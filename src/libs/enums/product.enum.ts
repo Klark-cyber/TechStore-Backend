@@ -1,8 +1,9 @@
-export enum ProductSize{
-    SMALL = "SMALL",
-    NORMAL = 'NORMAL',
-    LARGE = 'LARGE',
-    SET = 'SET'
+export enum AttributeKey{
+    MEMORY = "MEMORY",
+    RAM = 'RAM',
+    COLOR = 'COLOR',
+    BATTERY = 'BATTERY',
+    STORAGE = 'STORAGE'
 }
 
 export enum ProductVolume {

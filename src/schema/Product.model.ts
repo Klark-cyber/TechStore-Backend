@@ -1,65 +1,99 @@
-import mongoose, {Schema} from 'mongoose';
-import { ProductCollection, ProductSize, ProductStatus, ProductVolume } from '../libs/enums/product.enum';
+import mongoose, { Schema, Document } from "mongoose";
+import { ProductStatus } from "../libs/enums/product.enum";
+import { Product } from "../libs/types/product";
 
-const productSchema = new Schema(
-    {
-        productStatus:{
-            type: String,
-            enum: ProductStatus,
-            default: ProductStatus.PAUSE
-        },
-
-        productCollection:{
-            type: String,
-            enum: ProductCollection,
-            required: true,
-        },
-
-        productName:{
-            type: String,
-            required: true
-        },
-
-        productPrice:{
-            type: Number,
-            required: true
-        },
-
-         productLeftCount:{
-            type: Number,
-            required: true
-        },
-
-        productSize:{
-            type: String,
-            enum: ProductSize,
-            default: ProductSize.NORMAL
-        },
-
-        productVolume: {
-            type: Number,
-            enum: ProductVolume,
-            default: ProductVolume.ONE
-        },
-
-        productDesc: {
-            type: String,
-        },
-
-        productImages: {
-            type: [String],
-            default: [] //rasm kiritilmasa bosh errayni qabul qil
-        },
-
-        productViews: {
-            type: Number,
-            default: 0
-        },
+const productSchema = new Schema<Product>(
+  {
+    productStatus: {
+      type: String,
+      enum: Object.values(ProductStatus),
+      default: ProductStatus.ACTIVE,
     },
 
- {timestamps: true} //updatesAt va createdAt kabi malumotlarni defolt qoyib beradi
+    productName: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 2,
+      maxlength: 100,
+    },
+
+    productPrice: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+
+    productLeftCount: {
+      type: Number,
+      required: true,
+      min: 0,
+      default: 0,
+    },
+
+    productBrand: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    productDesc: {
+      type: String,
+      required: true,
+      maxlength: 1000,
+    },
+
+    productImages: {
+      type: [String],
+      default: [],
+    },
+
+    /* ===== STATS ===== */
+
+    productViews: {
+      type: Number,
+      default: 0,
+    },
+
+    productLikes: {
+      type: Number,
+      default: 0,
+    },
+
+    productRating: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 5,
+    },
+
+    productReviews: {
+      type: Number,
+      default: 0,
+    },
+
+    /* ===== DYNAMIC ATTRIBUTES ===== */
+
+    attributes: {
+      type: Map,
+      of: String,
+      default: {},
+    },
+
+    categoryId: {
+      type: Schema.Types.ObjectId,
+      ref: "Category",
+    },
+  },
+  { timestamps: true }
 );
-productSchema.index({productName:1, productSize:1, productVolume:1},
-    {unique:true}
-)
-export default mongoose.model('Product', productSchema) //mongoose orqali Schemani schema modelga aylantirib oldik
+
+
+productSchema.index({ productName: "text", productDesc: "text" });
+productSchema.index({ memberId: 1 });
+productSchema.index({ categoryId: 1 });
+
+export const ProductModel = mongoose.model<Product>(
+  "Product",
+  productSchema
+);

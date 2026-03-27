@@ -1,5 +1,5 @@
 import express, {Request, Response} from "express";
-import memberController from "./controllers/member.controller"; //memberController {} qavssiz import bolganiga sabab memberController ozi joylashgan fileda export bolgan boshqa malumot yoqligidaa
+import memberController from "./controllers/member.controller"; 
 import uploader from "./libs/utils/uploader";
 import productController from "./controllers/product.controller";
 import orderController from "./controllers/order.controller";

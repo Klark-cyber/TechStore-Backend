@@ -1,54 +1,63 @@
-import mongoose, {Schema} from 'mongoose';
-import { MemberStatus, MemberType } from '../libs/enums/member.enum';
-const memberSchema = new Schema({
+import mongoose, { Schema, Document } from "mongoose";
+import { Member } from "../libs/types/member";
+import { MemberStatus, MemberType } from "../libs/enums/member.enum";
+
+const memberSchema = new Schema<Member>(
+  {
     memberType: {
-        type: String,
-        enum: MemberType,//memberType enum korinishida bolishi kerak.MemberType import qilindi
-        default:MemberType.USER //Default qiymat sifatida USERni kiritdik
+      type: String,
+      enum: Object.values(MemberType),
+      default: MemberType.USER,
     },
 
     memberStatus: {
-        type: String,
-        enum: MemberStatus,
-        default: MemberStatus.ACTIVE
+      type: String,
+      enum: Object.values(MemberStatus),
+      default: MemberStatus.ACTIVE,
     },
 
     memberNick: {
-        type: String,
-        index: {unique: true, sparse: true}, //unique bu azolarning nick name unikal bolishini taminlaydi, sparse esa azo nick namega avval ishlatilgan nickname ishlatmoqchi bolsa himoyalaydi
-        required: true, //required true bu agar member nick kiritmasa user qabul qilinmaydi. Yani nickname majburiy.required yozilmasa avtomatik false yani defolt sifatida falseni tayinlaydi
-    },
-
-    memberPhone: {
-        type: String,
-        index: { unique: true, sparce: true },
-        required: true,
+      type: String,
+      required: true,
+      minlength: 3,
+      maxlength: 30,
+      trim: true,
     },
 
     memberPassword: {
-        type: String, 
-        select: false, //select MongoDbdan malumot olinganda telraqamni olib berma deganidir.Yani userning tel raqami maxfiy malumot hisoblanadi
-        required: true,
-    },
-
-    memberAddress: {
-        type: String, 
-    },
-
-    memberDesc: {
-        type: String, 
+      type: String,
+      required: true,
+      minlength: 6,
     },
 
     memberImage: {
-        type: String, 
+      type: String,
+      default: "",
+    },
+
+    memberPhone: {
+      type: String,
+      default: "",
+    },
+
+    memberAddress: {
+      type: String,
+      default: "",
+    },
+
+    memberDesc: {
+      type: String,
+      maxlength: 200,
+      default: "",
     },
 
     memberPoints: {
-        type: Number, 
-        default: 0,
-    }
-},
- {timestamps: true} //updatesAt va createdAt kabi malumotlarni defolt qoyib beradi
+      type: Number,
+      default: 0,
+    },
+  },
+  { timestamps: true }
 );
 
-export default mongoose.model('Member', memberSchema) //mongoose orqali Schemani schema modelga aylantirib oldik
+export default mongoose.model("Order", memberSchema);
+

@@ -22,7 +22,7 @@ export interface Member { //Bu type MongoDb member collectionga borib yozilib me
     memberNick: string;
     memberPhone: string;
     memberPassword?: string; //Data collectionga yozilgan malumot natijasi password va manzil kabi maxfiy malumotlarni result orqali console qilishini oldini olishimiz kerak 
-    memberAddres?: string;
+    memberAddress?: string;
     memberDesc?: string;
     memberImage?: string;
     memberPoints: number;

@@ -1,19 +1,7 @@
-import { ProductCollection, ProductSize, ProductStatus } from "../enums/product.enum";
+import { AttributeKey, ProductCollection, ProductStatus } from "../enums/product.enum";
 import { ObjectId } from 'mongoose';
 
-export interface ProductInput{
-    productStatus?: ProductStatus;
-    productCollection: ProductCollection;
-    productName: string;
-    productPrice: number;
-    productLeftCount: number;
-    productSize?: ProductSize;
-    productVolume?: number;
-    productDesc?: string;
-    productImages?: string[];
-    productViews?: number;
-}
-
+//.  TECHSTROE
 export interface Product{
     _id: ObjectId;
     productStatus: ProductStatus;
@@ -21,14 +9,39 @@ export interface Product{
     productName: string;
     productPrice: number;
     productLeftCount: number;
-    productSize: ProductSize;
+    productBrand: string;
     productVolume: number;
+    productLikes: number,
+    productRating: number,
     productDesc?: string;
     productImages: string[];
+    productReviews: number,
+    attributes: ProductAttributes,
+    categoryId?: ObjectId,
     productViews: number;
     createdAt: Date;
     updatedAt: Date;
+}
 
+export type ProductAttributes = {
+    [key in AttributeKey ]?: string;
+}
+
+
+
+
+
+
+export interface ProductInput{
+    productStatus?: ProductStatus;
+    productCollection: ProductCollection;
+    productName: string;
+    productPrice: number;
+    productLeftCount: number;
+    productVolume?: number;
+    productDesc?: string;
+    productImages?: string[];
+    productViews?: number;
 }
 
 export interface ProductInquiry {
@@ -46,7 +59,6 @@ export interface ProductUpdateInput{ //bu update boladigan productning interface
     productName?: string;
     productPrice?: number;
     productLeftCount?: number;
-    productSize?: ProductSize;
     productVolume?: number;
     productDesc?: string;
     productImages?: string[];
