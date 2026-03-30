@@ -1,45 +1,236 @@
-<%- include('includes/header') %>
+<!DOCTYPE html>
 
-<link rel="stylesheet" type="text/css" href="/css/login.css" />
-
-<body>
-  <form class="login-container" action="/admin/login" METHOD="POST">
-    <div class="login-frame">
-      <div class="login-top">
-        <span>Enter</span>
-        <div>Go back <a href="/admin" style="color: #6440fb">Home</a></div>
-        <p>
-          Not registered yet?
-          <a href="/admin/signup" style="color: #6440fb">Signup</a>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login | TechStore</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "inverse-on-surface": "#eef0ff",
+                        "on-secondary-fixed": "#001849",
+                        "on-primary-container": "#f8f7ff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#fff6f4",
+                        "inverse-primary": "#b3c5ff",
+                        "outline-variant": "#c2c6d8",
+                        "on-surface-variant": "#424656",
+                        "secondary-fixed-dim": "#b3c5ff",
+                        "secondary": "#425ca0",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed": "#001849",
+                        "tertiary": "#a33200",
+                        "on-primary": "#ffffff",
+                        "surface-variant": "#dae2fd",
+                        "on-background": "#131b2e",
+                        "error-container": "#ffdad6",
+                        "surface": "#faf8ff",
+                        "surface-container-high": "#e2e7ff",
+                        "surface-bright": "#faf8ff",
+                        "tertiary-fixed": "#ffdbd0",
+                        "on-surface": "#131b2e",
+                        "on-error": "#ffffff",
+                        "background": "#faf8ff",
+                        "tertiary-container": "#cc4204",
+                        "outline": "#727687",
+                        "on-primary-fixed-variant": "#003fa4",
+                        "surface-container-low": "#f2f3ff",
+                        "surface-container-highest": "#dae2fd",
+                        "error": "#ba1a1a",
+                        "secondary-container": "#9bb4fe",
+                        "tertiary-fixed-dim": "#ffb59d",
+                        "on-tertiary-fixed": "#390c00",
+                        "primary-fixed": "#dae1ff",
+                        "on-secondary-container": "#294487",
+                        "surface-tint": "#0054d6",
+                        "on-secondary-fixed-variant": "#284386",
+                        "primary-container": "#0066ff",
+                        "surface-dim": "#d2d9f4",
+                        "secondary-fixed": "#dae1ff",
+                        "on-tertiary-fixed-variant": "#832600",
+                        "surface-container": "#eaedff",
+                        "inverse-surface": "#283044",
+                        "primary": "#0050cb",
+                        "on-secondary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "primary-fixed-dim": "#b3c5ff"
+                    },
+                    fontFamily: {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .kinetic-bg {
+            background: radial-gradient(circle at 0% 0%, #0066ff 0%, transparent 50%),
+                        radial-gradient(circle at 100% 100%, #b3c5ff 0%, transparent 50%),
+                        #faf8ff;
+        }
+        .floating-sphere {
+            filter: blur(60px);
+            background: linear-gradient(135deg, #0050cb 0%, #0066ff 100%);
+            opacity: 0.4;
+        }
+    </style>
+</head>
+<body class="bg-background font-body text-on-background selection:bg-primary-container selection:text-on-primary-container overflow-x-hidden min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 w-full z-50 bg-slate-950/80 backdrop-blur-xl shadow-2xl shadow-blue-900/10">
+<nav class="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
+<div class="flex items-center gap-2">
+<img alt="TechStore Logo" class="h-8 w-auto" data-alt="high-tech minimalist logo for TechStore with sleek geometric lines and vibrant electric blue accents on a dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDI28WxBzQc7F7zpCwfF5Rgoj9ehpNdo_Mes9Zwluplb0fTin8ajEjaEJ6vginXnEEMLRgImvOhG_d6ZRM5KGrIlAqHC1L55EVaWysZh5LSa3nW-v-R-YLhltNg3rQt4MJU5RS5okegTeA4baqX5Qo1QHHjSgFh1Ky9wn6QnwF7HqWgCejwuqAOJhDVDdafGIgXMTWHhiHsK3WMsBUvCrIpMP72lMpd7hUB-iwD4DXRYrEbbirjty6vzChaoeMqQrY6wdYqjSaDxqN_"/>
+<span class="text-2xl font-bold tracking-tighter text-slate-50 dark:text-white">TechStore</span>
+</div>
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-slate-400 hover:text-slate-100 transition-colors duration-300 font-sans text-sm tracking-tight font-medium" href="/admin">Home</a>
+<a class="text-slate-400 hover:text-slate-100 transition-colors duration-300 font-sans text-sm tracking-tight font-medium" href="/admin/signup">Signup</a>
+<a class="text-blue-500 font-bold border-b-2 border-blue-500 pb-1 font-sans text-sm tracking-tight font-medium" href="/admin/login">Login</a>
+</div>
+</nav>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex items-center justify-center pt-24 pb-12 px-4 relative kinetic-bg overflow-hidden">
+<!-- Background Elements (Animated Particles Placeholder) -->
+<div class="absolute inset-0 pointer-events-none">
+<div class="absolute top-1/4 left-1/4 w-96 h-96 floating-sphere rounded-full"></div>
+<div class="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] floating-sphere rounded-full" style="background: linear-gradient(135deg, #b3c5ff 0%, #0054d6 100%); opacity: 0.2;"></div>
+</div>
+<!-- Login Container -->
+<div class="relative z-10 w-full max-w-5xl glass-panel rounded-xl shadow-2xl flex flex-col md:flex-row overflow-hidden border border-white/40">
+<!-- Left Side: Visual/Animation Section -->
+<div class="hidden md:flex md:w-5/12 bg-primary relative p-12 flex-col justify-between overflow-hidden">
+<div class="absolute inset-0 opacity-20" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCtjS7l8y0CaWA4Iveh-dqrxhf5HUC6a5hsm7oplfWfpiqQqqWxnDlyQSTH4Hll3_4d1iMtJ3SskuoBRieu9U95GcK4qGgmeEcwPIyS-j7rNlBS7UB8DLjeV3d32MjiqNsoASOkoEwiecqGXdw9q8blG3vebDRoKMSWjLTjLezBjinPDVbaoctNhClh4q-UdQpSzthECCTqox3d-iVi9qzRg-qmCjEshXD2ftpW6vVS0AZJp1E2vYNPl05uVKrj1-F2b0D41pDz2o6r');"></div>
+<div class="relative z-10">
+<h2 class="text-white text-4xl font-black tracking-tight leading-tight mb-4">
+                        Precision Engineering <br/> Meets Digital Curation.
+                    </h2>
+<p class="text-blue-100/80 text-lg font-light max-w-xs">
+                        Access your curated technology hub with secure, high-performance authentication.
+                    </p>
+</div>
+<div class="relative z-10 mt-auto">
+<div class="flex -space-x-3 mb-4">
+<img class="w-10 h-10 rounded-full border-2 border-primary" data-alt="professional headshot of a smiling tech executive in a modern studio setting with soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAohIYtOp3A0L7UuB_W9zkSdKWwPomfcEhJlG0XWRLN4fp7NwgHYAIbK9DpDIzByqi8IXAln0CicEY7J4vIdzoPdPQnTRRnTNqfGcRVoYLn110PxEHjhECHCQ0CP8H9BdZp1FUsvy4f6UVY-nsR95ekKdXdxqaQ2iAuD7ue9HvwE03MQUDIqO5naj4NeF9b78tU2qAMueLTQApc_BxuCNvd2V7jzjQ7wrrZvyg063-6tpF4CU_hdQrp6ZOvHiPABomC3Am-cc3b--ij"/>
+<img class="w-10 h-10 rounded-full border-2 border-primary" data-alt="close up portrait of a software developer looking focused in a neon lit room" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmee5MOD5mYAiMKjPiKCHOT3QMAZ8eyXUjkC8O0YspmZ8EHedDIbpdfWCP6TrctCFzNRsfUrepz5K3A6AE4D1VVyYiRZ5ujGh4qmqd81OR5iO7cBfL3JFzyGjEfll9pxyKXJVQxA8rU8iYbhoZL4ueZv_-5_BYhwqqHDIpUzuksf2jP1yNsgtNpquyD8umY3eaOJZDYwEMZZAZLwyPrsFDgclGRoRNVJZr9R-HTVvpXEQsj0kZKfD_oLUB25rLVB6nBf64ddIWysKT"/>
+<img class="w-10 h-10 rounded-full border-2 border-primary" data-alt="smiling woman in a tech workspace with modern equipment and plants in the background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsjI_NWR_tFPnm5y-pc_52Wa2u-QvmQp7dM6Swygo3_aiPI_OLfkFQ1WzVBqJzBKJaVZH5-f8AT87TermTRBKFvYOvQt9u9R3qSvUkgicKJephmEJQomIh7DWAVdshOHjH3egICQ8mhMAoluhCoc48XkBLDQxxi0PpD9kOenwkXY-_LaNESXMTci5gNe6uVKRD03ry2JrMccX8kId-twIX-gBHGKSTOCB8F-ux-sT_i2SKEWQxVy-2nUaFmdhbt5LAyYjg_gxhsBcF"/>
+</div>
+<p class="text-white text-sm font-semibold">Joined by 12,000+ innovators.</p>
+</div>
+<!-- Abstract Shape Decorations -->
+<div class="absolute -bottom-24 -left-24 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+<div class="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-white/5 to-transparent"></div>
+</div>
+<!-- Right Side: Login Form -->
+<div class="w-full md:w-7/12 p-8 md:p-16 flex flex-col justify-center bg-white/40">
+<div class="mb-10">
+<h1 class="text-3xl font-black text-on-surface tracking-tighter mb-2">Welcome Back</h1>
+<p class="text-on-surface-variant font-medium">Please enter your credentials to proceed.</p>
+</div>
+<form action="/admin/login" class="space-y-6" method="POST">
+<!-- Restaurant Name / memberNick -->
+<div class="space-y-2">
+<label class="block text-xs uppercase tracking-widest font-bold text-on-surface-variant ml-1" for="memberNick">Restaurant Name</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline" data-icon="storefront">storefront</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-highest/50 border-none rounded-lg focus:ring-2 focus:ring-primary focus:bg-white transition-all placeholder:text-outline/60 text-on-surface font-medium" id="memberNick" name="memberNick" placeholder="Enter restaurant name" required="" type="text"/>
+</div>
+</div>
+<!-- Password / memberPassword -->
+<div class="space-y-2">
+<div class="flex justify-between items-center px-1">
+<label class="block text-xs uppercase tracking-widest font-bold text-on-surface-variant" for="memberPassword">Password</label>
+<a class="text-xs font-bold text-primary hover:text-primary-container transition-colors" href="#">Forgot password?</a>
+</div>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline" data-icon="lock">lock</span>
+<input class="w-full pl-12 pr-12 py-4 bg-surface-container-highest/50 border-none rounded-lg focus:ring-2 focus:ring-primary focus:bg-white transition-all placeholder:text-outline/60 text-on-surface font-medium" id="memberPassword" name="memberPassword" placeholder="••••••••" required="" type="password"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+</div>
+</div>
+<!-- Remember Me -->
+<div class="flex items-center px-1">
+<input class="w-4 h-4 text-primary bg-surface-container-highest border-none rounded focus:ring-primary cursor-pointer" id="remember" type="checkbox"/>
+<label class="ml-2 text-sm text-on-surface-variant font-medium cursor-pointer select-none" for="remember">Keep me logged in</label>
+</div>
+<!-- Submit Button -->
+<button class="w-full py-4 bg-primary text-on-primary font-bold rounded-lg shadow-lg shadow-primary/20 hover:bg-primary-container active:scale-95 transition-all duration-200 flex items-center justify-center gap-3" type="submit">
+<span>Sign In to Dashboard</span>
+<span class="material-symbols-outlined text-lg" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</form>
+<div class="mt-12 pt-8 border-t border-outline-variant/20 text-center">
+<p class="text-on-surface-variant text-sm font-medium">
+                        Don't have an account? 
+                        <a class="text-primary font-bold hover:underline underline-offset-4 ml-1" href="/admin/signup">Signup Now</a>
+</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Section -->
+<footer class="w-full border-t border-slate-800/50 bg-slate-950 px-12 py-8 flex flex-col md:flex-row justify-between items-center gap-4">
+<div class="flex flex-col items-center md:items-start">
+<span class="text-lg font-black text-slate-200">TechStore</span>
+<span class="text-[10px] uppercase tracking-[0.2em] font-semibold text-slate-500 mt-1">Kinetic Precision Engineering.</span>
+</div>
+<div class="flex gap-8">
+<a class="text-xs uppercase tracking-widest font-semibold text-slate-500 hover:text-blue-400 underline-offset-4 hover:underline duration-300" href="#">Privacy Policy</a>
+<a class="text-xs uppercase tracking-widest font-semibold text-slate-500 hover:text-blue-400 underline-offset-4 hover:underline duration-300" href="#">Terms of Service</a>
+<a class="text-xs uppercase tracking-widest font-semibold text-slate-500 hover:text-blue-400 underline-offset-4 hover:underline duration-300" href="#">Support</a>
+<a class="text-xs uppercase tracking-widest font-semibold text-slate-500 hover:text-blue-400 underline-offset-4 hover:underline duration-300" href="#">Contact</a>
+</div>
+<p class="text-[10px] uppercase tracking-widest font-semibold text-slate-500/60">
+            © 2024 TechStore. All Rights Reserved.
         </p>
-      </div>
-      <div class="login-input-frame">
-        <div class="login-input-container">
-          <label>Restaurant *</label>
-          <input
-            type="text"
-            name="memberNick"
-            class="member-nick"
-            placeholder="Username"
-            value=""
-            required
-          />
-        </div>
-        <div class="login-input-container">
-          <label>Password *</label>
-          <input
-            type="password"
-            name="memberPassword"
-            class="member-password"
-            placeholder="Password"
-            value=""
-            required
-          />
-        </div>
-      </div>
-      <button class="login-btn btn" name="login" type="submit">Login</button>
-    </div>
-  </form>
-</body>
+</footer>
+<!-- Scripts -->
+<script>
+        // Simple loading state simulation for the button
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const btn = this.querySelector('button[type="submit"]');
+            const originalContent = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `
+                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Authenticating...</span>
+            `;
+            // Form continues to submit naturally to /admin/login
+        });
 
-<%- include('includes/footer') %>
+        // Password Visibility Toggle
+        const toggleBtn = document.querySelector('button[type="button"]');
+        const passInput = document.getElementById('memberPassword');
+        toggleBtn.addEventListener('click', () => {
+            const type = passInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passInput.setAttribute('type', type);
+            const icon = toggleBtn.querySelector('span');
+            icon.textContent = type === 'password' ? 'visibility' : 'visibility_off';
+        });
+    </script>
+</body></html>

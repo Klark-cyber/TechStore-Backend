@@ -1,127 +1,237 @@
-<%- include('includes/header') %>
+<!DOCTYPE html>
 
-<link rel="stylesheet" type="text/css" href="/css/home.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.js"></script>
-
-<body>
-  <div class="home-container">
-    <div class="navigation-menu">
-      <ul class="nav justify-content-center">
-        <li class="nav-item" style="cursor: pointer">
-          <a class="nav-link active" href="/admin">Home</a>
-        </li>
-        <% if(!member) { %>
-        <li class="nav-item" style="cursor: pointer">
-          <a class="nav-link" href="/admin/signup">Signup</a>
-        </li>
-        <li class="nav-item" style="cursor: pointer">
-          <a class="nav-link" href="/admin/login">Login</a>
-        </li>
-        <% } else { %>
-        <li class="nav-item" style="cursor: pointer">
-          <a class="nav-link" href="/admin/product/all">Menu</a>
-        </li>
-        <li class="nav-item" style="cursor: pointer">
-          <a class="nav-link" href="/admin/user/all">Users</a>
-        </li>
-        <li
-          class="nav-item"
-          style="cursor: pointer"
-          onclick="return confirm('Do you want to logout?')"
-        >
-          <a class="nav-link" href="/admin/logout">Logout</a>
-        </li>
-        <% } %>
-      </ul>
-    </div>
-
-    <div class="animation-frame">
-      <div class="animation-wrapper">
-        <div class="sphere-animation">
-          <svg class="sphere" viewBox="0 0 440 440" stroke="rgba(80,80,80,.35)">
-            <defs>
-              <linearGradient
-                id="sphereGradient"
-                x1="5%"
-                x2="5%"
-                y1="0%"
-                y2="15%"
-              >
-                <stop stop-color="#373734" offset="0%" />
-                <stop stop-color="#242423" offset="50%" />
-                <stop stop-color="#0D0D0C" offset="100%" />
-              </linearGradient>
-            </defs>
-            <path
-              d="M361.604 361.238c-24.407 24.408-51.119 37.27-59.662 28.727-8.542-8.543 4.319-35.255 28.726-59.663 24.408-24.407 51.12-37.269 59.663-28.726 8.542 8.543-4.319 35.255-28.727 59.662z"
-            />
-            <path
-              d="M360.72 360.354c-35.879 35.88-75.254 54.677-87.946 41.985-12.692-12.692 6.105-52.067 41.985-87.947 35.879-35.879 75.254-54.676 87.946-41.984 12.692 12.692-6.105 52.067-41.984 87.946z"
-            />
-            <path
-              d="M357.185 356.819c-44.91 44.91-94.376 68.258-110.485 52.149-16.11-16.11 7.238-65.575 52.149-110.485 44.91-44.91 94.376-68.259 110.485-52.15 16.11 16.11-7.239 65.576-52.149 110.486z"
-            />
-            <path
-              d="M350.998 350.632c-53.21 53.209-111.579 81.107-130.373 62.313-18.794-18.793 9.105-77.163 62.314-130.372 53.209-53.21 111.579-81.108 130.373-62.314 18.794 18.794-9.105 77.164-62.314 130.373z"
-            />
-            <path
-              d="M343.043 342.677c-59.8 59.799-125.292 91.26-146.283 70.268-20.99-20.99 10.47-86.483 70.269-146.282 59.799-59.8 125.292-91.26 146.283-70.269 20.99 20.99-10.47 86.484-70.27 146.283z"
-            />
-            <path
-              d="M334.646 334.28c-65.169 65.169-136.697 99.3-159.762 76.235-23.065-23.066 11.066-94.593 76.235-159.762s136.697-99.3 159.762-76.235c23.065 23.065-11.066 94.593-76.235 159.762z"
-            />
-            <path
-              d="M324.923 324.557c-69.806 69.806-146.38 106.411-171.031 81.76-24.652-24.652 11.953-101.226 81.759-171.032 69.806-69.806 146.38-106.411 171.031-81.76 24.652 24.653-11.953 101.226-81.759 171.032z"
-            />
-            <path
-              d="M312.99 312.625c-73.222 73.223-153.555 111.609-179.428 85.736-25.872-25.872 12.514-106.205 85.737-179.428s153.556-111.609 179.429-85.737c25.872 25.873-12.514 106.205-85.737 179.429z"
-            />
-            <path
-              d="M300.175 299.808c-75.909 75.909-159.11 115.778-185.837 89.052-26.726-26.727 13.143-109.929 89.051-185.837 75.908-75.908 159.11-115.778 185.837-89.051 26.726 26.726-13.143 109.928-89.051 185.836z"
-            />
-            <path
-              d="M284.707 284.34c-77.617 77.617-162.303 118.773-189.152 91.924-26.848-26.848 14.308-111.534 91.924-189.15C265.096 109.496 349.782 68.34 376.63 95.188c26.849 26.849-14.307 111.535-91.923 189.151z"
-            />
-            <path
-              d="M269.239 267.989c-78.105 78.104-163.187 119.656-190.035 92.807-26.849-26.848 14.703-111.93 92.807-190.035 78.105-78.104 163.187-119.656 190.035-92.807 26.849 26.848-14.703 111.93-92.807 190.035z"
-            />
-            <path
-              d="M252.887 252.52C175.27 330.138 90.584 371.294 63.736 344.446 36.887 317.596 78.043 232.91 155.66 155.293 233.276 77.677 317.962 36.521 344.81 63.37c26.85 26.848-14.307 111.534-91.923 189.15z"
-            />
-            <path
-              d="M236.977 236.61C161.069 312.52 77.867 352.389 51.14 325.663c-26.726-26.727 13.143-109.928 89.052-185.837 75.908-75.908 159.11-115.777 185.836-89.05 26.727 26.726-13.143 109.928-89.051 185.836z"
-            />
-            <path
-              d="M221.067 220.7C147.844 293.925 67.51 332.31 41.639 306.439c-25.873-25.873 12.513-106.206 85.736-179.429C200.6 53.786 280.931 15.4 306.804 41.272c25.872 25.873-12.514 106.206-85.737 179.429z"
-            />
-            <path
-              d="M205.157 204.79c-69.806 69.807-146.38 106.412-171.031 81.76-24.652-24.652 11.953-101.225 81.759-171.031 69.806-69.807 146.38-106.411 171.031-81.76 24.652 24.652-11.953 101.226-81.759 171.032z"
-            />
-            <path
-              d="M189.247 188.881c-65.169 65.169-136.696 99.3-159.762 76.235-23.065-23.065 11.066-94.593 76.235-159.762s136.697-99.3 159.762-76.235c23.065 23.065-11.066 94.593-76.235 159.762z"
-            />
-            <path
-              d="M173.337 172.971c-59.799 59.8-125.292 91.26-146.282 70.269-20.991-20.99 10.47-86.484 70.268-146.283 59.8-59.799 125.292-91.26 146.283-70.269 20.99 20.991-10.47 86.484-70.269 146.283z"
-            />
-            <path
-              d="M157.427 157.061c-53.209 53.21-111.578 81.108-130.372 62.314-18.794-18.794 9.104-77.164 62.313-130.373 53.21-53.209 111.58-81.108 130.373-62.314 18.794 18.794-9.105 77.164-62.314 130.373z"
-            />
-            <path
-              d="M141.517 141.151c-44.91 44.91-94.376 68.259-110.485 52.15-16.11-16.11 7.239-65.576 52.15-110.486 44.91-44.91 94.375-68.258 110.485-52.15 16.109 16.11-7.24 65.576-52.15 110.486z"
-            />
-            <path
-              d="M125.608 125.241c-35.88 35.88-75.255 54.677-87.947 41.985-12.692-12.692 6.105-52.067 41.985-87.947C115.525 43.4 154.9 24.603 167.592 37.295c12.692 12.692-6.105 52.067-41.984 87.946z"
-            />
-            <path
-              d="M109.698 109.332c-24.408 24.407-51.12 37.268-59.663 28.726-8.542-8.543 4.319-35.255 28.727-59.662 24.407-24.408 51.12-37.27 59.662-28.727 8.543 8.543-4.319 35.255-28.726 59.663z"
-            />
-          </svg>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script type="text/javascript" src="/js/home.js"></script>
-</body>
-
-<%- include('includes/footer') %>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TechStore | Kinetic Precision Engineering</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "inverse-on-surface": "#eef0ff",
+              "on-secondary-fixed": "#001849",
+              "on-primary-container": "#f8f7ff",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary-container": "#fff6f4",
+              "inverse-primary": "#b3c5ff",
+              "outline-variant": "#c2c6d8",
+              "on-surface-variant": "#424656",
+              "secondary-fixed-dim": "#b3c5ff",
+              "secondary": "#425ca0",
+              "on-tertiary": "#ffffff",
+              "on-primary-fixed": "#001849",
+              "tertiary": "#a33200",
+              "on-primary": "#ffffff",
+              "surface-variant": "#dae2fd",
+              "on-background": "#131b2e",
+              "error-container": "#ffdad6",
+              "surface": "#faf8ff",
+              "surface-container-high": "#e2e7ff",
+              "surface-bright": "#faf8ff",
+              "tertiary-fixed": "#ffdbd0",
+              "on-surface": "#131b2e",
+              "on-error": "#ffffff",
+              "background": "#faf8ff",
+              "tertiary-container": "#cc4204",
+              "outline": "#727687",
+              "on-primary-fixed-variant": "#003fa4",
+              "surface-container-low": "#f2f3ff",
+              "surface-container-highest": "#dae2fd",
+              "error": "#ba1a1a",
+              "secondary-container": "#9bb4fe",
+              "tertiary-fixed-dim": "#ffb59d",
+              "on-tertiary-fixed": "#390c00",
+              "primary-fixed": "#dae1ff",
+              "on-secondary-container": "#294487",
+              "surface-tint": "#0054d6",
+              "on-secondary-fixed-variant": "#284386",
+              "primary-container": "#0066ff",
+              "surface-dim": "#d2d9f4",
+              "secondary-fixed": "#dae1ff",
+              "on-tertiary-fixed-variant": "#832600",
+              "surface-container": "#eaedff",
+              "inverse-surface": "#283044",
+              "primary": "#0050cb",
+              "on-secondary": "#ffffff",
+              "on-error-container": "#93000a",
+              "primary-fixed-dim": "#b3c5ff"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-nav {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #0f172a 0%, #001849 100%);
+        }
+        .floating-sphere {
+            background: radial-gradient(circle at 30% 30%, #0066ff, #001849);
+            box-shadow: 0 0 60px rgba(0, 102, 255, 0.3), inset -20px -20px 50px rgba(0,0,0,0.5);
+        }
+        .bento-card {
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+        .bento-card:hover {
+            transform: translateY(-4px);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface selection:bg-primary-container selection:text-on-primary-container">
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 w-full z-50 glass-nav border-b border-white/5">
+<div class="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
+<div class="flex items-center gap-3">
+<img alt="TechStore Logo" class="h-8 w-auto" data-alt="minimalist futuristic tech logo with geometric shapes and neon blue accents on a dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvTCY4-WqaneGC-h_qtBLfD0E9XR44ckTccPbZzxYjJeO3FiUmToodnxYmY2IVFKxo_ccbfnEV12WKJn0Vm5Ce5Li6b8_JnGeohGf0UFzNSVjBbpkL8sXeIpuUkoiLCHmg329zyWj9_E2qHmbhrcXgHCpsKoHgqRI-fOp4m2tG84pSXBwcfu-NPiM2cGvg3h1dNCjJ0KCbwc1ToK3FBy4r3axecf1gDF-VKaT4Ti8nobyFJ4pcT5_hWqOrILsVglpqkhgbH9KdTxfW"/>
+<span class="text-2xl font-bold tracking-tighter text-slate-50">TechStore</span>
+</div>
+<!-- Desktop Nav -->
+ <div class="hidden md:flex items-center gap-8 font-inter tracking-tight text-sm font-medium"></div>
+<div class="hidden md:flex items-center gap-8 font-inter tracking-tight text-sm font-medium">
+<a class="text-slate-400 hover:text-slate-100 transition-colors duration-300 font-sans text-sm tracking-tight font-medium" href="/admin">Home</a>
+<% if(!member) { %>
+<a class="text-slate-400 hover:text-slate-100 transition-colors duration-300 font-sans text-sm tracking-tight font-medium" href="/admin/signup">Signup</a>
+<a class="text-slate-400 hover:text-slate-100 transition-colors duration-300 font-sans text-sm tracking-tight font-medium" href="/admin/login">Login</a>
+</div>
+<%} else { %>
+<div class="hidden md:flex items-center gap-8 font-inter tracking-tight text-sm font-medium">
+<a class="text-slate-400 hover:text-slate-100 transition-colors duration-300 font-sans text-sm tracking-tight font-medium" href="/admin/product/all">Menu</a>
+<a class="text-slate-400 hover:text-slate-100 transition-colors duration-300 font-sans text-sm tracking-tight font-medium" href="/admin/user/all">Users</a>
+<a class="text-slate-400 hover:text-slate-100 transition-colors duration-300 font-sans text-sm tracking-tight font-medium" href="/admin/logout" onclick="return confirm('Do you want to logout')" >Logout</a>
+</div>
+<%}%>
+</div>
+<!-- Mobile Menu Toggle -->
+<button class="md:hidden text-white">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+</div>
+</nav>
+<!-- Hero Section -->
+<section class="relative min-h-screen flex items-center justify-center overflow-hidden hero-gradient pt-20">
+<!-- Particle Effects Decor (Simulated via CSS) -->
+<div class="absolute inset-0 opacity-20 pointer-events-none">
+<div class="absolute top-1/4 left-1/4 w-2 h-2 bg-blue-400 rounded-full blur-sm"></div>
+<div class="absolute top-3/4 left-1/3 w-1 h-1 bg-white rounded-full"></div>
+<div class="absolute top-1/2 right-1/4 w-3 h-3 bg-blue-600 rounded-full blur-md"></div>
+</div>
+<div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center z-10">
+<div class="space-y-8">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="text-xs font-bold uppercase tracking-widest text-primary">Precision Engineering</span>
+</div>
+<h1 class="text-5xl md:text-7xl font-extrabold tracking-tighter text-white leading-none">
+                    Welcome to <span class="text-primary-container">TechStore</span>
+</h1>
+<p class="text-lg md:text-xl text-slate-400 max-w-lg leading-relaxed font-medium">
+                    Modern Admin Panel for Managing Products and Users. Elevate your workflow with Kinetic Precision and seamless hardware integration.
+                </p>
+<div class="flex flex-wrap gap-4 pt-4">
+<a class="px-8 py-4 bg-primary text-on-primary font-bold rounded-lg hover:bg-primary-container transition-all duration-300 flex items-center gap-2 group" href="/admin/signup">
+                        Signup Now
+                        <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</a>
+<a class="px-8 py-4 bg-white/5 border border-white/10 text-white font-bold rounded-lg hover:bg-white/10 transition-all duration-300" href="/admin/login">
+                        Login
+                    </a>
+</div>
+</div>
+<div class="relative flex justify-center items-center">
+<!-- 3D Sphere Placeholder -->
+<div class="floating-sphere w-64 h-64 md:w-96 md:h-96 rounded-full relative group cursor-crosshair transition-transform duration-700 hover:scale-105">
+<div class="absolute inset-0 rounded-full border border-white/10 animate-[spin_10s_linear_infinite]"></div>
+<div class="absolute -inset-4 rounded-full border border-blue-500/20 animate-[spin_15s_linear_infinite_reverse]"></div>
+<!-- Floating Gadget Icons -->
+<div class="absolute -top-8 -right-8 p-4 bg-slate-900/80 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="laptop_mac">laptop_mac</span>
+</div>
+<div class="absolute -bottom-4 -left-12 p-4 bg-slate-900/80 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="smart_watch">watch</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Bento Grid Management Showcase -->
+<section class="py-24 px-6 max-w-7xl mx-auto">
+<div class="mb-16">
+<h2 class="text-4xl font-black tracking-tighter text-on-surface mb-4">Enterprise Management</h2>
+<div class="h-1.5 w-24 bg-primary rounded-full"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[240px]">
+<!-- Product Control -->
+<div class="md:col-span-2 bento-card bg-surface-container-low rounded-xl p-8 flex flex-col justify-between overflow-hidden relative">
+<div>
+<h3 class="text-2xl font-bold text-on-surface mb-2">Inventory Architecture</h3>
+<p class="text-on-surface-variant max-w-sm">Manage complex hardware catalogs with granular precision and real-time synchronization.</p>
+</div>
+<div class="flex gap-4">
+<span class="px-4 py-2 bg-secondary-container text-on-secondary-container rounded-full text-xs font-bold uppercase tracking-wider">SKU Tracking</span>
+<span class="px-4 py-2 bg-secondary-container text-on-secondary-container rounded-full text-xs font-bold uppercase tracking-wider">Stock Alerts</span>
+</div>
+<img alt="Admin interface overview" class="absolute -right-12 -bottom-12 w-64 opacity-20 transform rotate-12" data-alt="clean high-tech dashboard interface showing inventory charts and product statistics with blue data visualizations" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_tIzY-Nk9VK1iqIROTg3RziFtssAHn6SLX7MQvEBTqQFT93tfdWytujsVtAhBk-Rx8js0n6jEp8ZSrNjlLKoY9vymJdPAEk9cQnWDj9ki22MKhJhwFrVZ9cxYpfhGh7H0ptVdlWm57I7hFy2lQ7E3E0eqYX6yIHT-7fs6T2tMrblmf3SQUvwvcQLlNuNA07jbCtM0l7-yYXDUPRXcsQ8fBaCk1qlFeF47LTyH41gIy5zuszvoeNHGN3rMOTtk1RpZAOnpNP6OOIbj"/>
+</div>
+<!-- User Security -->
+<div class="bento-card bg-primary text-on-primary rounded-xl p-8 flex flex-col justify-between">
+<span class="material-symbols-outlined text-4xl" data-icon="verified_user" data-weight="fill">verified_user</span>
+<div>
+<h3 class="text-xl font-bold mb-1">Secure Governance</h3>
+<p class="text-primary-fixed/80 text-sm">Advanced RBAC and activity auditing for user ecosystems.</p>
+</div>
+</div>
+<!-- Performance Grid -->
+<div class="bento-card bg-surface-container-highest rounded-xl p-8 flex flex-col justify-center items-center text-center gap-4">
+<span class="text-5xl font-black text-primary">99.9%</span>
+<p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">System Uptime</p>
+</div>
+<!-- Global Nodes -->
+<div class="md:col-span-2 bento-card bg-inverse-surface rounded-xl p-8 flex items-center justify-between">
+<div class="space-y-4">
+<h3 class="text-2xl font-bold text-inverse-on-surface">Global Distribution</h3>
+<p class="text-slate-400 text-sm max-w-xs">Connecting your products to a worldwide network of warehouses and retail nodes.</p>
+<button class="text-primary-container font-bold text-sm flex items-center gap-2">
+                        View Network <span class="material-symbols-outlined text-sm" data-icon="open_in_new">open_in_new</span>
+</button>
+</div>
+<div class="hidden sm:block w-48 h-32 bg-slate-800 rounded-lg overflow-hidden grayscale">
+<img alt="World map nodes" class="w-full h-full object-cover opacity-50" data-alt="abstract digital world map with glowing blue connection lines between major global tech hubs" data-location="London" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLZr5QgJFhMceDeSrxOZGLTUclkZsp864oG8zert_-7PqJlbQLFnq73gMpkBSUiizKKEy8vHeGIK6jroudg2VR8S_UGEpQel4k1Jpr9t4-MbfTKlzq3kWRvNpSjXqFABWFkeP_DgxNn8e8-q9m4H-5xV-Y7z2VKRk9aZWsYlIvv3CHzBjSmYIoJoYJrRn3mfdNJoWBUZPZKDNrujBReZHkCMXFObaaPCMCCFOgp401k4-pfLaJSIL0sCvm-oHWOowvvfI4cLp-z7Ck"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="w-full border-t border-slate-800/50 bg-slate-950 px-12 py-8 flex flex-col md:flex-row justify-between items-center gap-4">
+<div class="flex items-center gap-4">
+<span class="text-lg font-black text-slate-200">TechStore</span>
+<span class="text-xs uppercase tracking-widest font-semibold text-slate-500">© 2024 TechStore. Kinetic Precision Engineering.</span>
+</div>
+<div class="flex gap-8">
+<a class="text-xs uppercase tracking-widest font-semibold text-slate-500 hover:text-slate-300 transition-all duration-300 hover:text-blue-400 underline-offset-4 hover:underline" href="#">Privacy Policy</a>
+<a class="text-xs uppercase tracking-widest font-semibold text-slate-500 hover:text-slate-300 transition-all duration-300 hover:text-blue-400 underline-offset-4 hover:underline" href="#">Terms of Service</a>
+<a class="text-xs uppercase tracking-widest font-semibold text-slate-500 hover:text-slate-300 transition-all duration-300 hover:text-blue-400 underline-offset-4 hover:underline" href="#">Support</a>
+<a class="text-xs uppercase tracking-widest font-semibold text-slate-500 hover:text-slate-300 transition-all duration-300 hover:text-blue-400 underline-offset-4 hover:underline" href="#">Contact</a>
+</div>
+</footer>
+<!-- FAB (Suppressed on Landing/Home as per Shell Visibility Rules if necessary, but helpful for primary action) -->
+<a class="fixed bottom-8 right-8 w-16 h-16 bg-primary text-on-primary rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-transform z-40" href="/admin/signup">
+<span class="material-symbols-outlined text-3xl" data-icon="add">add</span>
+</a>
+</body></html>

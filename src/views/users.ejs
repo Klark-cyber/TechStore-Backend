@@ -1,93 +1,232 @@
-<%- include('includes/header') %>
+<!DOCTYPE html>
 
-<link rel="stylesheet" type="text/css" href="/css/users.css" />
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TechStore Admin - Users Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary-fixed-variant": "#832600",
+              "on-primary-fixed-variant": "#003fa4",
+              "on-tertiary-fixed": "#390c00",
+              "on-secondary-fixed-variant": "#284386",
+              "on-error-container": "#93000a",
+              "inverse-on-surface": "#eef0ff",
+              "secondary-container": "#9bb4fe",
+              "tertiary-container": "#cc4204",
+              "outline": "#727687",
+              "surface-container-highest": "#dae2fd",
+              "background": "#faf8ff",
+              "surface-tint": "#0054d6",
+              "on-background": "#131b2e",
+              "tertiary-fixed": "#ffdbd0",
+              "on-tertiary": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "outline-variant": "#c2c6d8",
+              "surface-container": "#eaedff",
+              "surface-dim": "#d2d9f4",
+              "surface-variant": "#dae2fd",
+              "tertiary-fixed-dim": "#ffb59d",
+              "secondary": "#425ca0",
+              "on-surface-variant": "#424656",
+              "on-tertiary-container": "#fff6f4",
+              "on-secondary-container": "#294487",
+              "error-container": "#ffdad6",
+              "primary-fixed": "#dae1ff",
+              "on-primary": "#ffffff",
+              "primary-fixed-dim": "#b3c5ff",
+              "surface-container-low": "#f2f3ff",
+              "surface-bright": "#faf8ff",
+              "secondary-fixed-dim": "#b3c5ff",
+              "secondary-fixed": "#dae1ff",
+              "on-error": "#ffffff",
+              "on-secondary": "#ffffff",
+              "tertiary": "#a33200",
+              "on-primary-fixed": "#001849",
+              "surface-container-high": "#e2e7ff",
+              "inverse-surface": "#283044",
+              "inverse-primary": "#b3c5ff",
+              "primary-container": "#0066ff",
+              "on-surface": "#131b2e",
+              "on-primary-container": "#f8f7ff",
+              "surface": "#faf8ff",
+              "primary": "#0050cb",
+              "on-secondary-fixed": "#001849",
+              "error": "#ba1a1a"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.05); }
+        }
 
-<body>
-  <div class="users-container">
-    <% if(!member) { %>
-    <div class="navigation-menu">
-      <ul class="nav justify-content-center">
-        <li class="nav-item" style="cursor: pointer">
-          <a class="nav-link active" href="/admin/">Home</a>
-        </li>
-        <li class="nav-item" style="cursor: pointer">
-          <a class="nav-link" href="/admin/signup">SignUp</a>
-        </li>
-        <li class="nav-item" style="cursor: pointer">
-          <a class="nav-link" href="/admin/login">Login</a>
-        </li>
-      </ul>
-    </div>
+        .kinetic-bg {
+            background: linear-gradient(-45deg, #001849, #0050cb, #a33200, #390c00);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
 
-    <div class="users-frame" style="color: #dddddd">
-      <div class="board" style="font-size: 40px">Please login first!</div>
-    </div>
+        .floating-sphere {
+            animation: float 8s ease-in-out infinite;
+            filter: blur(80px);
+            background: radial-gradient(circle, #0066ff 0%, rgba(0,102,255,0) 70%);
+        }
 
-    <% } else { %>
-    <div class="navigation-menu">
-      <ul class="nav justify-content-center">
-        <li class="nav-item" style="cursor: pointer">
-          <a class="nav-link active" href="/admin/">Home</a>
-        </li>
-        <li class="nav-item" style="cursor: pointer">
-          <a class="nav-link" href="/admin/product/all">Menu</a>
-        </li>
-        <li class="nav-item" style="cursor: pointer">
-          <a class="nav-link" href="/admin/user/all">Users</a>
-        </li>
-        <li
-          class="nav-item"
-          style="cursor: pointer"
-          onclick="return confirm('Do you really want to logout?')"
-        >
-          <a class="nav-link" href="/admin/logout">Logout</a>
-        </li>
-      </ul>
-    </div>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-    <div class="users-frame">
-      <div class="board">
-        <div class="user-table">
-          <span class="header-name" style="margin-bottom: 30px"
-            >All Users List</span
-          >
-          <table class="table table-hover table-sm">
-            <thead class="thead-light">
-              <tr class="thead-light">
-                <th scope="col">No</th>
-                <th scope="col">Name</th>
-                <th scope="col">Phone</th>
-                <th scope="col">Status</th>
-              </tr>
-            </thead>
-            <!--  LOOP PRODUCTS: START  -->
+        .member-status {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1rem;
+        }
 
-            <% users.map(function(value, index) { %>
+        .zebra-row:nth-child(even) {
+            background: rgba(255, 255, 255, 0.02);
+        }
 
-              <tbody style="background: white">
-              <td><%= index + 1 %></td>
-              <td><%= value.memberNick %></td>
-              <td><%= value.memberPhone %> </td>
-              <td style="width: 13%">
-                <select class="spec-select member-status" id="<%= value._id %>">
-                  <option value="ACTIVE" <%= value.memberStatus === "ACTIVE" ? "selected": " " %> >ACTIVE</option>
-                  <option value="BLOCK" <%= value.memberStatus === "BLOCK" ? "selected": " " %> >BLOCK</option>
-                  <option value="DELETE" <%= value.memberStatus === "DELETE" ? "selected": " " %> >DELETE</option>
-                </select>
-              </td>
-            </tbody>
+        .row-hover:hover {
+            background: rgba(0, 102, 255, 0.08) !important;
+            transform: translateX(4px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-           <% }) %>
-            
-            <!--  LOOP PRODUCTS: END  -->
-          </table>
-        </div>
-      </div>
-    </div>
-    <% } %>
-  </div>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body class="kinetic-bg min-h-screen font-body text-slate-100 flex flex-col overflow-x-hidden">
+<!-- Header Include -->
+<nav class="fixed top-0 w-full z-50 bg-slate-900/80 backdrop-blur-xl flex justify-between items-center px-8 h-16 w-full shadow-[0_8px_32px_0_rgba(0,0,0,0.3)]">
+<div class="flex items-center gap-4">
+<span class="text-xl font-bold text-slate-100 tracking-tighter">TechStore Admin</span>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-slate-400 hover:text-slate-200 transition-colors font-inter text-sm font-medium" href="/">Home</a>
+<a class="text-slate-400 hover:text-slate-200 transition-colors font-inter text-sm font-medium" href="/products">Products</a>
+<a class="text-blue-400 border-b-2 border-blue-500 pb-1 font-inter text-sm font-medium" href="/users">Users</a>
+<a class="text-slate-400 hover:text-slate-200 transition-colors font-inter text-sm font-medium" href="/logout">Logout</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-slate-400 hover:bg-white/5 p-2 rounded-lg transition-all duration-200 active:scale-95">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-blue-600/20 border border-blue-500/30 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Professional profile portrait of a male tech administrator with soft lighting and minimalist background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA00KxIL4Km4oLkU-1F-M2EAGttiEty4A434EDFU6n1WRDFrVXBGAup_FIz5N-l_UcnRnTQmmRMU660qBJh9vs0666N7D0xBqpJ1ngBRaNWZBbieQe5KNePoBIVNHl7wD1G-jIu-0WCmkIeU-VfjA6iRCDKMCej8J5IcSijWVy6LnhTIW26Sre2qV0sf5XCfc0luy7jCBI8vY3sRkuPtfAQ7RtPquv5n62j6aBos4rLui8tdYkcoFkZs1R8pVWy0FDMcWU066-yHOgQ"/>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-grow pt-32 pb-20 px-6 relative">
+<!-- Floating Focal Point -->
+<div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] floating-sphere rounded-full z-0 opacity-40 pointer-events-none"></div>
+<div class="max-w-6xl mx-auto relative z-10">
+<!-- Header Section -->
+<div class="mb-10 text-center md:text-left">
+<h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-2">User Directory</h1>
+<p class="text-slate-400 text-lg max-w-2xl">Manage system access levels, account statuses, and member security protocols from a centralized administrative hub.</p>
+</div>
+<!-- Table Container (Glassmorphism) -->
+<div class="glass-card rounded-2xl shadow-2xl overflow-hidden border border-white/10">
+<div class="overflow-x-auto">
 
-  <script type="text/javascript" src="/js/users.js"></script>
-</body>
-
-<%- include('includes/footer') %>
+                            &lt;% users.map(function(value, index) { %&gt;
+                                
+                            &lt;% }) %&gt;
+                        <table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-white/5 border-b border-white/10">
+<th class="px-8 py-5 text-xs font-bold uppercase tracking-widest text-blue-400">#</th>
+<th class="px-8 py-5 text-xs font-bold uppercase tracking-widest text-blue-400">Member Nickname</th>
+<th class="px-8 py-5 text-xs font-bold uppercase tracking-widest text-blue-400">Contact Number</th>
+<th class="px-8 py-5 text-xs font-bold uppercase tracking-widest text-blue-400">Account Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/5"><tr class="zebra-row row-hover group transition-all duration-300">
+<td class="px-8 py-6 text-slate-500 font-mono text-sm">&lt;%= index + 1 %&gt;</td>
+<td class="px-8 py-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center border border-white/5">
+<span class="material-symbols-outlined text-blue-400" data-icon="person">person</span>
+</div>
+<span class="font-semibold text-slate-100">&lt;%= value.memberNick %&gt;</span>
+</div>
+</td>
+<td class="px-8 py-6 text-slate-300 font-medium">&lt;%= value.memberPhone %&gt;</td>
+<td class="px-8 py-6">
+<div class="relative max-w-[160px]">
+<select class="member-status spec-select w-full bg-slate-950/40 border border-white/10 rounded-lg py-2 px-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all text-slate-200" id="&lt;%= value._id %&gt;">
+<option ""="" "active"="" "selected":="" %="" <%="value.memberStatus" =="=" ?="" value="ACTIVE">&gt;ACTIVE</option>
+<option ""="" "block"="" "selected":="" %="" <%="value.memberStatus" =="=" ?="" value="BLOCK">&gt;BLOCK</option>
+<option ""="" "delete"="" "selected":="" %="" <%="value.memberStatus" =="=" ?="" value="DELETE">&gt;DELETE</option>
+</select>
+<!-- Status Indicator Glow -->
+<div class="absolute -right-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full &lt;%= value.memberStatus === 'ACTIVE' ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]' : value.memberStatus === 'BLOCK' ? 'bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)]' : 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]' %&gt;">
+</div>
+</div>
+</td>
+</tr></tbody>
+</table>
+</div>
+<!-- Empty State Check (If no users) -->
+                &lt;% if (users.length === 0) { %&gt;
+                    <div class="py-20 flex flex-col items-center justify-center text-slate-500">
+<span class="material-symbols-outlined text-6xl mb-4" data-icon="group_off">group_off</span>
+<p class="text-xl">No members found in the database.</p>
+</div>
+                &lt;% } %&gt;
+            </div>
+</div>
+</main>
+<!-- Footer Include -->
+<footer class="w-full py-8 mt-auto border-t border-white/5 bg-slate-950/80 backdrop-blur-md">
+<div class="flex flex-col md:flex-row justify-between items-center px-12 w-full gap-4">
+<span class="text-xs font-inter text-slate-500 uppercase tracking-widest">© 2024 TechStore Kinetic Precision Framework</span>
+<div class="flex gap-8">
+<a class="text-xs font-inter text-slate-600 hover:text-slate-300 transition-colors uppercase tracking-widest" href="#">Status</a>
+<a class="text-xs font-inter text-slate-600 hover:text-slate-300 transition-colors uppercase tracking-widest" href="#">Documentation</a>
+<a class="text-xs font-inter text-slate-600 hover:text-slate-300 transition-colors uppercase tracking-widest" href="#">Support</a>
+</div>
+</div>
+</footer>
+<!-- Background Particles Layer -->
+<div class="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
+<div class="absolute w-1 h-1 bg-white/20 rounded-full top-[10%] left-[20%] animate-pulse"></div>
+<div class="absolute w-2 h-2 bg-blue-400/10 rounded-full top-[40%] left-[80%] animate-bounce" style="animation-duration: 10s"></div>
+<div class="absolute w-1 h-1 bg-white/20 rounded-full top-[70%] left-[15%] animate-pulse" style="animation-delay: 2s"></div>
+<div class="absolute w-1.5 h-1.5 bg-purple-400/10 rounded-full top-[85%] left-[60%] animate-bounce" style="animation-duration: 8s"></div>
+<div class="absolute w-1 h-1 bg-white/20 rounded-full top-[25%] left-[90%] animate-pulse" style="animation-delay: 1s"></div>
+</div>
+</body></html>

@@ -1,124 +1,264 @@
-<%- include('includes/header') %>
+<!DOCTYPE html>
 
-<link rel="stylesheet" type="text/css" href="/css/signup.css" />
-
-<body>
-  <div class="signup-container">
-    <form 
-     onsubmit="return validateSignupForm()"
-     action="/admin/signup" 
-     method="POST" 
-     enctype="multipart/form-data">
-      <div class="signup-frame" style="width: 650px">
-        <div class="signup-top">
-          <span>Signup</span>
-          <div>Go back <a href="/admin" style="color: #6440fb">Home</a></div>
-          <p>
-            Already signed up?
-            <a href="/admin/login" style="color: #6440fb">Login</a>
-          </p>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Join TechStore | Kinetic Precision Engineering</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "inverse-on-surface": "#eef0ff",
+                "on-secondary-fixed": "#001849",
+                "on-primary-container": "#f8f7ff",
+                "surface-container-lowest": "#ffffff",
+                "on-tertiary-container": "#fff6f4",
+                "inverse-primary": "#b3c5ff",
+                "outline-variant": "#c2c6d8",
+                "on-surface-variant": "#424656",
+                "secondary-fixed-dim": "#b3c5ff",
+                "secondary": "#425ca0",
+                "on-tertiary": "#ffffff",
+                "on-primary-fixed": "#001849",
+                "tertiary": "#a33200",
+                "on-primary": "#ffffff",
+                "surface-variant": "#dae2fd",
+                "on-background": "#131b2e",
+                "error-container": "#ffdad6",
+                "surface": "#faf8ff",
+                "surface-container-high": "#e2e7ff",
+                "surface-bright": "#faf8ff",
+                "tertiary-fixed": "#ffdbd0",
+                "on-surface": "#131b2e",
+                "on-error": "#ffffff",
+                "background": "#faf8ff",
+                "tertiary-container": "#cc4204",
+                "outline": "#727687",
+                "on-primary-fixed-variant": "#003fa4",
+                "surface-container-low": "#f2f3ff",
+                "surface-container-highest": "#dae2fd",
+                "error": "#ba1a1a",
+                "secondary-container": "#9bb4fe",
+                "tertiary-fixed-dim": "#ffb59d",
+                "on-tertiary-fixed": "#390c00",
+                "primary-fixed": "#dae1ff",
+                "on-secondary-container": "#294487",
+                "surface-tint": "#0054d6",
+                "on-secondary-fixed-variant": "#284386",
+                "primary-container": "#0066ff",
+                "surface-dim": "#d2d9f4",
+                "secondary-fixed": "#dae1ff",
+                "on-tertiary-fixed-variant": "#832600",
+                "surface-container": "#eaedff",
+                "inverse-surface": "#283044",
+                "primary": "#0050cb",
+                "on-secondary": "#ffffff",
+                "on-error-container": "#93000a",
+                "primary-fixed-dim": "#b3c5ff"
+              },
+              fontFamily: {
+                "headline": ["Inter"],
+                "body": ["Inter"],
+                "label": ["Inter"]
+              },
+              borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(250, 248, 255, 0.65);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .kinetic-bg {
+            background: radial-gradient(circle at 0% 0%, #0066ff 0%, transparent 40%),
+                        radial-gradient(circle at 100% 100%, #425ca0 0%, transparent 40%),
+                        #faf8ff;
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+        }
+        .floating-sphere {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, #0050cb, #9bb4fe);
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            top: 10%;
+            right: 10%;
+            z-index: -1;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar Shell Suppression Logic: Active (Transactional Page) -->
+<!-- However, the task requests EJS inclusion of header, so we simulate the TopNavBar style from JSON -->
+<header class="fixed top-0 w-full z-50 bg-slate-950/80 backdrop-blur-xl shadow-2xl shadow-blue-900/10">
+<nav class="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
+<div class="flex items-center gap-2">
+<img alt="TechStore Logo" class="h-8 w-auto" data-alt="Modern tech logo with geometric shapes and blue accent colors on a transparent background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhtfXniRRqL_UR-gCV4eQd92hZcoPWlQadkP-gmDIUyJ7Krnax0TKqxYdnUn8L0T6u1Q_WyNi2wn2Arn_Iy_uIyG6dzzSeHaFXWFsc9UNWV3HSygnEccw_DBRVnlV9a_L8tgymGkvONCUTwIOPsk1GjTJa7ZeeaSFh5MMKF5tkFfyj09j3ds2cEEHONV_RC9lwm71WW3lMN0_yKmIiQ4v7HHXdRjWrb6xUu-yVuBMO55Ng9ftUNbsUoFr4jYyWel01KZ6PEmZ4i-E4"/>
+<span class="text-2xl font-bold tracking-tighter text-slate-50 dark:text-white">TechStore</span>
+</div>
+<div class="hidden md:flex items-center gap-8 font-sans text-sm tracking-tight font-medium">
+<a class="text-slate-400 hover:text-slate-100 transition-colors duration-300" href="/admin">Home</a>
+<a class="text-blue-500 font-bold border-b-2 border-blue-500 pb-1" href="/signup">Signup</a>
+<a class="text-slate-400 hover:text-slate-100 transition-colors duration-300" href="/admin/login">Login</a>
+</div>
+</nav>
+</header>
+<main class="relative min-h-screen flex items-center justify-center px-4 pt-24 pb-12 overflow-hidden">
+<!-- Background Elements -->
+<div class="kinetic-bg"></div>
+<div class="floating-sphere"></div>
+<!-- Signup Card -->
+<div class="glass-panel w-full max-w-2xl rounded-xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
+<!-- Asymmetric Accent -->
+<div class="absolute -top-12 -right-12 w-32 h-32 bg-primary/10 rounded-full blur-3xl"></div>
+<div class="relative z-10">
+<div class="mb-10">
+<h1 class="text-display-lg text-4xl md:text-5xl font-extrabold tracking-tighter text-on-surface mb-3">
+                        Join the <span class="text-primary">Ecosystem</span>
+</h1>
+<p class="text-on-surface-variant text-lg">Create your professional partner account.</p>
+</div>
+<form action="/admin/signup" class="space-y-8" enctype="multipart/form-data" id="signupForm" method="POST">
+<!-- Profile Image Upload Section -->
+<div class="flex flex-col items-center mb-8">
+<div class="relative group">
+<div class="w-32 h-32 rounded-full border-2 border-dashed border-outline-variant bg-surface-container-low flex items-center justify-center overflow-hidden transition-all duration-300 group-hover:border-primary">
+<img class="hidden w-full h-full object-cover" data-alt="Placeholder for user uploaded circular profile picture or business logo" id="profilePreview" src="/img/default.jpeg"/>
+<span class="material-symbols-outlined text-4xl text-outline" id="uploadIcon">add_a_photo</span>
+<input accept=".jpg,.jpeg,.png" class="absolute inset-0 opacity-0 cursor-pointer" id="memberImage" name="memberImage" type="file"/>
+<input name="memberType" value="Admin" hidden/>
+</div>
+<div class="absolute -bottom-2 -right-2 bg-primary text-on-primary p-2 rounded-full shadow-lg">
+<span class="material-symbols-outlined text-sm">edit</span>
+</div>
+</div>
+<p class="text-xs text-on-surface-variant mt-4 text-center max-w-[280px]" id="uploadHint">
+                            Please upload restaurant image. Attention only: .jpg, .jpeg, or .png formats allowed!
+                        </p>
+</div>
+<!-- Input Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Restaurant Name -->
+<div class="space-y-2">
+<label class="text-xs uppercase tracking-widest font-semibold text-on-surface-variant px-1" for="memberNick">Restaurant Name</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">storefront</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-highest rounded-lg border-none focus:ring-0 focus:border-b-2 focus:border-primary transition-all text-on-surface placeholder:text-outline/50" id="memberNick" name="memberNick" placeholder="Kinetic Cuisine" required="" type="text"/>
+</div>
+</div>
+<!-- Phone Number -->
+<div class="space-y-2">
+<label class="text-xs uppercase tracking-widest font-semibold text-on-surface-variant px-1" for="memberPhone">Phone Number</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">call</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-highest rounded-lg border-none focus:ring-0 focus:border-b-2 focus:border-primary transition-all text-on-surface placeholder:text-outline/50" id="memberPhone" name="memberPhone" placeholder="+1 (555) 000-0000" required="" type="tel"/>
+</div>
+</div>
+<!-- Password -->
+<div class="space-y-2">
+<label class="text-xs uppercase tracking-widest font-semibold text-on-surface-variant px-1" for="memberPassword">Password</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">lock_open</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-highest rounded-lg border-none focus:ring-0 focus:border-b-2 focus:border-primary transition-all text-on-surface placeholder:text-outline/50" id="memberPassword" name="memberPassword" placeholder="••••••••" required="" type="password"/>
+</div>
+</div>
+<!-- Repeat Password -->
+<div class="space-y-2">
+<label class="text-xs uppercase tracking-widest font-semibold text-on-surface-variant px-1" for="confirmPassword">Confirm Password</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">key</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-highest rounded-lg border-none focus:ring-0 focus:border-b-2 focus:border-primary transition-all text-on-surface placeholder:text-outline/50" id="confirmPassword" name="confirmPassword" placeholder="••••••••" required="" type="password"/>
+</div>
+</div>
+</div>
+<!-- Submit Action -->
+<div class="pt-6">
+<button class="w-full bg-primary text-on-primary py-5 rounded-lg font-bold text-lg hover:bg-primary-container transition-all duration-300 shadow-xl shadow-primary/20 scale-100 active:scale-95" type="submit">
+                            Establish Partnership
+                        </button>
+</div>
+<div class="text-center text-sm text-on-surface-variant">
+                        Already registered? <a class="text-primary font-bold hover:underline underline-offset-4 transition-all" href="/login">Authenticate here</a>
+</div>
+</form>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full border-t border-slate-800/50 bg-slate-950 px-12 py-8 flex flex-col md:flex-row justify-between items-center gap-4">
+<div class="text-lg font-black text-slate-200">TechStore</div>
+<div class="text-xs uppercase tracking-widest font-semibold text-slate-500">
+            © 2024 TechStore. Kinetic Precision Engineering.
         </div>
+<div class="flex gap-6 text-xs uppercase tracking-widest font-semibold">
+<a class="text-slate-500 hover:text-slate-300 hover:text-blue-400 underline-offset-4 hover:underline duration-300 opacity-80 hover:opacity-100" href="#">Privacy Policy</a>
+<a class="text-slate-500 hover:text-slate-300 hover:text-blue-400 underline-offset-4 hover:underline duration-300 opacity-80 hover:opacity-100" href="#">Terms of Service</a>
+<a class="text-slate-500 hover:text-slate-300 hover:text-blue-400 underline-offset-4 hover:underline duration-300 opacity-80 hover:opacity-100" href="#">Support</a>
+</div>
+</footer>
+<script>
+        // Image Preview Logic
+        const imageInput = document.getElementById('memberImage');
+        const preview = document.getElementById('profilePreview');
+        const icon = document.getElementById('uploadIcon');
+        const hint = document.getElementById('uploadHint');
 
-        <div class="sign-input-frame" style="justify-content: space-between">
-          <div class="sign-up-frame">
-            <label>Restaurant *</label>
-            <input
-              type="text"
-              name="memberNick"
-              class="member-nick"
-              placeholder="Username"
-              value=""
-            />
-          </div>
-          <div class="sign-up-frame">
-            <label>Phone *</label>
-            <input
-              type="text"
-              name="memberPhone"
-              class="member-phone"
-              placeholder="Phone"
-              value=""
-            />
-          </div>
-        </div>
-        <div class="sign-input-frame" style="justify-content: space-between">
-          <div class="sign-up-frame">
-            <label>Password *</label>
-            <input
-              type="password"
-              name="memberPassword"
-              class="member-password"
-              placeholder="Password"
-              value=""
-            />
-          </div>
-          <div class="sign-up-frame">
-            <label>Repeat password *</label>
-            <input
-              type="password"
-              name="confirmPassword"
-              class="confirm-password"
-              placeholder="Repeat password"
-              value=""
-            />
-          </div>
-        </div>
+        imageInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden');
+                    icon.classList.add('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        });
 
-        <div class="signup-input-frame">
-          <div class="media-frame">
-            <img class="upload-img-frame" src="/img/default.jpeg" />
-            <div class="upload-container">
-              <span class="media-text">Product image</span>
-              <div
-                class="file-box bs3-primary preview-image"
-                style="margin-top: 25px; display: flex"
-              >
-                <input
-                  class="upload-name"
-                  value="Choose image"
-                  disabled="disabled"
-                />
-                <label for="input-file" class="file-input-label"
-                  >Upload Image</label
-                >
-                <input
-                  type="file"
-                  id="input-file"
-                  class="upload-hidden form-control-file member-image"
-                  name="memberImage"
-                />
-              </div>
-              <p class="thumbnail-desc">
-                Please upload restaurant image.<br />
-                Attention only:.jpg, .jpeg, or .png. <br />
-                formats allowed!
-              </p>
-            </div>
-          </div>
-        </div>
+        // Validation Logic
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            const password = document.getElementById('memberPassword').value;
+            const confirm = document.getElementById('confirmPassword').value;
+            const fileInput = document.getElementById('memberImage');
 
-        <input name="memberType" value="RESTAURANT" hidden />
+            let errors = [];
 
-        <button class="signup-btn btn" name="signup" type="submit">
-          Signup
-        </button>
-      </div>
-    </form>
-  </div>
+            if (!fileInput.files[0]) {
+                errors.push("Restaurant image is mandatory.");
+                hint.classList.add('text-error', 'font-bold');
+            }
 
-  <!-- jqueryni loyihamizning viewsiga qoshishning 2 usuli bor 1- togridan togri views ichidagi kerakli pagega tegishli ejs filga qoshish yoki osha pagega tegishli js file ichiga qoshib osha fileni script tegi ichiga import qilib olish -->
- 
-  <!-- 1-usul -->
-  <!-- <script> $(function() {
-    $("input").click(function(){
-      // alert($(".member-phone").val())
-      alert("CLICKED")
-    });
-  });
-  </script> -->
- 
- <!-- 2-usul -->
- <script type="text/javascript" src="/js/signup.js"></script> 
-</body>
+            if (password !== confirm) {
+                errors.push("Passwords do not match.");
+                document.getElementById('confirmPassword').classList.add('border-b-2', 'border-error');
+            }
 
-<%- include('includes/footer') %>
+            if (password.length < 6) {
+                errors.push("Password must be at least 6 characters.");
+            }
+
+            if (errors.length > 0) {
+                e.preventDefault();
+                alert(errors.join("\n"));
+            }
+        });
+    </script>
+</body></html>
