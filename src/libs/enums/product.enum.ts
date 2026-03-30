@@ -6,6 +6,7 @@ export enum AttributeKey{
     STORAGE = 'STORAGE'
 }
 
+
 export enum ProductVolume {
     HALF = 0.5,
     ONE = 1,
@@ -17,7 +18,8 @@ export enum ProductVolume {
 export enum ProductStatus{
     PAUSE = "PAUSE",
     PROCESS = "PROCESS",
-    DELETE = "DELETE"
+    DELETE = "DELETE",
+    ACTIVE = "ACTIVE"
 }
 
 export enum ProductCollection {

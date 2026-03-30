@@ -1,235 +1,437 @@
-<%- include('includes/header') %>
+<!DOCTYPE html>
 
-<link rel="stylesheet" type="text/css" href="/css/products.css" />
-
-<body>
-  <div class="products-container">
-    <div class="navigation-menu">
-      <ul class="nav justify-content-center">
-        <li class="nav-item" style="cursor: pointer">
-          <a class="nav-link active" href="/admin/">Home</a>
-        </li>
-        <li class="nav-item" style="cursor: pointer">
-          <a class="nav-link" href="/admin/product/all">Menu</a>
-        </li>
-        <li class="nav-item" style="cursor: pointer">
-          <a class="nav-link" href="/admin/user/all">Users</a>
-        </li>
-        <li
-          class="nav-item"
-          style="cursor: pointer"
-          onclick="return confirm('Do you want to logout?')"
-        >
-          <a class="nav-link" href="/admin/logout">Logout</a>
-        </li>
-      </ul>
-    </div>
-
-    <div class="restaurant-menu-frame">
-      <div class="board">
-        <div class="dishes-table">
-          <span class="new-dish-txt" style="margin-bottom: 30px">
-            RESTAURANT MENU
-          </span>
-          <table class="table table-bordered table-hover">
-            <thead class="thead-light">
-              <tr class="thead-light">
-                <th scope="col">T/r</th>
-                <th scope="col">Product Name</th>
-                <th scope="col">Product Type</th>
-                <th scope="col">Product Volume</th>
-                <th scope="col">Product Price</th>
-                <th scope="col">Product Left Count</th>
-                <th scope="col">Status</th>
-              </tr>
-            </thead>
-
-            <!--  LOOP PRODUCTS: START  -->
-              <% products.map(function(value, key) { %>
-              <tbody style="background: white">
-              <td> <%= key +1%> </td>
-              <td><%= value.productName %> </td>
-              <td><%= value.productCollection %></td>
-              <td><%= value.productCollection === "DRINK" ? value.productVolume : value.productSize %></td>
-              <td><%= value.productPrice %></td>
-              <td><%= value.productLeftCount %></td>
-              <td>
-                <select class="spec-select new-product-status" id="<%= value._id %>">
-                  <option value="PAUSE" <%= value.productStatus === "PAUSE" ? 'selected' : ''%> >PAUSE</option>
-                  <option value="PROCESS" <%= value.productStatus === "PROCESS" ? 'selected' : ''%> >PROCESS</option>
-                  <option value="DELETE" <%= value.productStatus === "DELETE" ? 'selected' : ''%> >DELETE</option>
-                </select>
-              </td>
-            </tbody>
-             
-              <% }) %>
-           
-            <!--  LOOP PRODUCTS: END  -->
-          </table>
-          <div
-            class="long-input"
-            style="align-items: flex-end; margin-bottom: 25px"
-          >
-            <button class="btn btn-primary" id="process-btn">
-              New Product
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Products | TechStore Admin</title>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "surface-container": "#eaedff",
+                "on-surface-variant": "#424656",
+                "surface-container-high": "#e2e7ff",
+                "background": "#faf8ff",
+                "surface": "#faf8ff",
+                "tertiary-container": "#cc4204",
+                "on-primary-fixed-variant": "#003fa4",
+                "on-primary-fixed": "#001849",
+                "inverse-surface": "#283044",
+                "primary-fixed": "#dae1ff",
+                "on-primary-container": "#f8f7ff",
+                "surface-bright": "#faf8ff",
+                "error": "#ba1a1a",
+                "on-tertiary-container": "#fff6f4",
+                "on-primary": "#ffffff",
+                "inverse-primary": "#b3c5ff",
+                "error-container": "#ffdad6",
+                "secondary-fixed": "#dae1ff",
+                "primary-fixed-dim": "#b3c5ff",
+                "outline-variant": "#c2c6d8",
+                "on-secondary-container": "#294487",
+                "secondary-fixed-dim": "#b3c5ff",
+                "primary": "#0050cb",
+                "surface-container-highest": "#dae2fd",
+                "outline": "#727687",
+                "on-surface": "#131b2e",
+                "inverse-on-surface": "#eef0ff",
+                "surface-container-lowest": "#ffffff",
+                "secondary-container": "#9bb4fe",
+                "on-tertiary-fixed-variant": "#832600",
+                "on-secondary": "#ffffff",
+                "primary-container": "#0066ff",
+                "on-secondary-fixed-variant": "#284386",
+                "on-error-container": "#93000a",
+                "surface-container-low": "#f2f3ff",
+                "on-tertiary": "#ffffff",
+                "on-background": "#131b2e",
+                "on-secondary-fixed": "#001849",
+                "secondary": "#425ca0",
+                "tertiary-fixed-dim": "#ffb59d",
+                "surface-tint": "#0054d6",
+                "surface-dim": "#d2d9f4",
+                "on-tertiary-fixed": "#390c00",
+                "tertiary": "#a33200",
+                "tertiary-fixed": "#ffdbd0",
+                "on-error": "#ffffff",
+                "surface-variant": "#dae2fd"
+              },
+              fontFamily: {
+                "headline": ["Inter"],
+                "body": ["Inter"],
+                "label": ["Inter"]
+              },
+              borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .kinetic-shadow {
+            box-shadow: 0 32px 64px -12px rgba(19, 27, 46, 0.06);
+        }
+        .bg-kinetic-gradient {
+            background: linear-gradient(135deg, #0066ff 0%, #0050cb 100%);
+        }
+        /* Custom Table Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #dae2fd;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary-fixed">
+<!-- Top Navigation Shell -->
+<header class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl shadow-sm dark:shadow-none flex justify-between items-center px-6 py-3 w-full">
+<div class="flex items-center gap-4">
+<span class="text-xl font-bold tracking-tighter text-slate-900 dark:text-slate-50">TechStore Admin</span>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<nav class="flex gap-6">
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-inter text-sm font-medium transition-colors" href="#">Home</a>
+<a class="text-blue-600 dark:text-blue-400 font-bold border-b-2 border-blue-600 font-inter text-sm transition-colors" href="#">Products</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-inter text-sm font-medium transition-colors" href="#">Users</a>
+</nav>
+<div class="flex items-center gap-3">
+<button class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200 active:scale-95">
+<span class="material-symbols-outlined text-slate-600">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
+<img alt="Admin Profile Avatar" data-alt="professional portrait of a tech administrator with clean studio lighting and neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrQ56q4gmeB1-WYGECkfLMrmjX9kSHEr-PzMPtGIze_l071ObxyY8TielAHDM32qHv1SGi6-ZdZBKfvQdYfyc4X_a7wBvNTHwXXnM88M1xodE3QSJCV0x5fyT0b8zAM40GWc90ef4CDHeC4Kj3Ih9MrthuNvPZrRA6bW4_LhHlhZjLBkXeSG3rlPlpXy_hZiu5UnwqDTP_pH2YewfgFVwRjt1Uw6CyuuzPq31APj8BQxSG1cjML5TT84IHdGtdfe-6X65y1nZdQnXX"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Side Navigation Shell (Desktop) -->
+<aside class="hidden lg:flex flex-col py-6 gap-2 h-screen w-64 fixed left-0 top-0 bg-slate-50 dark:bg-slate-900 border-r-0 pt-20">
+<div class="px-6 mb-8">
+<h2 class="text-lg font-black text-slate-900 dark:text-slate-50">TechStore</h2>
+<p class="text-xs text-slate-500 font-medium">Admin Panel</p>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 py-3 px-4 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-lg mx-2 hover:translate-x-1 transition-all duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-medium text-sm">Home</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-lg mx-2 hover:translate-x-1 transition-all duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="font-medium text-sm">Products</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-lg mx-2 hover:translate-x-1 transition-all duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-medium text-sm">Users</span>
+</a>
+<div class="mt-auto pt-10">
+<a class="flex items-center gap-3 py-3 px-4 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-lg mx-2 hover:translate-x-1 transition-all duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-medium text-sm">Logout</span>
+</a>
+</div>
+</nav>
+</aside>
+<!-- Main Content Canvas -->
+<main class="lg:ml-64 pt-24 pb-12 px-6 lg:px-12 relative overflow-hidden min-h-screen">
+<!-- Animated Background Elements -->
+<div class="fixed top-1/4 right-[-10%] w-96 h-96 bg-primary/10 rounded-full blur-[120px] -z-10"></div>
+<div class="fixed bottom-1/4 left-[-5%] w-80 h-80 bg-secondary/10 rounded-full blur-[100px] -z-10"></div>
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
+<div>
+<span class="label-md uppercase tracking-[0.2em] text-primary font-bold mb-2 block">Management</span>
+<h1 class="text-5xl font-black tracking-tighter text-on-surface">PRODUCTS</h1>
+</div>
+<button class="flex items-center gap-2 bg-kinetic-gradient text-on-primary px-6 py-3 rounded-lg font-semibold transition-all hover:brightness-110 active:scale-95 kinetic-shadow">
+<span class="material-symbols-outlined">add</span>
+                New Product
             </button>
-          </div>
-        </div>
-        <form
-        onsubmit=" return validateForm()"
-          action="/admin/product/create"
-          method="POST"
-          class="dish-container"
-          enctype="multipart/form-data"
-        >
-          <div class="long-input" style="display: flex; align-items: center">
-            <span class="new-dish-txt">NEW PRODUCT DETAIL</span>
-          </div>
-          <div class="login-input-frame">
-            <div class="long-input">
-              <label>Product Name</label>
-              <input
-                type="text"
-                placeholder="Name"
-                name="productName"
-                class="product-name"
-              />
-            </div>
-            <input
-              name="productStatus"
-              value="PAUSE"
-              class="product-status"
-              hidden
-            />
-          </div>
-          <div class="half-input-frame">
-            <div class="half-input">
-              <label>Product Price</label>
-              <input
-                type="number"
-                placeholder="Price"
-                name="productPrice"
-                class="product-price"
-              />
-            </div>
-            <div class="half-input">
-              <label>Product Left Counts</label>
-              <input
-                type="number"
-                placeholder="Counts"
-                name="productLeftCount"
-                class="product-left-count"
-              />
-            </div>
-          </div>
-          <div class="half-input-frame">
-            <div class="half-input">
-              <label>Product Type</label>
-              <select class="product-collection" name="productCollection">
-                <option value="DISH" selected>Dish</option>
-                <option value="SALAD">Salad</option>
-                <option value="DESSERT">Dessert</option>
-                <option value="DRINK">Drink</option>
-                <option value="OTHER">Other</option>
-              </select>
-            </div>
+</div>
+<!-- Filters & Search Toolbar -->
+<div class="glass-panel rounded-xl p-4 mb-8 grid grid-cols-1 md:grid-cols-12 gap-4 items-center border border-white/20 shadow-sm">
+<div class="md:col-span-6 relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-12 pr-4 py-3 bg-surface-container-highest/50 border-none rounded-lg focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-outline-variant" placeholder="Search products, models, or SKUs..." type="text"/>
+</div>
+<div class="md:col-span-4 flex gap-2 overflow-x-auto pb-2 md:pb-0">
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-primary text-on-primary text-sm font-medium">All</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-secondary-container text-on-secondary-container text-sm font-medium hover:bg-primary-fixed transition-colors">Telephone</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-secondary-container text-on-secondary-container text-sm font-medium hover:bg-primary-fixed transition-colors">Accessory</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-secondary-container text-on-secondary-container text-sm font-medium hover:bg-primary-fixed transition-colors">Other</button>
+</div>
+<div class="md:col-span-2 text-right">
+<button class="p-2 text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+</div>
+<!-- Product Table Container -->
+<div class="glass-panel rounded-2xl border border-white/30 overflow-hidden kinetic-shadow">
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/50 border-b border-outline-variant/10">
+<th class="px-6 py-4 label-md text-on-surface-variant font-bold uppercase tracking-wider">No</th>
+<th class="px-6 py-4 label-md text-on-surface-variant font-bold uppercase tracking-wider">Product Name</th>
+<th class="px-6 py-4 label-md text-on-surface-variant font-bold uppercase tracking-wider">Category</th>
+<th class="px-6 py-4 label-md text-on-surface-variant font-bold uppercase tracking-wider">Memory</th>
+<th class="px-6 py-4 label-md text-on-surface-variant font-bold uppercase tracking-wider">Price</th>
+<th class="px-6 py-4 label-md text-on-surface-variant font-bold uppercase tracking-wider text-center">Stock</th>
+<th class="px-6 py-4 label-md text-on-surface-variant font-bold uppercase tracking-wider">Status</th>
+<th class="px-6 py-4"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<!-- Row 1 -->
+<tr class="group hover:bg-white/40 transition-all duration-300">
+<td class="px-6 py-5 text-sm text-outline">01</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center p-1 overflow-hidden">
+<img alt="iPhone 15 Pro" class="w-full h-full object-contain mix-blend-multiply" data-alt="close-up of a premium sleek smartphone with a metallic frame on a clean white surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuADZxc9jca9g3xW5VJ5mJZvI8bL7cVyXjnGjbkfr3i1OCzyuLJ_tyDl3-Gb9z3j5rng1DX3F_cz7aonXcjyt2f7W-oKWtSSQ-4-4NnoBuSqXcsdkrqFXFvl-mevFYiNPyz-_c3U4SteayUGtZKC61Rdhqqm6SbdjT_Gbib-MiX2pFvaT6Lh0qyS9jkSAN3gXw2N7mvWe5ThT3weutRGenfCuZSpfuTxtm0VDeK5swhdeVBvibIezcWiG7JmhR_ABt1wrmFg8Qhz1vy6"/>
+</div>
+<div>
+<div class="text-on-surface font-bold">iPhone 15 Pro</div>
+<div class="text-xs text-outline">SKU: APP-I15-TIT</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="px-3 py-1 rounded-full bg-secondary-container/30 text-secondary text-xs font-bold uppercase">Telephone</span>
+</td>
+<td class="px-6 py-5 text-on-surface font-medium">256 GB</td>
+<td class="px-6 py-5">
+<span class="text-primary font-black text-lg">$1,199.00</span>
+</td>
+<td class="px-6 py-5 text-center">
+<span class="text-sm font-semibold px-2 py-1 bg-surface-container rounded">42</span>
+</td>
+<td class="px-6 py-5">
+<div class="relative inline-block">
+<span class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                        ACTIVE
+                                    </span>
+</div>
+</td>
+<td class="px-6 py-5 text-right">
+<button class="opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:text-primary">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="group hover:bg-white/40 transition-all duration-300">
+<td class="px-6 py-5 text-sm text-outline">02</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center p-1 overflow-hidden">
+<img alt="Studio Pro" class="w-full h-full object-contain mix-blend-multiply" data-alt="professional photo of modern over-ear headphones in matte black with leather padding" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQVFb_Dfe2JSscQRXmKFytldWY-n5cezIeShNUt5Q_A2jvqiNlhjveDvyCAYApHHk6rLJPhNj6oNRXDMes8l16ctUyhzUTdm6aQHwKP-59YIBgZGKwxjcdme0luLyWKLJDG3I7h3fLj0p8MFW73oSTaul87kGXEbuErIgHplPUnj2ZN5qVKfV9dnI6zIIXhTcM-K_7KB6dyTZ8al9tJP1KYwWqmFKDW4JgZPM2-jqoURWSXRLIuUWWdBVYG60wWHE_NM980t1nSW1q"/>
+</div>
+<div>
+<div class="text-on-surface font-bold">Studio Pro X</div>
+<div class="text-xs text-outline">SKU: AUD-SPX-BLK</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="px-3 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-xs font-bold uppercase">Accessory</span>
+</td>
+<td class="px-6 py-5 text-outline">—</td>
+<td class="px-6 py-5">
+<span class="text-primary font-black text-lg">$349.50</span>
+</td>
+<td class="px-6 py-5 text-center">
+<span class="text-sm font-semibold px-2 py-1 bg-surface-container rounded text-error">03</span>
+</td>
+<td class="px-6 py-5">
+<span class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                    PROCESS
+                                </span>
+</td>
+<td class="px-6 py-5 text-right">
+<button class="opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:text-primary">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="group hover:bg-white/40 transition-all duration-300">
+<td class="px-6 py-5 text-sm text-outline">03</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center p-1 overflow-hidden">
+<img alt="G-Pro Mouse" class="w-full h-full object-contain mix-blend-multiply" data-alt="clean minimalist photo of a computer gaming mouse with rgb lighting on a gray pad" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXR81V93g5ezKnz8qJ9eJyZZxjXwuCAUjWvcF-2YyFCr3TL7kid-AV8JvZPYDS2bUnumfd3l_yQp8VZYoDSYisSI4WfKx2z9o4PVTQ6arnha3yE_OmeaJrDoeZZ-HZ2vGs4RXRFbKXAiapkmx_4dSIO-KIZGPvuQAudZ5NVhVAdghh-folqbYdxOZJRLWZUh8fXtCIl9g7vZYaJWRnju0b9tV8vaY1iSrGWNdbVinym5xDaWLyFLXDpPQ2MLYGoNwy6iheFnU0GQ1N"/>
+</div>
+<div>
+<div class="text-on-surface font-bold">Logitech G-Pro</div>
+<div class="text-xs text-outline">SKU: LOG-GPW-RGB</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="px-3 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-xs font-bold uppercase">Other</span>
+</td>
+<td class="px-6 py-5 text-outline">—</td>
+<td class="px-6 py-5">
+<span class="text-primary font-black text-lg">$149.00</span>
+</td>
+<td class="px-6 py-5 text-center">
+<span class="text-sm font-semibold px-2 py-1 bg-surface-container rounded">15</span>
+</td>
+<td class="px-6 py-5">
+<span class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-500 text-xs font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                                    BLOCKED
+                                </span>
+</td>
+<td class="px-6 py-5 text-right">
+<button class="opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:text-primary">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Pagination/Footer -->
+<div class="px-6 py-4 bg-surface-container-low/30 flex justify-between items-center text-sm text-outline font-medium">
+<span>Showing 3 of 152 products</span>
+<div class="flex gap-2">
+<button class="p-1 hover:bg-surface-container-high rounded transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="px-3 py-1 bg-primary text-on-primary rounded">1</button>
+<button class="px-3 py-1 hover:bg-surface-container-high rounded transition-colors">2</button>
+<button class="px-3 py-1 hover:bg-surface-container-high rounded transition-colors">3</button>
+<button class="p-1 hover:bg-surface-container-high rounded transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- New Product Form Section (Editorial Style) -->
+<section class="mt-20">
+<div class="flex items-center gap-4 mb-10">
+<div class="h-px flex-1 bg-outline-variant/30"></div>
+<h2 class="title-lg font-black text-on-surface whitespace-nowrap">ADD NEW LISTING</h2>
+<div class="h-px flex-1 bg-outline-variant/30"></div>
+</div>
+<div class="glass-panel p-8 lg:p-12 rounded-3xl border border-white/40 kinetic-shadow max-w-5xl mx-auto">
+<form class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+<div class="space-y-6">
+<div class="group">
+<label class="block label-sm font-bold text-on-surface-variant mb-2 group-focus-within:text-primary transition-colors">PRODUCT NAME</label>
+<input class="w-full bg-surface-container-highest/40 border-none rounded-lg p-4 focus:ring-2 focus:ring-primary/20 text-on-surface transition-all" placeholder="e.g. Galaxy S24 Ultra" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block label-sm font-bold text-on-surface-variant mb-2">CATEGORY</label>
+<select class="w-full bg-surface-container-highest/40 border-none rounded-lg p-4 focus:ring-2 focus:ring-primary/20 text-on-surface transition-all" id="categorySelect">
+<option value="TELEPHONE">Telephone</option>
+<option value="ACCESSORY">Accessory</option>
+<option value="OTHER">Other</option>
+</select>
+</div>
+<div class="transition-all duration-300" id="memoryContainer">
+<label class="block label-sm font-bold text-on-surface-variant mb-2">MEMORY</label>
+<select class="w-full bg-surface-container-highest/40 border-none rounded-lg p-4 focus:ring-2 focus:ring-primary/20 text-on-surface">
+<option>128 GB</option>
+<option>256 GB</option>
+<option>512 GB</option>
+<option>1 TB</option>
+</select>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block label-sm font-bold text-on-surface-variant mb-2">UNIT PRICE ($)</label>
+<input class="w-full bg-surface-container-highest/40 border-none rounded-lg p-4 focus:ring-2 focus:ring-primary/20 text-on-surface" step="0.01" type="number"/>
+</div>
+<div>
+<label class="block label-sm font-bold text-on-surface-variant mb-2">STOCK COUNT</label>
+<input class="w-full bg-surface-container-highest/40 border-none rounded-lg p-4 focus:ring-2 focus:ring-primary/20 text-on-surface" type="number"/>
+</div>
+</div>
+</div>
+<div class="space-y-6">
+<div>
+<label class="block label-sm font-bold text-on-surface-variant mb-2">DESCRIPTION</label>
+<textarea class="w-full bg-surface-container-highest/40 border-none rounded-lg p-4 focus:ring-2 focus:ring-primary/20 text-on-surface resize-none" placeholder="Provide key technical specs and features..." rows="4"></textarea>
+</div>
+<div>
+<label class="block label-sm font-bold text-on-surface-variant mb-2">PRODUCT IMAGES</label>
+<div class="flex flex-wrap gap-4 mt-2">
+<div class="w-20 h-20 rounded-full border-2 border-dashed border-outline-variant flex items-center justify-center cursor-pointer hover:border-primary hover:bg-primary/5 transition-all text-outline-variant hover:text-primary relative overflow-hidden group">
+<input class="absolute inset-0 opacity-0 cursor-pointer" multiple="" type="file"/>
+<span class="material-symbols-outlined">add_a_photo</span>
+</div>
+<!-- Previews (Demo) -->
+<div class="w-20 h-20 rounded-full border border-white p-1 shadow-sm relative group overflow-hidden">
+<img class="w-full h-full rounded-full object-cover" data-alt="product preview of a smartphone screen showing vibrant app icons" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBi5PQ2jkjelofx89n5tx6s8c83RazxW8xSUCvpSd1T0FjnTxH7sGoFLCzReeSuHRbS_vBnesL9Or9a4E0biv8Vq3FLlKQUEue5djmrRjAT39OaMbQhSrsqdr_mAYhKlViXzOc4BFZfQxTqgLxYLxR-Hx55NAsr5_L2JnQizP27s2_LOUTJgSy3Kbj5vQzanwIhiX-rtgaSm33Jyi70YU-PoFNTWuNb25vihRPkuU4lq3iN5WeBWzs4aYvFgteBPmoz_anU1TNkWEjz"/>
+<div class="absolute inset-0 bg-error/80 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity cursor-pointer">
+<span class="material-symbols-outlined text-white text-sm">close</span>
+</div>
+</div>
+<div class="w-20 h-20 rounded-full border border-white p-1 shadow-sm relative group overflow-hidden">
+<img class="w-full h-full rounded-full object-cover" data-alt="preview detail of camera lenses on the back of a high-end mobile phone" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAexp9cjfQT243JjdHrWsRBgakGPePxZhJiREBvpuaDQlKw4PuBklAAa9UO2WdLZy3H8QrUZJdCetd992fWavzI3MuKU8Cx0Dhj1-zUTgLb93tfrle7Bfvi0YD-_5xIucLxWMzBGNLIxIiKsk5-l03nU7tOdOWajQm98WSPnk2WhLSx15jPMVbg7T5JetAD33KyhBB9Uo1lsnh8uagG0PDQ1b-1C6yQjQR3OqTbU5EhPH1lXAqDxrfTNBzgenC6EDjxM3jMoKHXCG8r"/>
+<div class="absolute inset-0 bg-error/80 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity cursor-pointer">
+<span class="material-symbols-outlined text-white text-sm">close</span>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-4">
+<button class="w-full bg-kinetic-gradient text-on-primary py-4 rounded-xl font-black text-lg kinetic-shadow transition-transform hover:-translate-y-1 active:scale-95" type="submit">
+                                PUBLISH PRODUCT
+                            </button>
+</div>
+</div>
+</form>
+</div>
+</section>
+</main>
+<!-- Floating UI Element -->
+<div class="fixed bottom-8 right-8 z-50">
+<div class="w-16 h-16 rounded-full bg-kinetic-gradient flex items-center justify-center text-white shadow-2xl animate-bounce cursor-pointer group">
+<span class="material-symbols-outlined transition-transform group-hover:rotate-12">support_agent</span>
+</div>
+</div>
+<!-- Logic for Form Behavior -->
+<script>
+        const categorySelect = document.getElementById('categorySelect');
+        const memoryContainer = document.getElementById('memoryContainer');
 
-            <div class="half-input" id="product-collection">
-              <label>Dish Volume</label>
-              <select class="product-size" name="productSize">
-                <option value="SMALL">Small</option>
-                <option value="NORMAL" selected>Normal</option>
-                <option value="LARGE">Large</option>
-                <option value="SET">Set</option>
-              </select>
-            </div>
-
-            <div class="half-input" id="product-volume" style="display: none">
-              <label>Drink Volume</label>
-              <select class="product-volume" name="productVolume">
-                <option value="0.5">0,5 liters</option>
-                <option value="1" selected>1 liters</option>
-                <option value="1.2">1,2 liters</option>
-                <option value="1.5">1,5 liters</option>
-                <option value="2">2 liters</option>
-              </select>
-            </div>
-          </div>
-          <div class="long-input">
-            <label>Product Description</label>
-            <textarea name="productDesc" class="product-desc"></textarea>
-          </div>
-
-          <div class="img-frame">
-            <label>Product Images</label>
-            <div class="media-frame">
-              <div class="upload-img-box">
-                <img src="/img/upload.svg" class="1" id="image-section-1" />
-                <input
-                  type="file"
-                  id="file"
-                  name="productImages"
-                  class="image-one"
-                  required
-                  onchange="previewFileHandler(this,1)" 
-                />
-              </div>
-              <div class="upload-img-box">
-                <img src="/img/upload.svg" class="2" id="image-section-2" />
-                <input
-                  type="file"
-                  id="file"
-                  name="productImages"
-                  class="image-two"
-                  onchange="previewFileHandler(this,2)" 
-                />
-              </div>
-              <div class="upload-img-box">
-                <img src="/img/upload.svg" class="3" id="image-section-3" />
-                <input
-                  type="file"
-                  id="file"
-                  name="productImages"
-                  class="image-three"
-                  onchange="previewFileHandler(this,3)" 
-                />
-              </div>
-              <div class="upload-img-box">
-                <img src="/img/upload.svg" class="4" id="image-section-4" />
-                <input
-                  type="file"
-                  id="file"
-                  name="productImages"
-                  class="image-four"
-                  onchange="previewFileHandler(this,4)" 
-                />
-              </div>
-              <div class="upload-img-box">
-                <img src="/img/upload.svg" class="5" id="image-section-5" />
-                <input
-                  type="file"
-                  id="file"
-                  name="productImages"
-                  class="image-five"
-                  onchange="previewFileHandler(this,5)" 
-                />
-              </div>
-              <input name="restaurantIid" class="restaurant-id" hidden />
-            </div>
-          </div>
-
-          <div class="operation-buttons">
-            <button class="btn btn-danger" id="cancel-btn">Cancel</button>
-            <button type="submit" class="btn btn-primary" id="create-btn">
-              Create
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <script type="text/javascript" src="/js/products.js"></script>
-</body>
-
-<%- include('includes/footer') %>
+        categorySelect.addEventListener('change', (e) => {
+            if (e.target.value === 'TELEPHONE') {
+                memoryContainer.style.opacity = '1';
+                memoryContainer.style.pointerEvents = 'auto';
+                memoryContainer.classList.remove('grayscale', 'opacity-30');
+            } else {
+                memoryContainer.style.opacity = '0.3';
+                memoryContainer.style.pointerEvents = 'none';
+                memoryContainer.classList.add('grayscale');
+            }
+        });
+    </script>
+</body></html>
