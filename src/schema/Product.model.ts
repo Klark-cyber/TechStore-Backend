@@ -1,46 +1,55 @@
-import mongoose, { Schema, Document } from "mongoose";
-import { ProductStatus } from "../libs/enums/product.enum";
+import mongoose, { Schema } from "mongoose";
+import { ProductCollection, ProductMemory, ProductRam, ProductStatus } from "../libs/enums/product.enum";
 import { Product } from "../libs/types/product";
 
-const productSchema = new Schema<Product>(
+const productSchema = new Schema(
   {
     productStatus: {
       type: String,
-      enum: Object.values(ProductStatus),
-      default: ProductStatus.ACTIVE,
+      enum: ProductStatus,
+      default: ProductStatus.PAUSE,
+    },
+
+    productCollection: {
+      type: String,
+      enum: ProductCollection,
+      required: true,
     },
 
     productName: {
       type: String,
       required: true,
-      trim: true,
-      minlength: 2,
-      maxlength: 100,
     },
 
     productPrice: {
       type: Number,
       required: true,
-      min: 0,
     },
 
     productLeftCount: {
       type: Number,
       required: true,
-      min: 0,
-      default: 0,
+    },
+    //qoshimcha
+     productMemory: {
+      type: String,
+      enum: ProductMemory,
+    },
+    //qoshimcha
+     productRam: {
+      type: String,
+      enum: ProductRam,
     },
 
+    //qoshimcha
     productBrand: {
       type: String,
-      trim: true,
+      required: true,
       default: "",
     },
 
     productDesc: {
       type: String,
-      required: true,
-      maxlength: 1000,
     },
 
     productImages: {
@@ -48,18 +57,18 @@ const productSchema = new Schema<Product>(
       default: [],
     },
 
-    /* ===== STATS ===== */
-
+   
+ //qoshimcha
     productViews: {
       type: Number,
       default: 0,
     },
-
+ //qoshimcha
     productLikes: {
       type: Number,
       default: 0,
     },
-
+ //qoshimcha
     productRating: {
       type: Number,
       default: 0,
@@ -67,33 +76,17 @@ const productSchema = new Schema<Product>(
       max: 5,
     },
 
-    productReviews: {
-      type: Number,
-      default: 0,
-    },
-
-    /* ===== DYNAMIC ATTRIBUTES ===== */
-
+ //qoshimcha
     attributes: {
       type: Map,
       of: String,
       default: {},
-    },
-
-    categoryId: {
-      type: Schema.Types.ObjectId,
-      ref: "Category",
     },
   },
   { timestamps: true }
 );
 
 
-productSchema.index({ productName: "text", productDesc: "text" });
-productSchema.index({ memberId: 1 });
-productSchema.index({ categoryId: 1 });
+productSchema.index({ productName:1 , productMemory:1, }, {unique: true});
 
-export const ProductModel = mongoose.model<Product>(
-  "Product",
-  productSchema
-);
+export default mongoose.model("Product",productSchema);

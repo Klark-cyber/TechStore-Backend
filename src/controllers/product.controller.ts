@@ -13,35 +13,46 @@ const productController: T ={}; //productController nomli yangi object yaratdik 
 /** SPA */
 
 productController.getProducts = async (req: Request, res: Response) => {
-    try{    
-        console.log("getProducts "); //Mantiq ishga tushganini yani buyruq ishga tushganini tekshiramiz.natija terminalda paydo boladi
-        const {page, limit, order, productCollection, search } = req.query
-        //console.log(`page: ${page}, order: ${order}, prductCollection: ${productCollection}`)
-        console.log(req.query)
-        console.log("keldi")
-        const inquiry: ProductInquiry = {
-            order: String(order),
-            page: Number(page),
-            limit: Number(limit), //yuqoridagi 3 ta qiymat doim mavjud bolishi kerak sababi uni product.ts ichida productInquiry ichida majburiy bor bolishini belgilaik
-        };
-        if(productCollection) inquiry.productCollection = productCollection as ProductCollection //productCollection ProductCollection ichidagi Enum qiymatlardan iborat
-        if(search) inquiry.search = String(search)
+  try {
+    console.log("getProducts");
+    console.log(req.query);
 
-        const result = await productService.getProducts(inquiry);
+    const {
+      page = 1,
+      limit = 10,
+      order = "createdAt",
+      productCollection,
+      search,
+      productRam,
+      productMemory,
+    } = req.query;
 
-        res.status(HttpCode.OK).json(result)
-        // const query = req.query; //?name=david&age=28&nation=german => natija: { name: 'david', age: '28', nation: 'german' }
-        // console.log("req,query:", req.query)
-        // const params = req.params;
-        // console.log("req.params:", req.params) //request orqali paramsni olmoqchi bolsak avval router ichiga "/product/all/:id" /5kvfry => natija: { id: '5kvfry' }. paramsni urlning header qismi davomidan istalgancha qoshish mumkin.Shuningdek params va queryni ketma ket birgalikda ishlatish ham mumkin
+    const inquiry: ProductInquiry = {
+      order: String(order),
+      page: Number(page),
+      limit: Number(limit),
+    };
 
+    if (productCollection)
+      inquiry.productCollection = productCollection as ProductCollection;
 
-    } catch (err) { 
-        console.log("Error, getProducts", err)
-        if (err instanceof Errors) res.status(err.code).json(err);
-        else res.status(Errors.standard.code).json(Errors.standard);
-    }
-}
+    if (search) inquiry.search = String(search);
+
+    // 🔥 NEW
+    if (productRam) inquiry.productRam = String(productRam);
+    if (productMemory) inquiry.productMemory = String(productMemory);
+
+    const result = await productService.getProducts(inquiry);
+
+    res.render("products", { products: result });
+
+  } catch (err) {
+    console.log("Error, getProducts", err);
+
+    if (err instanceof Errors) res.status(err.code).json(err);
+    else res.status(Errors.standard.code).json(Errors.standard);
+  }
+};
 
 productController.getProduct = async (req: ExtendedRequest, res: Response) => { //getProductsga kelgan req dastlab retrievAuthga keladi agar user login bolgan bolsa req.member req tarkibiga qoshiladi.Shu sababli req: Extendedrequest boldi
     try{

@@ -1,5 +1,5 @@
 import { shapeIntoMongooseObjectId } from "../libs/config";
-import { ProductStatus } from "../libs/enums/product.enum";
+import { ProductCollection, ProductStatus } from "../libs/enums/product.enum";
 import Errors, { HttpCode, Message } from "../libs/Errors";
 import { T } from "../libs/types/common";
 import { Product, ProductInput, ProductInquiry, ProductUpdateInput } from "../libs/types/product";
@@ -19,32 +19,63 @@ class ProductService{
     /** SPA */
 
 public async getProducts(inquiry: ProductInquiry): Promise<Product[]> {
-    console.log("inquiry:", inquiry);
-    const match: T = {productStatus: ProductStatus.PROCESS};
+  console.log("inquiry:", inquiry);
 
-    if(inquiry.productCollection) 
-        match.productCollection = inquiry.productCollection
-    if(inquiry.search) {
-        match.productName = {$regex: new RegExp(inquiry.search, "i") }
-    }
+  const match: T = { productStatus: ProductStatus.PROCESS };
 
-    const sort: T = inquiry.order === "productPrice" 
-    ? {[inquiry.order]: 1} 
-    : {[inquiry.order]: -1}; //agar user productlarni sort qilishda productPrice ni tanlasa sort narx boyicha eng arzondan boshlab yuqoriga amalga oshadi aks holda sanasi boyicha
-    
-    const result = await this.productModel.aggregate([ //aggregateni Schema model orqali chaqirdik,Array ichiga joyladik,uni ichiga kerakli iplinelarni joyladik
-        {$match: match}, //match objecti boyicha query qiladi.Yani ProductStatus.Process
-        {$sort: sort}, //sort boyicha query qiladi yani productPrice yoki createdAt boyicha
-        {$skip: (inquiry.page*1-1)*inquiry.limit }, //natija=0 bolsa 0dan boshlab limit qiymatigacha mahsulotni 1 pagega joyla. natija:2 bolsa limit qiymatigacha bolgan mahsulotlarni tashlab yubor v keyingi limit qiymatigacha bolgan mahsulotni 2 pagega joyla.limit sonidan kelib mavjud productlarni pagelarga joylashtirish
-        {$limit: inquiry.limit*1 }
-      ]).exec();
-      console.log("resultttt:",result)
-    if(!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND)
-    
-    return result;
+  if (inquiry.productCollection) {
+    match.productCollection = inquiry.productCollection;
+  }
+
+  if (inquiry.search) {
+    match.productName = { $regex: new RegExp(inquiry.search, "i") };
+  }
+
+  // 🔥 RAM filter
+  if (inquiry.productRam) {
+    match.productRam = inquiry.productRam;
+  }
+
+  // 🔥 MEMORY filter
+  if (inquiry.productMemory) {
+    match.productMemory = inquiry.productMemory;
+  }
+
+  const sort: T =
+    inquiry.order === "productPrice"
+      ? { [inquiry.order]: 1 }
+      : { [inquiry.order]: -1 };
+
+  const result = await this.productModel
+    .aggregate([
+      { $match: match },
+
+      // 🔥 4GB/64GB format
+      {
+        $addFields: {
+          productSpecs: {
+            $cond: [
+              { $eq: ["$productCollection", "TELEPHONE"] },
+              { $concat: ["$productRam", "/", "$productMemory"] },
+              "-"
+            ]
+          }
+        }
+      },
+
+      { $sort: sort },
+      { $skip: (inquiry.page * 1 - 1) * inquiry.limit },
+      { $limit: inquiry.limit * 1 }
+    ])
+    .exec();
+
+  if (!result || result.length === 0)
+    throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+
+  return result;
 }
 
-public async getPoduct(memberId: ObjectId | null, id: String): Promise<Product> {
+public async getPoduct(memberId: ObjectId | null, id: String): Promise<Product[]> {
     const productId = shapeIntoMongooseObjectId(id);
 
     let result = await this.productModel.findOne({_id: productId, productStatus: ProductStatus.PROCESS}).exec();
@@ -82,15 +113,32 @@ public async getAllProducts(): Promise<Product[]> { //try?catch ishlatilmadi. tr
 }
 
 
- public async createNewProduct(input: ProductInput): Promise<Product> {
-   try{
-       return await this.productModel.create(input)
+public async createNewProduct(input: ProductInput): Promise<Product> {
+  try {
+    if (
+      input.productCollection === ProductCollection.TELEPHONE &&
+      (!input.productMemory || !input.productRam)
+    ) {
+      throw new Error("RAM and Memory are required for TELEPHONE");
+    }
 
-       }catch(err) { //Aggar biror xatolik sabab malumot DataBasega yozilmasa hosil bolgan error orniga ozimiz yozgan errorni browserga yubordik
-        console.log("Error, model:createNewProduct:", err) //DB dan kelgan haqiqiy error
-        throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED); //Frontendga ketadigan biz yozgan customize error
-       }
- }
+    if (input.productCollection !== ProductCollection.TELEPHONE) {
+      input.productMemory = undefined;
+      input.productRam = undefined;
+    }
+
+    if (!input.attributes) {
+      input.attributes = {};
+    }
+
+    return await this.productModel.create(input);
+
+  } catch (err) {
+    console.log("Error, model:createNewProduct:", err);
+
+    throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);
+  }
+}
 
  public async updateChosenProduct(id: string | string[], input: ProductUpdateInput): Promise<Product> { //try?catch ishlatilmadi. try/catch maxsus yani DBga malumot yozgandagina ishlatiladi.Error hosil bolganda handle qilish uchun
     //id: string => ObjectId
