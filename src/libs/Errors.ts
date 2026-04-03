@@ -24,6 +24,10 @@ export enum Message { //error hosil bolganda yuboriladigan xabarlar
     WRONG_PASSWORD = "Wrong password, please try again!",
     NOT_AUTHENTIFICATED = "You are not authentificated, Please login first",
     TOKEN_CREATION_FAILED = "Token creation error!",
+
+    RAM_MEMORY_REQUIRED = "RAM and MEMORY required for TELEPHONE",
+    REQUIRED_PRODUCT_ID = "Product ID is required",
+    REQUIRED_PRODUCT_IMAGES = "Product image is required"
 }
 
 class Errors extends Error {

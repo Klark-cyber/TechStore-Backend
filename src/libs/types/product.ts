@@ -10,7 +10,7 @@ export interface Product{
     productPrice: number;
     productLeftCount: number;
     productBrand: string;
-     productMemory: number;
+    productMemory: number;
     productRam: number;
     productLikes: number,
     productRating: number,
@@ -52,15 +52,15 @@ export interface ProductInquiry {
   productMemory?: string;    // 🔥 new
 }
 
-export interface ProductUpdateInput{ //bu update boladigan productning interface.Hammasini ? opsional qilishdan saabab user qaysi malumotni istasa oshani update qiladi.
-     _id: ObjectId; //Qaysi productni update qilmoqchi bolsak oshani idsini qoshib kiritishiiz shart
-    productStatus?: ProductStatus;
-    productCollection?: ProductCollection;
-    productName?: string;
-    productPrice?: number;
-    productLeftCount?: number;
-    productVolume?: number;
-    productDesc?: string;
-    productImages?: string[];
-    productViews?: number;
+export interface ProductUpdateInput {
+  _id: ObjectId;
+  productStatus?: ProductStatus;
+  productCollection?: ProductCollection;
+  productName?: string;
+  productPrice?: number;
+  productLeftCount?: number;
+  productRam?: string;       // 🔥 new
+  productMemory?: string;    // 🔥 new
+  productDesc?: string;
+  productImages?: string[];
 }

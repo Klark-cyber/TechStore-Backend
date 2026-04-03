@@ -10,7 +10,7 @@ class ViewService {
     }
 
     public async checkViewExistence(input: ViewInput): Promise<View> {
-        return await this.viewModel.findOne({memberId: input.memberId, viewRefId: input.viewRefId}).exec();
+        return await this.viewModel.findOne({memberId: input.memberId, viewRefId: input.viewRefId, viewGroup: input.viewGroup}).exec();
     }
 
     public async insertMemberView(input: ViewInput): Promise<View> {

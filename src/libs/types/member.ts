@@ -48,16 +48,15 @@ export interface MemberUpdateInput {
 }
 
 export interface ExtendedRequest extends Request {
-    member: Member;
-    file: Express.Multer.File;
-    files: Express.Multer.File[];
+  member?: Member; // 🔥 optional
+  file?: Express.Multer.File;
+  files?: Express.Multer.File[];
 }
 
-export interface AdminRequest extends Request{ //Requestdan extands bolgan yangi interface hosil qildik
-    member: Member //AdminRequest ichidagi memberni type yuqorida yaratilgan Member interfacega teng
-    //raqam: any
-    session: Session & {member: Member,student: string, group: string} //AdminRequest ichidagi session typeni Session belgiladik.Uning ichida member mavjud bolib uning type Memberga teng. 
-    file: Express.Multer.File
-    files: Express.Multer.File[] 
+export interface AdminRequest extends Request {
+  member: Member; // 🔥 majburiy
+  session: Session & { member: Member };
+  file?: Express.Multer.File;
+  files?: Express.Multer.File[];
 }
 
