@@ -14,162 +14,317 @@ class MemberService { //MemberService module ichida Member Schema modelni ishlat
 
     /** SPA */
 
-    public async getRestaurant(): Promise <Member> {
-        const result = await this.memberModel
-        .findOne({memberType: MemberType.RESTAURANT})
-        .exec();
-        if(!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED)
-            
-        return result
+   public async getAdmin(): Promise<Member[]> {
+  const result = await this.memberModel
+    .find({ memberType: MemberType.ADMIN })
+    .exec();
+
+  if (!result) {
+    throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+  }
+
+  return result;
+}
+
+
+public async signup(input: MemberInput): Promise<Member> {
+  try {
+    // 🔥 DUPLICATE CHECK (faqat nick)
+    const exist = await this.memberModel.findOne({
+      memberNick: input.memberNick
+    }).exec();
+
+    if (exist) {
+      throw new Errors(HttpCode.BAD_REQUEST, Message.USED_NICK_PHONE);
     }
 
+    // 🔥 PASSWORD HASH
+    const salt = await bcrypt.genSalt(10);
+    input.memberPassword = await bcrypt.hash(input.memberPassword, salt);
 
+    const result = await this.memberModel.create(input);
 
-    public async signup(input: MemberInput): Promise<Member>{ //yangi public methodining defineqismini yasadik.U type MemberInputga teng bolgan inputni qabul qilib uni schima model orqali databasega yozadi. Method nomi ozi xizmat korrsatadigan kontrollerga tegishli restaurant controllerning.processSignup methodi bilan nomdosh bolishi kerak.Ushbu method kontrollerdan kelgan memberlarni schima modelga yuborib beradi 
-        const salt = await bcrypt.genSalt() //genSalt() bu tasodifiy string bolib parolga qoshilib hash qilinadi.
-        input.memberPassword = await bcrypt.hash(input.memberPassword, salt) //bcryptning hash() metodi orqali paswordni heshing qildik yani oqib bolmaydigan holatga keltirdik. 1- argument hashlanayotgan malumot, 2- argument nima orqali heshlash. bu qatordagi kodni input.memberPassword = await bcrypt.hash(input.memberPassword, 10) korinishida genSaltsiz ishlatish mumkin
-       
-       
-        try{
-        const result = await this.memberModel.create(input); //memberModel klasining .create() methodi orqali Db dagi member collectionga yangi malumotlarni olib borib yozdik va natijasini resultga tengladik
-    //    const result = new this.memberModel(input); //malumotni DB ga qoshishning 2-usuli. 
-    //    const result = await result.save(); 
-        result.memberPassword = "" //password consoleda chiqishini oldini olish uchun uni bosh stringga tenglab qoydik
-        return result.toJSON()
+    // 🔥 PASSWORDNI RESPONSE DAN OLIB TASHLAYMIZ
+    const member = result.toObject();
+    delete member.memberPassword;
 
-       }catch(err) { //Aggar biror xatolik sabab malumot DataBasega yozilmasa hosil bolgan error orniga ozimiz yozgan errorni browserga yubordik
-        console.error("Error, model:signup", err)
-        throw new Errors(HttpCode.BAD_REQUEST, Message.USED_NICK_PHONE); //Bu xato 2 ta holatda: 1-Username yoki password xato yoki malumot bazasida mavjud bolmasagina ishga tushadi
-       }
+    return member;
+
+  } catch (err) {
+    console.error("Error, service:signup", err);
+
+    throw new Errors(
+      HttpCode.BAD_REQUEST,
+      Message.CREATE_FAILED
+    );
+  }
 }
     
-    public async login(input: LoginInput): Promise<Member>{
-        // TODO: Consider member status later
-        const member = await this.memberModel
-        .findOne( //mongoosening findOne static methodini chaqirib query condition yozamiz.
-            {memberNick: input.memberNick,
-             memberStatus: {$ne: MemberStatus.DELETE} //$ne no equal yani MemberStatus delete ga teng bomasligi kerak.Bu orqali delete bolib chiqib ketgan userlarni izlab otirma
-            }, //findOne static methodi orqali member collectiondan memberNicki request orqali kirib kelgan memberNickga teng bolgan datani topamiz
-            {memberNick: 1, memberPassword: 1, memberStatus: 1}) //findOne methodi qabul qiladigan 2 argument bu topilgan malumotning ayni keraklilarini yoki maxfiyligi sababli korinmay qolgan qismini tanlab ajratib olib uchun ishlatiladi. agar 1 qoyilsa faqat osha malumot korinadi, agar 0 qoyilsa osha malumotdan boshqa barchasi korinadi. _id: istisno hisoblanib agar unga 0 qoysak u korinmaydi.Agar qiymat kiritmasak defolt 1 ni qabul qiladi 
-        .exec()
-        if(!member) throw new Errors(HttpCode.BAD_REQUEST, Message.NO_MEMBER_NICK) //agar kiritilgan malumot member collectionda mavjud bolmasa err yuboramiz.
-        else if(member.memberStatus === MemberStatus.BLOCK){ //Agar memberStatus restaran tomonidan blocklangan bolsa uni tekshirib kerakli xabarni yubordik
-            throw new Errors(HttpCode.FORBIDDEN, Message.BLOCKED_USER)
-        }
-       
-       const isMatch = await bcrypt.compare(input.memberPassword, member.memberPassword) //bcryptni compare() methodi kritilgan parolni avvaldan heshlangan parol bilan solishtirish imkonini beradi. 1- argument browserdan kelgan parol 2- argument malumot bazasidagi avvaldan heshlangan parol
-        // const isMatch = input.memberPassword === member.memberPassword  //true/false //browserda kiritilgan parol malumot bazasida mavjud yoki yoqligini tekshiramiz.
-        
-        if(!isMatch) throw new Errors(HttpCode.UNAUTHORIZED, Message.WRONG_PASSWORD); //agar parol notogri kiritilga bolsa ozimiz yaratgan Errors customizied klasimiz orqali frontendga error xabarini yuboramiz.Agar error yuzaga kelsa keyingi qatorlar ishga tushmaydi
-        
-        return await this.memberModel.findById(member._id).lean().exec() //findById methofi orqali member ichidagi bizga korinmay turgan _id: orqalitanlab olib osha idga tegishli malumotlarni return orqali frontendga yuboramiz
-    }
+public async login(input: LoginInput): Promise<Member> {
+  const member = await this.memberModel
+    .findOne({
+      memberNick: input.memberNick,
+      memberStatus: { $ne: MemberStatus.DELETE }
+    })
+    .select("+memberPassword memberStatus memberNick")
+    .lean()
+    .exec();
+
+  if (!member) {
+    throw new Errors(HttpCode.BAD_REQUEST, Message.NO_MEMBER_NICK);
+  }
+
+  if (member.memberStatus === MemberStatus.BLOCK) {
+    throw new Errors(HttpCode.FORBIDDEN, Message.BLOCKED_USER);
+  }
+
+  // 🔥 PASSWORD CHECK
+  const isMatch = await bcrypt.compare(
+    input.memberPassword,
+    member.memberPassword as string
+  );
+
+  if (!isMatch) {
+    throw new Errors(HttpCode.UNAUTHORIZED, Message.WRONG_PASSWORD);
+  }
+
+  // 🔥 PASSWORDNI OLIB TASHLAYMIZ
+  delete member.memberPassword;
+
+  return member;
+}
 
 
 
-    public  async getMemberDetail(member : Member): Promise <Member> {
-        const memberId = shapeIntoMongooseObjectId(member._id);
-        const result = await this.memberModel.findOne({_id: member._id, memberStatus: MemberStatus.ACTIVE}).exec();
-        if(!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND)
+public async getMemberDetail(member: Member): Promise<Member> {
+  const memberId = shapeIntoMongooseObjectId(member._id);
 
-        return result;
-    }
+  const result = await this.memberModel
+    .findOne({
+      _id: memberId,
+      memberStatus: MemberStatus.ACTIVE,
+    })
+    .lean()
+    .exec();
 
-    public async updateMember(member: Member, input: MemberUpdateInput): Promise<Member> {
-        const memberId = shapeIntoMongooseObjectId(member._id);
-        const salt = await bcrypt.genSalt() //genSalt() bu tasodifiy string bolib parolga qoshilib hash qilinadi.
-        if(input.memberPassword){
-            input.memberPassword = await bcrypt.hash(input?.memberPassword as string, salt) //bcryptning hash() metodi orqali paswordni heshing qildik yani oqib bolmaydigan holatga keltirdik. 1- argument hashlanayotgan malumot, 2- argument nima orqali heshlash. bu qatordagi kodni input.memberPassword = await bcrypt.hash(input.memberPassword, 10) korinishida genSaltsiz ishlatish mumkin
-        }
-        const result = await this.memberModel.findByIdAndUpdate({_id: memberId}, input, { new: true }).exec();
-        if(!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED)
+  if (!result) {
+    throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+  }
 
-        return result
-    } 
+  // 🔥 PASSWORDNI OLIB TASHLAYMIZ
+  delete result.memberPassword;
 
-    public async getTopUsers(): Promise<Member[]> { //Ushbu method natijasi member of array yani memberlardan tashkil topgan return boladi
-    
-        const result = await this.memberModel.find(
-            {memberStatus: MemberStatus.ACTIVE,
-             memberPoints: { $gte: 1 },
-            }).sort({ memberPoints: -1 }) //-1 bu memberPointi yuqori bolgan natijalarni yuqoriga kotar sharti.shuningdek 'asc'= +1 va 'desc'= -1 qilib asc va descni raqamlar orniga almashtirib ishlatishimizz mumkin
-            .limit(4)
-            .exec();
-        if(!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND)
+  return result;
+}
 
-        return result 
-    } 
+    public async updateMember(
+  member: Member,
+  input: MemberUpdateInput
+): Promise<Member> {
+  const memberId = shapeIntoMongooseObjectId(member._id);
 
-        public async addUserPoint(member: Member, point: number): Promise<Member> {
-            const memberId = shapeIntoMongooseObjectId(member._id);
+  // 🔥 PASSWORD HASH (faqat bo‘lsa)
+  if (input.memberPassword) {
+    const salt = await bcrypt.genSalt(10);
+    input.memberPassword = await bcrypt.hash(
+      input.memberPassword,
+      salt
+    );
+  }
 
-            return await this.memberModel.findOneAndUpdate({_id:memberId, memberType: MemberType.USER, memberStatus: MemberStatus.ACTIVE}, {$inc: {memberPoints: point}}, {new:true}).exec();
-        }
+  const result = await this.memberModel
+    .findOneAndUpdate(
+      { _id: memberId, memberStatus: MemberStatus.ACTIVE }, // 🔥 faqat active user
+      input,
+      { new: true }
+    )
+    .lean()
+    .exec();
 
+  if (!result) {
+    throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED);
+  }
+
+  // 🔥 PASSWORDNI OLIB TASHLAYMIZ
+  delete result.memberPassword;
+
+  return result;
+}
+
+  public async getTopUsers(): Promise<Member[]> {
+  const result = await this.memberModel
+    .find({
+      memberStatus: MemberStatus.ACTIVE,
+      memberPoints: { $gte: 1 },
+    })
+    .sort({ memberPoints: -1 })
+    .limit(4)
+    .lean()
+    .exec();
+
+  if (!result || result.length === 0) {
+    throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+  }
+
+  // 🔥 PASSWORDNI OLIB TASHLAYMIZ
+  result.forEach((el) => delete el.memberPassword);
+
+  return result;
+}
+
+public async addUserPoint(
+  member: Member,
+  point: number
+): Promise<Member> {
+  const memberId = shapeIntoMongooseObjectId(member._id);
+
+  const result = await this.memberModel
+    .findOneAndUpdate(
+      {
+        _id: memberId,
+        memberType: MemberType.USER,
+        memberStatus: MemberStatus.ACTIVE,
+      },
+      { $inc: { memberPoints: point } },
+      { new: true }
+    )
+    .lean()
+    .exec();
+
+  if (!result) {
+    throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED);
+  }
+
+  // 🔥 PASSWORDNI OLIB TASHLAYMIZ
+  delete result.memberPassword;
+
+  return result;
+}
     
 
     /** SSR*/
 
- public async processSignup(input: MemberInput): Promise<Member>{ //yangi public methodining defineqismini yasadik.U type MemberInputga teng bolgan inputni qabul qilib uni schima model orqali databasega yozadi. Method nomi ozi xizmat korrsatadigan kontrollerga tegishli restaurant controllerning.processSignup methodi bilan nomdosh bolishi kerak.Ushbu method kontrollerdan kelgan memberlarni schima modelga yuborib beradi 
-    //    const exist = await this.memberModel
-    //    .findOne({memberType: MemberType.RESTAURANT})
-    //    .exec();
-       
-    //    if (exist) throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED); //Bu shart orqali MemberType RESTAURANT bolgan boshqa member mavjud bolsa unni qabul qilmasdan error yuborish kerakligini yozdik.Sababi Burakda faqat bitta restaurant mavjud bolishi kerak
-       
-        console.log("before: ", input.memberPassword)
-
-        const salt = await bcrypt.genSalt() //genSalt() bu tasodifiy string bolib parolga qoshilib hash qilinadi.
-        input.memberPassword = await bcrypt.hash(input.memberPassword, salt) //bcryptning hash() metodi orqali paswordni heshing qildik yani oqib bolmaydigan holatga keltirdik. 1- argument hashlanayotgan malumot, 2- argument nima orqali heshlash. bu qatordagi kodni input.memberPassword = await bcrypt.hash(input.memberPassword, 10) korinishida genSaltsiz ishlatish mumkin
-        
-        console.log("after: ", input.memberPassword)
-       try{
-       const result = await this.memberModel.create(input); //memberModel klasining .create() methodi orqali Db dagi member collectionga yangi malumotlarni olib borib yozdik va natijasini resultga tengladik
-    //    const tempResult = new this.memberModel(input); //malumotni DB ga qoshishning 2-usuli. 
-    //    const result = await tempResult.save(); 
-       result.memberPassword = "" //password consoleda chiqishini oldini olish uchun uni bosh stringga tenglab qoydik
-       console.log("Passed Here")
-        return result
-       }
-
-       catch(err) { //Aggar biror xatolik sabab malumot DataBasega yozilmasa hosil bolgan error orniga ozimiz yozgan errorni browserga yubordik
-       console.log("b")
-        throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);
-       }
-}
-
-    public async processLogin(input: LoginInput): Promise<Member>{
-        const member = await this.memberModel
-        .findOne( //mongoosening findOne static methodini chaqirib query condition yozamiz.
-            {memberNick: input.memberNick}, //findOne static methodi orqali member collectiondan memberNicki request orqali kirib kelgan memberNickga teng bolgan datani topamiz
-            {memberNick: 1, memberPassword: 1}) //findOne methodi qabul qiladigan 2 argument bu topilgan malumotning ayni keraklilarini yoki maxfiyligi sababli korinmay qolgan qismini tanlab ajratib olib uchun ishlatiladi. agar 1 qoyilsa faqat osha malumot korinadi, agar 0 qoyilsa osha malumotdan boshqa barchasi korinadi. _id: istisno hisoblanib agar unga 0 qoysak u korinmaydi.Agar qiymat kiritmasak defolt 1 ni qabul qiladi 
-        .exec()
-        if(!member) throw new Errors(HttpCode.BAD_REQUEST, Message.NO_MEMBER_NICK) //agar kiritilgan malumot member collectionda mavjud bolmasa err yuboramiz.
-
-       
-       const isMatch = await bcrypt.compare(input.memberPassword, member.memberPassword) //bcryptni compare() methodi kritilgan parolni avvaldan heshlangan parol bilan solishtirish imkonini beradi. 1- argument browserdan kelgan parol 2- argument malumot bazasidagi avvaldan heshlangan parol
-        // const isMatch = input.memberPassword === member.memberPassword  //true/false //browserda kiritilgan parol malumot bazasida mavjud yoki yoqligini tekshiramiz.
-        
-        if(!isMatch) throw new Errors(HttpCode.UNAUTHORIZED, Message.WRONG_PASSWORD); //agar parol notogri kiritilga bolsa ozimiz yaratgan Errors customizied klasimiz orqali frontendga error xabarini yuboramiz.Agar error yuzaga kelsa keyingi qatorlar ishga tushmaydi
-        
-        return await this.memberModel.findById(member._id).exec() //findById methofi orqali member ichidagi bizga korinmay turgan _id: orqalitanlab olib osha idga tegishli malumotlarni return orqali frontendga yuboramiz
+ public async processSignup(input: MemberInput): Promise<Member> {
+  try {
+    // 🔥 VALIDATION
+    if (!input.memberNick || !input.memberPassword) {
+      throw new Errors(
+        HttpCode.BAD_REQUEST,
+        Message.NICK_PASSWORD_REQUIRED
+      );
     }
 
+    // 🔥 PASSWORD HASH
+    const salt = await bcrypt.genSalt(10);
+    input.memberPassword = await bcrypt.hash(
+      input.memberPassword,
+      salt
+    );
 
-     public async getUsers(): Promise<Member[]>{ //yangi public methodining defineqismini yasadik.U type MemberInputga teng bolgan inputni qabul qilib uni schima model orqali databasega yozadi. Method nomi ozi xizmat korrsatadigan kontrollerga tegishli restaurant controllerning.processSignup methodi bilan nomdosh bolishi kerak.Ushbu method kontrollerdan kelgan memberlarni schima modelga yuborib beradi 
-        const result = await this.memberModel.find({memberType: MemberType.USER}).exec()
-        if(!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
-        return result;
+    const result = await this.memberModel.create(input);
+
+    const member = result.toObject();
+
+    // 🔥 PASSWORDNI OLIB TASHLAYMIZ
+    delete member.memberPassword;
+
+    return member;
+
+  } catch (err) {
+    console.log("Error, processSignup", err);
+
+    throw new Errors(
+      HttpCode.BAD_REQUEST,
+      Message.USED_NICK_PHONE
+    );
+  }
+}
+   public async processLogin(input: LoginInput): Promise<Member> {
+  const member = await this.memberModel
+    .findOne(
+      {
+        memberNick: input.memberNick,
+        memberStatus: { $ne: MemberStatus.DELETE },
+      }
+    )
+    .select("+memberPassword memberStatus memberNick")
+    .lean()
+    .exec();
+
+  if (!member) {
+    throw new Errors(HttpCode.BAD_REQUEST, Message.NO_MEMBER_NICK);
+  }
+
+  if (member.memberStatus === MemberStatus.BLOCK) {
+    throw new Errors(HttpCode.FORBIDDEN, Message.BLOCKED_USER);
+  }
+
+  // 🔥 PASSWORD CHECK
+  if (!member.memberPassword) {
+    throw new Errors(HttpCode.INTERNAL_SERVER_ERROR, Message.SOMETHING_WENT_WRONG);
+  }
+
+  const isMatch = await bcrypt.compare(
+    input.memberPassword,
+    member.memberPassword
+  );
+
+  if (!isMatch) {
+    throw new Errors(HttpCode.UNAUTHORIZED, Message.WRONG_PASSWORD);
+  }
+
+  // 🔥 PASSWORDNI OLIB TASHLAYMIZ
+  delete member.memberPassword;
+
+  return member;
 }
 
-public async updateChosenUser(input: MemberUpdateInput): Promise<Member>{ //yangi public methodining defineqismini yasadik.U type MemberInputga teng bolgan inputni qabul qilib uni schima model orqali databasega yozadi. Method nomi ozi xizmat korrsatadigan kontrollerga tegishli restaurant controllerning.processSignup methodi bilan nomdosh bolishi kerak.Ushbu method kontrollerdan kelgan memberlarni schima modelga yuborib beradi 
-        console.log("keldi")
-        input._id = shapeIntoMongooseObjectId(input._id);
-        const result = await this.memberModel.findByIdAndUpdate({_id: input._id}, input, {new:true, runValidators:true}).exec()
-        if(!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED);
-        return result;
+
+   public async getUsers(): Promise<Member[]> {
+  const result = await this.memberModel
+    .find({
+      memberType: MemberType.USER,
+      memberStatus: { $ne: MemberStatus.DELETE },
+    })
+    .lean()
+    .exec();
+
+  if (!result || result.length === 0) {
+    throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+  }
+
+  // 🔥 PASSWORDNI OLIB TASHLAYMIZ
+  result.forEach((el) => delete el.memberPassword);
+
+  return result;
 }
 
+public async updateChosenUser(
+  input: MemberUpdateInput
+): Promise<Member> {
+  const memberId = shapeIntoMongooseObjectId(input._id);
+
+  const result = await this.memberModel
+    .findOneAndUpdate(
+      {
+        _id: memberId,
+        memberStatus: { $ne: MemberStatus.DELETE }, // 🔥 delete bo‘lmagan user
+      },
+      input,
+      { new: true, runValidators: true }
+    )
+    .lean()
+    .exec();
+
+  if (!result) {
+    throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED);
+  }
+
+  // 🔥 PASSWORDNI OLIB TASHLAYMIZ
+  delete result.memberPassword;
+
+  return result;
+}
    
 }
 

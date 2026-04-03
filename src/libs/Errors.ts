@@ -19,6 +19,7 @@ export enum Message { //error hosil bolganda yuboriladigan xabarlar
     UPDATE_FAILED = "Update is failed!",
    
     USED_NICK_PHONE = "You are inserting already used nick or phone number!",
+    NICK_PASSWORD_REQUIRED = "Nick and password required",
     BLOCKED_USER = "You have been blocked!, contact restaurant",
     NO_MEMBER_NICK = "No member with that member nick!",
     WRONG_PASSWORD = "Wrong password, please try again!",
