@@ -7,7 +7,7 @@ import orderController from "./controllers/order.controller";
 const router = express.Router();
 
 // Member
-router.get('/member/restaurant', memberController.getRestaurant);
+router.get('/member/admin', memberController.getAdmin);
 router.post('/member/signup', memberController.signup);
 router.post('/member/login', memberController.login);
 router.post('/member/logout',  memberController.logout); //Agar user logout bolmoqchi bolsa login bolgan bolishi kerak shu sababli verifyAuth middlewareni ishlatyapmiz

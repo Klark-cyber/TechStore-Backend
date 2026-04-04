@@ -51,14 +51,14 @@ restaurantController.getLogin = (req: Request, res: Response ) => {
 restaurantController.processSignup = async (req: AdminRequest, res: Response ) => { //Admin request Requestdan etands bolib yasalgan interface
     try{
         console.log("processSignup "); //Mantiq ishga tushganini yani buyruq ishga tushganini tekshiramiz.natija terminalda paydo boladi
-     console.log("body:", req.body) //postman orqali frontenddan yuborilgan postlarni terminalda log qildik
+        console.log("body:", req.body) //postman orqali frontenddan yuborilgan postlarni terminalda log qildik
        
         const newMember: MemberInput = req.body; //MemberInput new memberning type bolib uni alohida fileda shkllantirib oldik
         const file = req.file; //req.body ichida yuborilgan file yoki rasmning pathi yani joylashgan manzilini ajratib oldik
         if(!file) throw new Errors(HttpCode.BAD_REQUEST, Message.SOMETHING_WENT_WRONG) ///Agar user ras yuklamagan bolsa ushbu errorni yuboramiz
         
         newMember.memberImage = file?.path.replace(/\\/g, '/'); //rasm yoki file joylashgan manzilni agar mavjud bolsa Newmember.memberImagega tengladik.Bunday qilishdan maqsad DB ga rasmni emas rasm joylashgan manzilni yoqzmoqchimiz
-        newMember.memberType = MemberType.RESTAURANT; //newMemberning defout type USER ammo biz uni RESTAURANTga tenglab oldik
+        newMember.memberType = MemberType.ADMIN; //newMemberning defout type USER ammo biz uni RESTAURANTga tenglab oldik
 
         const result = await memberService.processSignup(newMember);
         //TODO: TOKENS AUTHENTIFICATION
@@ -156,7 +156,7 @@ restaurantController.updateChosenUser = async (req: Request, res: Response ) => 
 }
 
 restaurantController.verifyRestaurant = (req: AdminRequest, res: Response, next: NextFunction) => { // user kim ekanligini aniqlab restoran user ekanligini tekshirishi kerak bolgan middleware yozamiz.Bu mantiq faqatgina userlar productcontroller methodlaridan foydalana olishi uchun qilindi.Next: Nextfunction bu middlewareda qollaniladigan funksiya
-        if(req.session?.member?.memberType === MemberType.RESTAURANT){ //? belgisini yozishimizga sabab agar req tarkibida member mavjud bolsa kerakli response yuboriladi.Agar member mavjud bolmas yani user hali login qilib sidni olmagan bolsa error bolib side ishlamay qolishini oldini olish uchun
+        if(req.session?.member?.memberType === MemberType.ADMIN){ //? belgisini yozishimizga sabab agar req tarkibida member mavjud bolsa kerakli response yuboriladi.Agar member mavjud bolmas yani user hali login qilib sidni olmagan bolsa error bolib side ishlamay qolishini oldini olish uchun
          req.member = req.session.member; //Bu qator filtr vazifasini bajardi yani member mavjud bolgan requestlarnigina yani login bolgan userlarni otkazib yuboradi.Agar member mavjud bolmasa padagi catch ishga tushadi va userni login bolish uchun login pagega yuboradi.Shuningdek productcontroller ichidagi methodlarni yuqoridagi kabi if ichidagi shartga oxshab tekshirishni shart emas.Sabab verifiyRestoan allaqachon buni bizga bajarib berdi
          //req.raqam = req.session.member.memberPhone
          next(); //next qoyilishiga sabab tekshiruv tugagandan song keyingi bosqichga yani productkontrollerning methodlari ishga tushishi kerakligini anglatadi

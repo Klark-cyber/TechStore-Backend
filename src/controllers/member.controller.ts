@@ -14,7 +14,7 @@ const memberController: T ={};
  
 //REACT loyihamiz uchun
 
-productController.getAdmin = async (req: Request, res: Response) => {
+memberController.getAdmin = async (req: Request, res: Response) => {
   try {
     console.log("getAdmin");
 
