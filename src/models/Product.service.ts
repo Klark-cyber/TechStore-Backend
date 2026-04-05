@@ -162,44 +162,87 @@ public async likeProduct(memberId: ObjectId, productId: string): Promise<void> {
 
     /** SSR */
 
+// public async getAllProducts(inquiry?: { search?: string; productCollection?: string }): Promise<any[]> {
+//   try {
+//     console.log("getAllProducts service");
+//     console.log("inquiry:", inquiry);  // ← bu bor
+
+//     const match: any = {
+//       productStatus: { $ne: "DELETE" }
+//     };
+
+//     if (inquiry?.search) {
+//       match.$or = [
+//         { productName: { $regex: inquiry.search, $options: 'i' } },
+//         { productBrand: { $regex: inquiry.search, $options: 'i' } }
+//       ];
+//     }
+
+//     if (inquiry?.productCollection) {
+//       match.productCollection = inquiry.productCollection;
+//     }
+
+//     console.log("match:", JSON.stringify(match));  // ← qo'shing
+    
+//     const result = await this.productModel
+//       .find(match)
+//       .sort({ createdAt: -1 })
+//       .lean()
+//       .exec();
+
+//     console.log("result count:", result.length);  // ← qo'shing
+
+//     return result as unknown as any[];
+
+//   } catch (err) {
+//     console.log("Error, getAllProducts service", err);
+//     throw new Errors(HttpCode.INTERNAL_SERVER_ERROR, Message.SOMETHING_WENT_WRONG);
+//   }
+// }
+
+// services/product.service.ts
+
 public async getAllProducts(inquiry?: { search?: string; productCollection?: string }): Promise<any[]> {
   try {
-    console.log("getAllProducts service");
-    console.log("inquiry:", inquiry);  // ← bu bor
+    console.log("===== getAllProducts service called =====");
+    console.log("Received inquiry:", inquiry);
 
+    // Bazaviy filter (DELETE holatidagi productlarni chiqarma)
     const match: any = {
       productStatus: { $ne: "DELETE" }
     };
 
+    // Agar search bo'lsa: productName yoki productBrand ichida qidirish
     if (inquiry?.search) {
       match.$or = [
-        { productName: { $regex: inquiry.search, $options: 'i' } },
-        { productBrand: { $regex: inquiry.search, $options: 'i' } }
+        { productName: { $regex: inquiry.search, $options: "i" } },
+        { productBrand: { $regex: inquiry.search, $options: "i" } }
       ];
     }
 
-    if (inquiry?.productCollection) {
+    // Agar category tanlangan bo'lsa
+    if (inquiry?.productCollection && inquiry.productCollection !== "") {
       match.productCollection = inquiry.productCollection;
     }
 
-    console.log("match:", JSON.stringify(match));  // ← qo'shing
-    
+    console.log("MongoDB filter (match):", JSON.stringify(match, null, 2));
+
+    // DB query
     const result = await this.productModel
       .find(match)
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: -1 })  // oxirgi qo'shilgan birinchi
       .lean()
       .exec();
 
-    console.log("result count:", result.length);  // ← qo'shing
+    console.log("Number of products found:", result.length);
 
     return result as unknown as any[];
 
   } catch (err) {
-    console.log("Error, getAllProducts service", err);
+    console.error("Error in getAllProducts service:", err);
     throw new Errors(HttpCode.INTERNAL_SERVER_ERROR, Message.SOMETHING_WENT_WRONG);
   }
 }
-
 
 public async createNewProduct(input: ProductInput): Promise<Product> {
   try {

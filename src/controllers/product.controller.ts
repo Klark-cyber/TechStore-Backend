@@ -125,36 +125,76 @@ productController.likeProduct = async (req: ExtendedRequest, res: Response) => {
 
 /** SSR */
 
-productController.getAllProducts = async (req: Request, res: Response) => {
-  try {
-    console.log("getAllProducts");
-    console.log("query:", req.query);
+// productController.getAllProducts = async (req: Request, res: Response) => {
+//   try {
+//     console.log("getAllProducts");
+//     console.log("query:", req.query);
     
-    console.log("getAllProducts");
-    console.log("query:", req.query);  // ← shu log bor mi?
-    console.log("search:", req.query.search);
-    console.log("productCollection:", req.query.productCollection);
-    
-    const { search, productCollection } = req.query;
+//     console.log("getAllProducts");
+//     console.log("query:", req.query);  // ← shu log bor mi?
+//     console.log("search:", req.query.search);
+//     console.log("productCollection:", req.query.productCollection);
 
-    const inquiry: any = {};
-    if (search) inquiry.search = String(search);
-    if (productCollection) inquiry.productCollection = String(productCollection);
+//     const { search, productCollection } = req.query;
 
-    const data = await productService.getAllProducts(inquiry);
+//     const inquiry: any = {};
+//     if (search) inquiry.search = String(search);
+//     if (productCollection) inquiry.productCollection = String(productCollection);
 
-    res.render("products", {
-      products: data,
-      search: search || '',
-      productCollection: productCollection || ''
-    });
+//     const data = await productService.getAllProducts(inquiry);
 
-  } catch (err) {
-    console.log("Error, getAllProducts", err);
-    if (err instanceof Errors) res.status(err.code).json(err);
-    else res.status(Errors.standard.code).json(Errors.standard);
+//     res.render("products", {
+//       products: data,
+//       search: search || '',
+//       productCollection: productCollection || ''
+//     });
+
+//   } catch (err) {
+//     console.log("Error, getAllProducts", err);
+//     if (err instanceof Errors) res.status(err.code).json(err);
+//     else res.status(Errors.standard.code).json(Errors.standard);
+//   }
+// };
+
+// controllers/product.controller.ts
+
+productController.getAllProducts= async (req: Request, res: Response) => {
+    try {
+      console.log("===== getAllProducts controller called =====");
+      console.log("Raw query:", req.query);
+
+      const { search, productCollection } = req.query;
+
+      console.log("Parsed search:", search);
+      console.log("Parsed productCollection:", productCollection);
+
+      // Inquiry object to pass to service
+      const inquiry: { search?: string; productCollection?: string } = {};
+      if (search) inquiry.search = String(search);
+      if (productCollection && productCollection !== "") inquiry.productCollection = String(productCollection);
+
+      console.log("Inquiry object for service:", inquiry);
+
+      // Call service
+      const products = await productService.getAllProducts(inquiry);
+
+      console.log("Number of products returned:", products.length);
+
+      // Render the EJS page
+      res.render("products", {
+        products,
+        search: search || "",
+        productCollection: productCollection || ""
+      });
+
+    } catch (err) {
+      console.error("Error in getAllProducts controller:", err);
+      if (err instanceof Errors) res.status(err.code).json(err);
+      else res.status(500).json({ message: "Something went wrong" });
+    }
   }
-};
+
+
 
 productController.createNewProduct = async (
   req: AdminRequest,
