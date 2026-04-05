@@ -10,7 +10,7 @@ import app from "./app"
 mongoose.connect(process.env.MONGO_URL as string, {})
 .then((data)=>{
     console.log("MongoDb connection succeed")
-    const PORT = process.env.PORT ?? 3003; //?? 3003 bu agar port mavjud bolmasa 3003 ni tanla buyrugi
+    const PORT = process.env.PORT ?? 3009; //?? 3003 bu agar port mavjud bolmasa 3003 ni tanla buyrugi
     app.listen(PORT, function(){
         console.log(`The server is running successfully on port: ${PORT}`)
         console.info(`Admin project on http://localhost:${PORT}/admin \n`);

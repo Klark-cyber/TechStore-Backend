@@ -4,7 +4,7 @@ import Errors, { HttpCode, Message } from "../libs/Errors";
 import ProductService from "../models/Product.service";
 import { AdminRequest, ExtendedRequest } from "../libs/types/member";
 import { ProductInput, ProductInquiry, ProductUpdateInput } from "../libs/types/product";
-import { ProductCollection } from "../libs/enums/product.enum";
+import { ProductCollection, ProductStatus } from "../libs/enums/product.enum";
 
 const productService = new ProductService(); //Product service model clasidan productService objectni hosil qildik 
 
@@ -91,6 +91,32 @@ productController.getProduct = async (
   }
 };
 
+productController.likeProduct = async (req: ExtendedRequest, res: Response) => {
+    try {
+        console.log("likeProduct");
+
+        const memberId = req.member?._id;
+        if (!memberId) {
+            return res.status(HttpCode.UNAUTHORIZED).json({ 
+                success: false, 
+                message: "Member not authenticated" 
+            });
+        }
+
+        const { id } = req.body;
+        await productService.likeProduct(memberId, id);
+
+        res.status(HttpCode.OK).json({ success: true });
+
+    } catch (err) {
+        console.log("Error, likeProduct", err);
+
+        if (err instanceof Errors) res.status(err.code).json(err);
+        else res.status(Errors.standard.code).json(Errors.standard);
+    }
+};
+
+
 
 
 
@@ -108,7 +134,7 @@ productController.getAllProducts = async (
 
     const data = await productService.getAllProducts();
 
-    console.log("products count:", data.length);
+    console.log("products count:", data);
 
     // 🔥 EJS render
     res.render("products", {
@@ -131,37 +157,56 @@ productController.createNewProduct = async (
 
     // ❗ IMAGE VALIDATION
     if (!req.files || !(req.files as Express.Multer.File[]).length) {
-      throw new Errors(HttpCode.BAD_REQUEST,Message.REQUIRED_PRODUCT_IMAGES);
+      throw new Errors(HttpCode.BAD_REQUEST, Message.REQUIRED_PRODUCT_IMAGES);
     }
 
     const data: ProductInput = req.body;
 
-    // 🔥 IMAGE PATH FIX (Windows fix ham bor)
+    // 🔥 IMAGE PATH FIX
     data.productImages = (req.files as Express.Multer.File[]).map(file =>
       file.path.replace(/\\/g, "/")
     );
 
-    // 🔥 TYPE CONVERSION (MUHIM)
+    // 🔥 TYPE CONVERSION
     data.productPrice = Number(data.productPrice);
     data.productLeftCount = Number(data.productLeftCount);
+    if (data.productRam) data.productRam = Number(data.productRam);
+    if (data.productMemory) data.productMemory = Number(data.productMemory);
+    if (data.productBrand) data.productBrand = data.productBrand.toUpperCase().trim();
+    // 🔥 DEFAULT STATUS (backend nazorat qiladi)
+    data.productStatus = ProductStatus.PROCESS;
 
-    // 🔥 TELEPHONE VALIDATION
-    if (
-      data.productCollection === ProductCollection.TELEPHONE &&
-      (!data.productRam || !data.productMemory)
-    ) {
-      throw new Errors(
-        HttpCode.BAD_REQUEST,
-        Message.RAM_MEMORY_REQUIRED
-      );
+    // 🔥 CATEGORY BASED VALIDATION
+    switch (data.productCollection) {
+
+      case ProductCollection.TELEPHONE:
+        if (!data.productRam || !data.productMemory) {
+          throw new Errors(
+            HttpCode.BAD_REQUEST,
+            Message.RAM_MEMORY_REQUIRED
+          );
+        }
+        break;
+
+      case ProductCollection.MACBOOKS:
+        if (!data.productMemory) {
+          throw new Errors(
+            HttpCode.BAD_REQUEST,
+            Message.RAM_MEMORY_REQUIRED
+          );
+        }
+        // RAM optional → o‘chiramiz
+        data.productRam = undefined;
+        break;
+
+      default:
+        // boshqa categorylar uchun specs kerak emas
+        data.productRam = undefined;
+        data.productMemory = undefined;
+        break;
     }
 
-    // 🔥 ACCESSORY yoki OTHER bo‘lsa RAM/MEMORY ni olib tashlaymiz
-    if (data.productCollection !== ProductCollection.TELEPHONE) {
-      data.productRam = undefined;
-      data.productMemory = undefined;
-    }
-
+    // 🔥 CREATE
     await productService.createNewProduct(data);
 
     // ✅ SUCCESS
@@ -192,22 +237,22 @@ productController.updateChosenProduct = async (
   req: Request,
   res: Response
 ) => {
+  console.log(req.body)
   try {
     console.log("updateChosenProduct");
 
-    const { id } = req.params;
+    const { id } = req.params; // ✅ TO‘G‘RISI SHU
 
-    // ❗ ID VALIDATION
     if (!id) {
       throw new Errors(HttpCode.BAD_REQUEST, Message.REQUIRED_PRODUCT_ID);
     }
 
-    console.log("_id:", id);
-    console.log("body:", req.body);
-
     const input: ProductUpdateInput = req.body;
 
-    // 🔥 TYPE CONVERSION (MUHIM)
+    console.log("_id:", id);
+    console.log("body:", input);
+
+    // 🔥 TYPE CONVERSION
     if (input.productPrice) {
       input.productPrice = Number(input.productPrice);
     }
@@ -216,11 +261,44 @@ productController.updateChosenProduct = async (
       input.productLeftCount = Number(input.productLeftCount);
     }
 
+    if (input.productRam) {
+      input.productRam = Number(input.productRam);
+    }
+
+    if (input.productMemory) {
+      input.productMemory = Number(input.productMemory);
+    }
+
+    // 🔥 TELEPHONE + MACBOOKS
+    if (
+      [ProductCollection.TELEPHONE, ProductCollection.MACBOOKS].includes(
+        input.productCollection as ProductCollection
+      )
+    ) {
+      if (!input.productMemory) {
+        throw new Errors(
+          HttpCode.BAD_REQUEST,
+          Message.RAM_MEMORY_REQUIRED
+        );
+      }
+    }
+
+    // 🔥 OTHER CATEGORY → REMOVE
+    if (
+      input.productCollection &&
+      ![ProductCollection.TELEPHONE, ProductCollection.MACBOOKS].includes(
+        input.productCollection
+      )
+    ) {
+      input.productRam = undefined;
+      input.productMemory = undefined;
+    }
+
     const result = await productService.updateChosenProduct(id, input);
 
     res.status(HttpCode.OK).json({
       success: true,
-      data: result
+      data: result,
     });
 
   } catch (err) {

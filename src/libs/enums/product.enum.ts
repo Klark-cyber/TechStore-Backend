@@ -7,14 +7,6 @@ export enum AttributeKey{
 }
 
 
-export enum ProductVolume {
-    HALF = 0.5,
-    ONE = 1,
-    ONE_POINT_TWO = 1.2,
-    ONE_POINT_FIVE = 1.5,
-    TWO = 2
-}
-
 export enum ProductStatus{
     PAUSE = "PAUSE",
     PROCESS = "PROCESS",
@@ -22,11 +14,10 @@ export enum ProductStatus{
 }
 
 export enum ProductCollection {
-    PHONES = "PHONES",
     LAPTOPS = "LAPTOPS",
     PC = "PC",
     ACCESSORIES = "ACCESSORIES",
-    TABLETS = "TABLETS",
+    MACBOOKS = "MACBOOKS",
     SMARTWATCHES ="SMARTWATCHES",
     OTHERS ="OTHERS",
     TELEPHONE = "TELEPHONE"

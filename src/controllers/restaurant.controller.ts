@@ -64,10 +64,10 @@ restaurantController.processSignup = async (req: AdminRequest, res: Response ) =
         //TODO: TOKENS AUTHENTIFICATION
         
         req.session.member = result; //req-request session midleware qismida hosil bolgan va har bir requestga avtomatik qoshiladigan object.member ozimiz yaratgan object nomi. session collection ichiga resultni borib joyladik.Shuningdek browser cookie ga SessionId ni yubordik.Agar bu qator bolmasa collectionga faqat session saqlanadi result saqlanmaydi.Natijada keyinchalik shu browserdan keladigan req uchun ayni shu browserga tegishli malumotni res.send qila olmaymiz
-        req.session.save(function(){ 
-            res.redirect("/admin/product/all"); //save muvafaqqiyatli amalga oshsa browserni product/all pagega redirect qildik
-        });
-        
+        // req.session.save(function(){ 
+        //     res.redirect("/admin/product/all"); //save muvafaqqiyatli amalga oshsa browserni product/all pagega redirect qildik
+        // });
+        res.send(result)
 
     } catch (err) { //Agar malumot memberSchema talabiga javob bermasa masalan phoneNumber takroriy bolsa err yuzaga keladi.
         console.log("Error, processLogin", err)
@@ -89,8 +89,6 @@ restaurantController.processLogin = async (req: AdminRequest, res: Response ) =>
         
         
         req.session.member = result; // session collection ichiga resultni borib joyladik.Shuningdek browser cookie ga SessionId ni yubordik.Agar bu qator bolmasa collectionga faqat session saqlanadi result saqlanmaydi.Natijada keyinchalik shu browserdan keladigan req uchun ayni shu browserga tegishli malumotni res.send qila olmaymiz
-        //req.session.student = "Javohir";
-        //req.session.group = "MIT38"
         req.session.save(function(){ //req.session.save internet pas hududlarda req.session.member yani session collection amalga oshmasdan kngi qator kodlar ishga tushib ketishini oldini oladi yani malumot 100% dB ga yozilishini taminlaydi
              res.redirect("/admin/product/all"); //save muvafaqqiyatli amalga oshsa browserni product/all pagega redirect qildik
         });

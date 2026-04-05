@@ -27,6 +27,11 @@ router.get('/product/all', productController.getProducts);
 router.get('/product/:id', 
     memberController.retrieveAuth, 
     productController.getProduct);
+router.post(
+    "/product/like",
+    memberController.verifyAuth, // user login bo‘lishini tekshiradi
+    productController.likeProduct
+);
 
 
 // Order

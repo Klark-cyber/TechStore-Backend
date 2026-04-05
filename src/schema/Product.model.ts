@@ -7,7 +7,7 @@ const productSchema = new Schema(
     productStatus: {
       type: String,
       enum: ProductStatus,
-      default: ProductStatus.PAUSE,
+      default: ProductStatus.PROCESS,
     },
 
     productCollection: {
@@ -32,13 +32,11 @@ const productSchema = new Schema(
     },
     //qoshimcha
      productMemory: {
-      type: String,
-      enum: ProductMemory,
+      type: Number,
     },
     //qoshimcha
      productRam: {
-      type: String,
-      enum: ProductRam,
+      type: Number
     },
 
     //qoshimcha
@@ -87,6 +85,9 @@ const productSchema = new Schema(
 );
 
 
-productSchema.index({ productName:1 , productMemory:1, }, {unique: true});
+productSchema.index(
+  { productName: 1, productMemory: 1, productRam: 1 },
+  { unique: true, sparse: true }
+);
 
 export default mongoose.model("Product",productSchema);

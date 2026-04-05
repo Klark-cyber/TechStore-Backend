@@ -27,6 +27,7 @@ const memberSchema = new Schema<Member>(
 
     memberPassword: {
       type: String,
+      select: false,
       required: true,
       minlength: 6,
     },

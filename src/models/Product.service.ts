@@ -8,13 +8,18 @@ import {ObjectId} from "mongoose"
 import ViewService from "./View.service";
 import { ViewInput } from "../libs/types/view";
 import { ViewGroup } from "../libs/enums/view.enum";
+import LikeService from "./Like.service";
+import { LikeInput } from "../libs/types/like";
+import { LikeGroup } from "../libs/enums/Like.enum";
 
 class ProductService{
     private readonly productModel;
     public viewService;
+    public likeService;
  constructor(){
         this.productModel = ProductModel;
         this.viewService = new ViewService()
+        this.likeService = new LikeService();
     }
     /** SPA */
 
@@ -123,6 +128,37 @@ public async getProduct(
   return result;
 }
 
+public async likeProduct(memberId: ObjectId, productId: string): Promise<void> {
+
+    const likeRefId = shapeIntoMongooseObjectId(productId);
+
+    const input: LikeInput = {
+        memberId: memberId,
+        likeRefId: likeRefId,
+        likeGroup: LikeGroup.PRODUCT
+    };
+
+    const existLike = await this.likeService.checkLikeExistence(input);
+
+    // 🔴 AGAR LIKE BOR BO‘LSA → O‘CHIRAMIZ
+    if (existLike) {
+        await this.likeService["likeModel"].findByIdAndDelete(existLike._id);
+
+        await this.productModel.findByIdAndUpdate(
+            likeRefId,
+            { $inc: { productLikes: -1 } }
+        ).exec();
+
+    } else {
+        // 🟢 AGAR YO‘Q BO‘LSA → QO‘SHAMIZ
+        await this.likeService.insertMemberLike(input);
+
+        await this.productModel.findByIdAndUpdate(
+            likeRefId,
+            { $inc: { productLikes: 1 } }
+        ).exec();
+    }
+}
 
     /** SSR */
 
@@ -133,7 +169,6 @@ public async getAllProducts(): Promise<Product[]> {
       // 🔥 faqat active productlar
       {
         $match: {
-          productStatus: ProductStatus.PROCESS
         }
       },
 
@@ -143,7 +178,11 @@ public async getAllProducts(): Promise<Product[]> {
           productSpecs: {
             $cond: [
               { $eq: ["$productCollection", "TELEPHONE"] },
-              { $concat: ["$productRam", "/", "$productMemory"] },
+              { $concat: [
+            { $toString: "$productRam" },
+            "/",
+            { $toString: "$productMemory" }
+          ] },
               "-"
             ]
           }
@@ -168,22 +207,40 @@ public async getAllProducts(): Promise<Product[]> {
 
 public async createNewProduct(input: ProductInput): Promise<Product> {
   try {
-    if (
-      input.productCollection === ProductCollection.TELEPHONE &&
-      (!input.productMemory || !input.productRam)
-    ) {
-      throw new Errors(HttpCode.BAD_REQUEST, Message.RAM_MEMORY_REQUIRED);
+    // 🔥 SAFETY (fallback - agar controllerdan o'tib ketsa)
+    switch (input.productCollection) {
+
+      case ProductCollection.TELEPHONE:
+        if (!input.productRam || !input.productMemory) {
+          throw new Errors(
+            HttpCode.BAD_REQUEST,
+            Message.RAM_MEMORY_REQUIRED
+          );
+        }
+        break;
+
+      case ProductCollection.MACBOOKS:
+        if (!input.productMemory) {
+          throw new Errors(
+            HttpCode.BAD_REQUEST,
+            Message.RAM_MEMORY_REQUIRED
+          );
+        }
+        input.productRam = undefined;
+        break;
+
+      default:
+        input.productRam = undefined;
+        input.productMemory = undefined;
+        break;
     }
 
-    if (input.productCollection !== ProductCollection.TELEPHONE) {
-      input.productMemory = undefined;
-      input.productRam = undefined;
-    }
-
+    // 🔥 ATTRIBUTES DEFAULT
     if (!input.attributes) {
       input.attributes = {};
     }
 
+    // 🔥 CREATE
     return await this.productModel.create(input);
 
   } catch (err) {
@@ -193,25 +250,33 @@ public async createNewProduct(input: ProductInput): Promise<Product> {
   }
 }
 
- public async updateChosenProduct(
+public async updateChosenProduct(
   id: string | string[],
   input: ProductUpdateInput
 ): Promise<Product> {
 
   id = shapeIntoMongooseObjectId(id);
 
-  // 🔥 TELEPHONE validation
+  // 🔥 TELEPHONE + MACBOOKS validation
   if (
-    input.productCollection === ProductCollection.TELEPHONE &&
-    (!input.productRam || !input.productMemory)
+    [ProductCollection.TELEPHONE, ProductCollection.MACBOOKS].includes(
+      input.productCollection as ProductCollection
+    )
   ) {
-    throw new Errors(HttpCode.BAD_REQUEST, Message.RAM_MEMORY_REQUIRED);
+    if (!input.productMemory) {
+      throw new Errors(
+        HttpCode.BAD_REQUEST,
+        Message.RAM_MEMORY_REQUIRED
+      );
+    }
   }
 
-  // 🔥 TELEPHONE bo‘lmasa RAM/MEMORY o‘chadi
+  // 🔥 BOSHQA CATEGORY → RAM/MEMORY o‘chadi
   if (
     input.productCollection &&
-    input.productCollection !== ProductCollection.TELEPHONE
+    ![ProductCollection.TELEPHONE, ProductCollection.MACBOOKS].includes(
+      input.productCollection
+    )
   ) {
     input.productRam = undefined;
     input.productMemory = undefined;
@@ -221,9 +286,14 @@ public async createNewProduct(input: ProductInput): Promise<Product> {
     .findOneAndUpdate(
       { _id: id },
       input,
-      { new: true }
+      {
+        new: true,
+        runValidators: true // 🔥 MUHIM
+      }
     )
     .exec();
+
+  console.log("UPDATED:", result); // 🔥 DEBUG
 
   if (!result) {
     throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED);

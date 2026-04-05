@@ -240,17 +240,14 @@ public async addUserPoint(
   }
 }
    public async processLogin(input: LoginInput): Promise<Member> {
-  const member = await this.memberModel
-    .findOne(
-      {
-        memberNick: input.memberNick,
-        memberStatus: { $ne: MemberStatus.DELETE },
-      }
-    )
-    .select("+memberPassword memberStatus memberNick")
-    .lean()
-    .exec();
-
+    console.log("Qidirilayotgan nick:", input.memberNick);
+    
+    const member = await this.memberModel
+      .findOne( //mongoosening findOne static methodini chaqirib query condition yozamiz.
+            {memberNick: input.memberNick}, //findOne static methodi orqali member collectiondan memberNicki request orqali kirib kelgan memberNickga teng bolgan datani topamiz
+            {memberNick: 1, memberPassword: 1, memberStatus: 1, memberType: 1}) //findOne methodi qabul qiladigan 2 argument bu topilgan malumotning ayni keraklilarini yoki maxfiyligi sababli korinmay qolgan qismini tanlab ajratib olib uchun ishlatiladi. agar 1 qoyilsa faqat osha malumot korinadi, agar 0 qoyilsa osha malumotdan boshqa barchasi korinadi. _id: istisno hisoblanib agar unga 0 qoysak u korinmaydi.Agar qiymat kiritmasak defolt 1 ni qabul qiladi 
+            .exec()
+console.log(member)
   if (!member) {
     throw new Errors(HttpCode.BAD_REQUEST, Message.NO_MEMBER_NICK);
   }
@@ -286,7 +283,7 @@ public async addUserPoint(
       memberType: MemberType.USER,
       memberStatus: { $ne: MemberStatus.DELETE },
     })
-    .lean()
+    // .lean()
     .exec();
 
   if (!result || result.length === 0) {

@@ -37,7 +37,7 @@ export interface ProductInput{
     productMemory?: number;
     productRam?: number;
     productDesc?: string;
-    productImages?: string[];
+    productImages: string[];
     productViews?: number;
     attributes?: Record<string, string>;
 }
@@ -59,8 +59,8 @@ export interface ProductUpdateInput {
   productName?: string;
   productPrice?: number;
   productLeftCount?: number;
-  productRam?: string;       // 🔥 new
-  productMemory?: string;    // 🔥 new
+  productRam?: number;       // 🔥 new
+  productMemory?: number;    // 🔥 new
   productDesc?: string;
   productImages?: string[];
 }
