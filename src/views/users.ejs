@@ -54,7 +54,7 @@
 <% } else { %>
 
 <!-- Logged in -->
-<nav class="bg-white border-b border-outline fixed top-0 w-full z-50 flex justify-between items-center px-8 h-16">
+<nav class="bg-white border-b border-outline fixed top-0 w-full z-50 flex justify-between items-center px-10 h-16">
   <div class="text-xl font-bold text-slate-900 tracking-tight">TechStore Admin</div>
   <div class="hidden md:flex items-center gap-8">
     <a class="text-on-surface-variant font-medium hover:text-primary transition-colors" href="/admin/">Home</a>
@@ -63,10 +63,6 @@
     <a class="text-on-surface-variant font-medium hover:text-primary transition-colors"
       href="/admin/logout"
       onclick="return confirm('Do you really want to logout?')">Logout</a>
-  </div>
-  <div class="flex items-center gap-4">
-    <button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all p-2">notifications</button>
-    <button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all p-2">settings</button>
   </div>
 </nav>
 
