@@ -104,18 +104,17 @@
       <span class="material-symbols-outlined">menu</span>
     </button>
     <span class="text-lg md:text-xl font-bold tracking-tighter text-slate-900 whitespace-nowrap">TechStore Admin</span>
-   <nav class="bg-white border-b border-outline fixed top-0 w-full z-50 flex justify-between items-center px-20 h-16">
-  <div class="text-xl font-bold text-slate-900 tracking-tight">TechStore Admin</div>
-  <div class="hidden md:flex items-center gap-8">
-    <a class="text-on-surface-variant font-medium hover:text-primary transition-colors" href="/admin/">Home</a>
-    <a class="text-primary font-bold border-b-2 border-primary" href="/admin/product/all">Menu</a>
-    <a class="text-on-surface-variant font-medium hover:text-primary transition-colors" href="/admin/user/all">Users</a>
-    <a class="text-on-surface-variant font-medium hover:text-primary transition-colors"
-      href="/admin/logout"
-      onclick="return confirm('Do you really want to logout?')">Logout</a>
-  </div>
- 
-</nav>
+    <nav class="bg-white border-b border-outline fixed top-0 w-full z-50 flex justify-between items-center px-20 h-16">
+      <div class="text-xl font-bold text-slate-900 tracking-tight">TechStore Admin</div>
+      <div class="hidden md:flex items-center gap-8">
+        <a class="text-on-surface-variant font-medium hover:text-primary transition-colors" href="/admin/">Home</a>
+        <a class="text-primary font-bold border-b-2 border-primary" href="/admin/product/all">Menu</a>
+        <a class="text-on-surface-variant font-medium hover:text-primary transition-colors" href="/admin/user/all">Users</a>
+        <a class="text-on-surface-variant font-medium hover:text-primary transition-colors"
+          href="/admin/logout"
+          onclick="return confirm('Do you really want to logout?')">Logout</a>
+      </div>
+    </nav>
   </div>
   <div class="flex items-center gap-2 md:gap-4">
     <div class="relative hidden lg:block">
@@ -152,34 +151,42 @@
       <span class="material-symbols-outlined">help</span>
       <span>Help Center</span>
     </a>
-    <a class="flex items-center gap-3 px-3 py-2 text-error hover:bg-error/5 rounded-lg font-inter text-sm font-semibold transition-all" href="/admin/logout">
+    <a class="flex items-center gap-3 px-3 py-2 text-error hover:bg-error/5 rounded-lg font-inter text-sm font-semibold transition-all" onclick="return confirm('Do you want to logout')" href="/admin/logout">
       <span class="material-symbols-outlined">logout</span>
       <span>Logout</span>
     </a>
   </div>
 </aside>
 
-<main class="lg:ml-64 pt-24 p-4 md:p-8 bg-surface min-h-screen relative z-0"  >
-  <div class="max-w-7xl mx-auto space-y-8 md:space-y-12 ">
+<main class="lg:ml-64 pt-24 p-4 md:p-8 bg-surface min-h-screen relative z-0">
+  <div class="max-w-7xl mx-auto space-y-8 md:space-y-12">
 
     <section class="w-full space-y-10 md:space-y-16 py-12 md:py-24 lg:py-320 px-4 md:px-8">
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-on-surface">Product Inventory</h1>
-          <p class="text-on-surface-variant mt-1 text-sm md:text-base">Manage your hardware catalog and stock levels.</p>
+          <p class="text-on-surface-variant mt-1 text-sm md:text-base">Manage all electronic products and stock levels.</p>
         </div>
         <div class="flex flex-wrap items-center gap-2 md:gap-3 bg-surface-container-low p-2 rounded-xl">
           <div class="relative flex-1 md:flex-none">
             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant text-sm">search</span>
-            <input class="w-full bg-surface-container-lowest border-none rounded-lg pl-9 pr-4 py-2 text-sm focus:ring-1 focus:ring-primary focus:outline-none md:w-48 transition-all" placeholder="Filter by name..." type="text"/>
+            <input
+              id="searchInput"
+              value="<%= typeof search !== 'undefined' ? search : '' %>"
+              class="w-full bg-surface-container-lowest border-none rounded-lg pl-9 pr-4 py-2 text-sm focus:ring-1 focus:ring-primary focus:outline-none md:w-48 transition-all"
+              placeholder="Filter by name..."
+              type="text"/>
           </div>
-          <select class="flex-1 md:flex-none bg-surface-container-lowest border-none rounded-lg px-4 py-2 text-sm focus:ring-1 focus:ring-primary focus:outline-none cursor-pointer">
+          <select id="categorySelect" class="flex-1 md:flex-none bg-surface-container-lowest border-none rounded-lg px-4 py-2 text-sm focus:ring-1 focus:ring-primary focus:outline-none cursor-pointer">
             <option value="">All Categories</option>
-            <option value="TELEPHONE">TELEPHONE</option>
-            <option value="ACCESSORIES">ACCESSORIES</option>
-            <option value="OTHER">OTHER</option>
+            <option value="TELEPHONE" <%= typeof productCollection !== 'undefined' && productCollection === 'TELEPHONE' ? 'selected' : '' %>>TELEPHONE</option>
+            <option value="PC" <%= typeof productCollection !== 'undefined' && productCollection === 'PC' ? 'selected' : '' %>>PC</option>
+            <option value="MACBOOKS" <%= typeof productCollection !== 'undefined' && productCollection === 'MACBOOKS' ? 'selected' : '' %>>MACBOOKS</option>
+            <option value="SMARTWATCHES" <%= typeof productCollection !== 'undefined' && productCollection === 'SMARTWATCHES' ? 'selected' : '' %>>SMARTWATCHES</option>
+            <option value="ACCESSORIES" <%= typeof productCollection !== 'undefined' && productCollection === 'ACCESSORIES' ? 'selected' : '' %>>ACCESSORIES</option>
+            <option value="OTHER" <%= typeof productCollection !== 'undefined' && productCollection === 'OTHER' ? 'selected' : '' %>>OTHER</option>
           </select>
-          <button class="bg-primary-container text-white p-2 rounded-lg hover:brightness-110 transition-all">
+          <button onclick="searchProducts()" class="bg-primary-container text-white p-2 rounded-lg hover:brightness-110 transition-all">
             <span class="material-symbols-outlined">tune</span>
           </button>
         </div>
@@ -203,98 +210,93 @@
             </thead>
             <tbody class="divide-y divide-outline-variant/5">
 
-<% if (typeof products !== 'undefined' && products.length > 0) { %>
-  <% products.forEach(function(product, index) { %>
+              <% if (typeof products !== 'undefined' && products.length > 0) { %>
+                <% products.forEach(function(product, index) { %>
 
-  <tr class="group hover:bg-surface-container-highest transition-all duration-200">
+                <tr class="group hover:bg-surface-container-highest transition-all duration-200">
 
-    <td class="px-6 py-4 text-sm font-medium text-outline">
-      <%= (index + 1).toString().padStart(2, '0') %>
-    </td>
+                  <td class="px-6 py-4 text-sm font-medium text-outline">
+                    <%= (index + 1).toString().padStart(2, '0') %>
+                  </td>
 
-    <td class="px-6 py-4">
-      <div class="flex items-center gap-3">
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-lg bg-white p-1 shadow-sm overflow-hidden flex-shrink-0">
+                        <% if (product.productImages && product.productImages.length > 0) { %>
+                          <img src="/<%= product.productImages[0] %>" class="w-full h-full object-contain"/>
+                        <% } else { %>
+                          <div class="w-full h-full flex items-center justify-center">
+                            <span class="material-symbols-outlined text-sm">image</span>
+                          </div>
+                        <% } %>
+                      </div>
+                      <span class="font-semibold whitespace-nowrap">
+                        <%= product.productName %>
+                      </span>
+                    </div>
+                  </td>
 
-        <div class="w-10 h-10 rounded-lg bg-white p-1 shadow-sm overflow-hidden flex-shrink-0">
-          <% if (product.productImages && product.productImages.length > 0) { %>
-            <img src="/<%= product.productImages[0] %>" class="w-full h-full object-contain"/>
-          <% } else { %>
-            <div class="w-full h-full flex items-center justify-center">
-              <span class="material-symbols-outlined text-sm">image</span>
-            </div>
-          <% } %>
-        </div>
+                  <td class="px-6 py-4 text-sm text-on-surface">
+                    <%= product.productBrand || '-' %>
+                  </td>
 
-        <span class="font-semibold whitespace-nowrap">
-          <%= product.productName %>
-        </span>
+                  <td class="px-6 py-4">
+                    <span class="px-3 py-1 bg-secondary-container rounded-full text-[11px] font-bold">
+                      <%= product.productCollection %>
+                    </span>
+                  </td>
 
-      </div>
-    </td>
+                  <td class="px-6 py-4">
+                    <div class="flex flex-col text-xs font-bold">
+                      <% if (product.productCollection === 'TELEPHONE' || product.productCollection === 'MACBOOKS') { %>
+                        <span>RAM: <%= product.productRam || '-' %></span>
+                        <span>Storage: <%= product.productMemory || '-' %></span>
+                      <% } else { %>
+                        <span>-</span>
+                      <% } %>
+                    </div>
+                  </td>
 
-    <td class="px-6 py-4 text-sm text-on-surface">
-      <%= product.productBrand || '-' %>
-    </td>
+                  <td class="px-6 py-4 font-bold text-primary">
+                    $<%= product.productPrice ? product.productPrice.toLocaleString() : '0' %>
+                  </td>
 
-    <td class="px-6 py-4">
-      <span class="px-3 py-1 bg-secondary-container rounded-full text-[11px] font-bold">
-        <%= product.productCollection %>
-      </span>
-    </td>
+                  <td class="px-6 py-4">
+                    <%= product.productLeftCount %>
+                  </td>
 
-    <td class="px-6 py-4">
-      <div class="flex flex-col text-xs font-bold">
-        <% if (product.productCollection === 'TELEPHONE' || product.productCollection === 'MACBOOKS') { %>
-          <span>RAM: <%= product.productRam || '-' %></span>
-          <span>Storage: <%= product.productMemory || '-' %></span>
-        <% } else { %>
-          <span>-</span>
-        <% } %>
-      </div>
-    </td>
+                  <td class="px-6 py-4">
+                    <select id="<%= product._id %>" onchange="updateProductStatus(this, event)" onclick="event.stopPropagation()"
+                      class="rounded px-2 py-1 text-xs font-bold
+                      <%= product.productStatus === 'ACTIVE' ? 'text-green-600' :
+                          product.productStatus === 'PAUSE' ? 'text-orange-500' :
+                          'text-gray-500' %>">
+                      <option value="ACTIVE" <%= product.productStatus === 'ACTIVE' ? 'selected' : '' %>>ACTIVE</option>
+                      <option value="PAUSE" <%= product.productStatus === 'PAUSE' ? 'selected' : '' %>>PAUSE</option>
+                      <option value="PROCESS" <%= product.productStatus === 'PROCESS' ? 'selected' : '' %>>PROCESS</option>
+                      <option value="DELETE" <%= product.productStatus === 'DELETE' ? 'selected' : '' %>>DELETE</option>
+                    </select>
+                  </td>
 
-    <td class="px-6 py-4 font-bold text-primary">
-      $<%= product.productPrice ? product.productPrice.toLocaleString() : '0' %>
-    </td>
+                  <td class="px-6 py-4 text-right">
+                    <span class="material-symbols-outlined">more_vert</span>
+                  </td>
 
-    <td class="px-6 py-4">
-      <%= product.productLeftCount %>
-    </td>
+                </tr>
 
-    <td class="px-6 py-4">
-      <select id="<%= product._id %>" onchange="updateProductStatus(this, event)" onclick="event.stopPropagation()"
-        class="rounded px-2 py-1 text-xs font-bold
-        <%= product.productStatus === 'ACTIVE' ? 'text-green-600' :
-            product.productStatus === 'PAUSE' ? 'text-orange-500' :
-            'text-gray-500' %>">
+                <% }); %>
 
-        <option value="ACTIVE" <%= product.productStatus === 'ACTIVE' ? 'selected' : '' %>>ACTIVE</option>
-        <option value="PAUSE" <%= product.productStatus === 'PAUSE' ? 'selected' : '' %>>PAUSE</option>
-        <option value="PROCESS" <%= product.productStatus === 'PROCESS' ? 'selected' : '' %>>PROCESS</option>
-        <option value="DELETE" <%= product.productStatus === 'DELETE' ? 'selected' : '' %>>DELETE</option>
+              <% } else { %>
 
-      </select>
-    </td>
+              <tr>
+                <td colspan="9" class="px-6 py-12 text-center text-on-surface-variant font-medium">
+                  No products found in the catalog
+                </td>
+              </tr>
 
-    <td class="px-6 py-4 text-right">
-      <span class="material-symbols-outlined">more_vert</span>
-    </td>
+              <% } %>
 
-  </tr>
-
-  <% }); %>
-
-<% } else { %>
-
-<tr>
-  <td colspan="9" class="px-6 py-12 text-center text-on-surface-variant font-medium">
-    No products found in the catalog
-  </td>
-</tr>
-
-<% } %>
-
-</tbody>
+            </tbody>
           </table>
         </div>
         <div class="p-4 border-t border-outline-variant/10 text-xs text-on-surface-variant flex justify-between items-center bg-white/20">
@@ -316,7 +318,7 @@
             </div>
             <div>
               <h2 class="text-xl md:text-2xl font-black text-on-surface tracking-tight">Create New Product</h2>
-              <p class="text-sm text-on-surface-variant">Add a new item to your digital store catalog.</p>
+              <p class="text-sm text-on-surface-variant">List a new electronic device or accessory in the store.</p>
             </div>
           </div>
           <form action="/admin/product/create" method="POST" enctype="multipart/form-data" class="space-y-6" onsubmit="return validateForm()">
@@ -326,9 +328,9 @@
                 <input name="productName" class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:outline-none transition-all" placeholder="e.g. Galaxy S24 Ultra" required type="text"/>
               </div>
               <div class="space-y-2">
-  <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider px-1">Brand</label>
-  <input name="productBrand" class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:outline-none transition-all" placeholder="e.g. Samsung" required type="text"/>
-</div>
+                <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider px-1">Brand</label>
+                <input name="productBrand" class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:outline-none transition-all" placeholder="e.g. Samsung" required type="text"/>
+              </div>
               <div class="space-y-2">
                 <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider px-1">Category</label>
                 <select name="productCollection" id="productCollection" onchange="toggleSpecs()" class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:outline-none cursor-pointer">
@@ -344,7 +346,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div class="space-y-2">
                 <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider px-1">Price ($)</label>
-                <input name="productPrice" class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:outline-none transition-all" placeholder="0.00" required step="0.01" type="number"/>
+                <input name="productPrice" class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:outline-none transition-all" placeholder="0.00" required type="number"/>
               </div>
               <div class="space-y-2">
                 <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider px-1">Initial Stock</label>
@@ -403,9 +405,9 @@
       <div class="space-y-8">
         <div class="bg-primary rounded-3xl p-6 text-white shadow-xl shadow-primary/20 relative overflow-hidden">
           <div class="relative z-10">
-            <h3 class="text-sm font-bold uppercase tracking-wider opacity-80">Catalog Growth</h3>
+            <h3 class="text-sm font-bold uppercase tracking-wider opacity-80">Sales Growth</h3>
             <div class="text-3xl md:text-4xl font-black mt-2">+12.4%</div>
-            <p class="text-xs mt-4 opacity-90 leading-relaxed">Inventory has expanded significantly this quarter with 145 new SKU entries.</p>
+            <p class="text-xs mt-4 opacity-90 leading-relaxed">Our electronics catalog is growing fast — new smartphones, accessories and gadgets added weekly.</p>
           </div>
           <div class="absolute -right-8 -bottom-8 opacity-10">
             <span class="material-symbols-outlined text-[120px]">analytics</span>
@@ -418,14 +420,25 @@
 </main>
 
 <script>
+  function searchProducts() {
+    var search = document.getElementById('searchInput').value.trim();
+    var category = document.getElementById('categorySelect').value;
+    var url = '/admin/product/all?';
+    if (search) url += 'search=' + encodeURIComponent(search) + '&';
+    if (category) url += 'productCollection=' + encodeURIComponent(category);
+    window.location.href = url;
+  }
+
+  document.getElementById('searchInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') searchProducts();
+  });
+
   function showProductForm() {
     var section = document.getElementById('product-form-section');
     section.classList.remove('hidden');
     document.getElementById('sidebar').classList.add('closed');
     document.getElementById('sidebar-overlay').classList.add('hidden');
-    
     toggleSpecs();
-    
     setTimeout(function() {
       section.scrollIntoView({ behavior: 'smooth' });
     }, 300);
@@ -442,8 +455,7 @@
     const specsBlock = document.getElementById('telephone-specs');
     const ramInput = document.querySelector('input[name="productRam"]');
     const memoryInput = document.querySelector('input[name="productMemory"]');
-
-    if (category === 'TELEPHONE' || category === 'MACBOOKS' ) {
+    if (category === 'TELEPHONE' || category === 'MACBOOKS') {
       specsBlock.classList.remove('hidden');
       ramInput.disabled = false;
       memoryInput.disabled = false;
@@ -456,26 +468,25 @@
     }
   }
 
-function updateProductStatus(select, event) {
-  if (event) event.preventDefault();
+  function updateProductStatus(select, event) {
+    if (event) event.preventDefault();
+    const productId = select.id;
+    const newStatus = select.value;
+    fetch(`/admin/product/${productId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productStatus: newStatus })
+    })
+    .then(res => {
+      if (!res.ok) {
+        alert('Status update failed');
+      } else {
+        console.log("updated");
+      }
+    })
+    .catch(err => console.error(err));
+  }
 
-  const productId = select.id;
-  const newStatus = select.value;
-
-  fetch(`/admin/product/${productId}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ productStatus: newStatus })
-  })
-  .then(res => {
-    if (!res.ok) {
-      alert('Status update failed');
-    } else {
-      console.log("updated");
-    }
-  })
-  .catch(err => console.error(err));
-}
   function validateForm() {
     var name = document.querySelector('[name="productName"]').value.trim();
     var brand = document.querySelector('[name="productBrand"]').value.trim();
@@ -517,3 +528,5 @@ function updateProductStatus(select, event) {
 </html>
 
 <%- include('includes/footer') %>
+
+

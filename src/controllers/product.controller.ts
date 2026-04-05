@@ -125,24 +125,34 @@ productController.likeProduct = async (req: ExtendedRequest, res: Response) => {
 
 /** SSR */
 
-productController.getAllProducts = async (
-  req: Request,
-  res: Response
-) => {
+productController.getAllProducts = async (req: Request, res: Response) => {
   try {
     console.log("getAllProducts");
+    console.log("query:", req.query);
+    
+    console.log("getAllProducts");
+    console.log("query:", req.query);  // ← shu log bor mi?
+    console.log("search:", req.query.search);
+    console.log("productCollection:", req.query.productCollection);
+    
+    const { search, productCollection } = req.query;
 
-    const data = await productService.getAllProducts();
+    const inquiry: any = {};
+    if (search) inquiry.search = String(search);
+    if (productCollection) inquiry.productCollection = String(productCollection);
 
-    console.log("products count:", data);
+    const data = await productService.getAllProducts(inquiry);
 
-    // 🔥 EJS render
     res.render("products", {
-      products: data
+      products: data,
+      search: search || '',
+      productCollection: productCollection || ''
     });
 
   } catch (err) {
     console.log("Error, getAllProducts", err);
+    if (err instanceof Errors) res.status(err.code).json(err);
+    else res.status(Errors.standard.code).json(Errors.standard);
   }
 };
 

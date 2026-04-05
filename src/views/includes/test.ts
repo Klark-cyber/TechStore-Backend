@@ -1,0 +1,535 @@
+// <!-- <%- include('includes/header') %>
+
+// <!DOCTYPE html>
+// <html class="light scroll-smooth" lang="en">
+// <head>
+// <meta charset="utf-8"/>
+// <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+// <title>TechStore</title>
+// <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+// <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+// <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+// <script id="tailwind-config">
+//   tailwind.config = {
+//     darkMode: "class",
+//     theme: {
+//       extend: {
+//         colors: {
+//           "surface-dim": "#d2d9f4",
+//           "on-primary-fixed": "#001849",
+//           "inverse-surface": "#283044",
+//           "tertiary-fixed-dim": "#ffb59d",
+//           "on-secondary-container": "#294487",
+//           "surface": "#faf8ff",
+//           "secondary-container": "#9bb4fe",
+//           "secondary": "#425ca0",
+//           "surface-container-lowest": "#ffffff",
+//           "on-tertiary": "#ffffff",
+//           "on-background": "#131b2e",
+//           "error": "#ba1a1a",
+//           "secondary-fixed": "#dae1ff",
+//           "surface-container-high": "#e2e7ff",
+//           "on-secondary": "#ffffff",
+//           "secondary-fixed-dim": "#b3c5ff",
+//           "on-tertiary-fixed": "#390c00",
+//           "inverse-primary": "#b3c5ff",
+//           "error-container": "#ffdad6",
+//           "on-primary": "#ffffff",
+//           "surface-container-highest": "#dae2fd",
+//           "surface-bright": "#faf8ff",
+//           "primary-container": "#0066ff",
+//           "primary-fixed": "#dae1ff",
+//           "inverse-on-surface": "#eef0ff",
+//           "outline": "#727687",
+//           "on-surface-variant": "#424656",
+//           "on-secondary-fixed-variant": "#284386",
+//           "on-surface": "#131b2e",
+//           "on-secondary-fixed": "#001849",
+//           "on-tertiary-container": "#fff6f4",
+//           "on-primary-container": "#f8f7ff",
+//           "primary-fixed-dim": "#b3c5ff",
+//           "tertiary": "#a33200",
+//           "outline-variant": "#c2c6d8",
+//           "primary": "#0050cb",
+//           "background": "#faf8ff",
+//           "on-error": "#ffffff",
+//           "tertiary-container": "#cc4204",
+//           "on-error-container": "#93000a",
+//           "surface-container-low": "#f2f3ff",
+//           "on-tertiary-fixed-variant": "#832600",
+//           "tertiary-fixed": "#ffdbd0",
+//           "on-primary-fixed-variant": "#003fa4",
+//           "surface-variant": "#dae2fd",
+//           "surface-container": "#eaedff",
+//           "surface-tint": "#0054d6"
+//         },
+//         borderRadius: {
+//           DEFAULT: "0.25rem",
+//           lg: "0.5rem",
+//           xl: "0.75rem",
+//           full: "9999px"
+//         },
+//         fontFamily: {
+//           headline: ["Inter"],
+//           body: ["Inter"],
+//           label: ["Inter"]
+//         }
+//       }
+//     }
+//   }
+// </script>
+// <style>
+//   .material-symbols-outlined {
+//     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+//     vertical-align: middle;
+//   }
+//   body { font-family: 'Inter', sans-serif; }
+//   .glass-nav {
+//     background: rgba(255, 255, 255, 0.8);
+//     backdrop-filter: blur(12px);
+//     -webkit-backdrop-filter: blur(12px);
+//   }
+//   #sidebar { transition: transform 0.3s ease-in-out; }
+//   @media (max-width: 1023.9px) {
+//     #sidebar.closed { transform: translateX(-100%); }
+//   }
+// </style>
+// </head>
+// <body class="bg-surface text-on-surface min-h-screen overflow-x-hidden">
+
+// <header class="fixed top-0 w-full z-[100] glass-nav shadow-[0_0_32px_0_rgba(19,27,46,0.06)] flex justify-between items-center px-4 md:px-8 h-16">
+//   <div class="flex items-center gap-4 md:gap-8">
+//     <button class="lg:hidden p-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all"
+//       onclick="document.getElementById('sidebar').classList.toggle('closed'); document.getElementById('sidebar-overlay').classList.toggle('hidden');">
+//       <span class="material-symbols-outlined">menu</span>
+//     </button>
+//     <span class="text-lg md:text-xl font-bold tracking-tighter text-slate-900 whitespace-nowrap">TechStore Admin</span>
+//    <nav class="bg-white border-b border-outline fixed top-0 w-full z-50 flex justify-between items-center px-20 h-16">
+//   <div class="text-xl font-bold text-slate-900 tracking-tight">TechStore Admin</div>
+//   <div class="hidden md:flex items-center gap-8">
+//     <a class="text-on-surface-variant font-medium hover:text-primary transition-colors" href="/admin/">Home</a>
+//     <a class="text-primary font-bold border-b-2 border-primary" href="/admin/product/all">Menu</a>
+//     <a class="text-on-surface-variant font-medium hover:text-primary transition-colors" href="/admin/user/all">Users</a>
+//     <a class="text-on-surface-variant font-medium hover:text-primary transition-colors"
+//       href="/admin/logout"
+//       onclick="return confirm('Do you really want to logout?')">Logout</a>
+//   </div>
+ 
+// </nav>
+//   </div>
+//   <div class="flex items-center gap-2 md:gap-4">
+//     <div class="relative hidden lg:block">
+//     </div>
+//   </div>
+// </header>
+
+// <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 hidden lg:hidden" id="sidebar-overlay"
+//   onclick="document.getElementById('sidebar').classList.add('closed'); this.classList.add('hidden');"></div>
+
+// <aside class="h-screen w-64 fixed left-0 top-0 bg-white flex flex-col p-4 gap-2 z-[90] lg:z-40 pt-6 lg:pt-20 shadow-xl lg:shadow-none closed lg:translate-x-0" id="sidebar">
+//   <div class="mb-8 px-2 flex justify-between items-center">
+//     <div class="flex items-center gap-3">
+//       <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white">
+//         <span class="material-symbols-outlined">bolt</span>
+//       </div>
+//       <div>
+//         <h2 class="text-lg font-black text-slate-900 leading-none">TechStore</h2>
+//         <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mt-1">Management Portal</p>
+//       </div>
+//     </div>
+//     <button class="lg:hidden p-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg"
+//       onclick="document.getElementById('sidebar').classList.add('closed'); document.getElementById('sidebar-overlay').classList.add('hidden');">
+//       <span class="material-symbols-outlined">close</span>
+//     </button>
+//   </div>
+//   <div class="mt-auto flex flex-col gap-1">
+//     <button
+//       class="w-full bg-primary text-white font-bold py-3 rounded-lg text-sm mb-4 shadow-lg shadow-primary/20 hover:scale-[0.98] active:opacity-80 transition-all"
+//       onclick="showProductForm()">
+//       Add New Product
+//     </button>
+//     <a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-200/50 rounded-lg font-inter text-sm font-semibold transition-all" href="#">
+//       <span class="material-symbols-outlined">help</span>
+//       <span>Help Center</span>
+//     </a>
+//     <a class="flex items-center gap-3 px-3 py-2 text-error hover:bg-error/5 rounded-lg font-inter text-sm font-semibold transition-all" href="/admin/logout">
+//       <span class="material-symbols-outlined">logout</span>
+//       <span>Logout</span>
+//     </a>
+//   </div>
+// </aside>
+
+// <main class="lg:ml-64 pt-24 p-4 md:p-8 bg-surface min-h-screen relative z-0"  >
+//   <div class="max-w-7xl mx-auto space-y-8 md:space-y-12 ">
+
+//     <section class="w-full space-y-10 md:space-y-16 py-12 md:py-24 lg:py-320 px-4 md:px-8">
+//       <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+//         <div>
+//           <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-on-surface">Product Inventory</h1>
+//           <p class="text-on-surface-variant mt-1 text-sm md:text-base">Manage all electronic products and stock levels.</p>
+//         </div>
+//         <div class="flex flex-wrap items-center gap-2 md:gap-3 bg-surface-container-low p-2 rounded-xl">
+//           <div class="relative flex-1 md:flex-none">
+//             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant text-sm">search</span>
+//             <input id="searchInput" value="<%= typeof search !== 'undefined' ? search : '' %>" class="w-full bg-surface-container-lowest border-none rounded-lg pl-9 pr-4 py-2 text-sm focus:ring-1 focus:ring-primary focus:outline-none md:w-48 transition-all" placeholder="Filter by name..." type="text"/>
+//           </div>
+//           <select id="categorySelect" class="flex-1 md:flex-none bg-surface-container-lowest border-none rounded-lg px-4 py-2 text-sm focus:ring-1 focus:ring-primary focus:outline-none cursor-pointer">
+//   <option value="">All Categories</option>
+//   <option value="TELEPHONE" <%= typeof productCollection !== 'undefined' && productCollection === 'TELEPHONE' ? 'selected' : '' %>>TELEPHONE</option>
+//   <option value="PC" <%= typeof productCollection !== 'undefined' && productCollection === 'PC' ? 'selected' : '' %>>PC</option>
+//   <option value="MACBOOKS" <%= typeof productCollection !== 'undefined' && productCollection === 'MACBOOKS' ? 'selected' : '' %>>MACBOOKS</option>
+//   <option value="SMARTWATCHES" <%= typeof productCollection !== 'undefined' && productCollection === 'SMARTWATCHES' ? 'selected' : '' %>>SMARTWATCHES</option>
+//   <option value="ACCESSORIES" <%= typeof productCollection !== 'undefined' && productCollection === 'ACCESSORIES' ? 'selected' : '' %>>ACCESSORIES</option>
+//   <option value="OTHER" <%= typeof productCollection !== 'undefined' && productCollection === 'OTHER' ? 'selected' : '' %>>OTHER</option>
+// </select>
+// <button onclick="searchProducts()" class="bg-primary-container text-white p-2 rounded-lg hover:brightness-110 transition-all">
+//   <span class="material-symbols-outlined">tune</span>
+// </button>
+//         </div>
+//       </div>
+
+//       <div class="bg-surface-container-low rounded-2xl shadow-sm border border-outline-variant/10">
+//         <div class="overflow-x-auto">
+//           <table class="w-full text-left border-collapse min-w-[800px]">
+//             <thead>
+//               <tr class="bg-surface-container-highest/50 border-b border-outline-variant/10">
+//                 <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant">No</th>
+//                 <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant">Product Name</th>
+//                 <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant">Brand</th>
+//                 <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant">Category</th>
+//                 <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant">Specs</th>
+//                 <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant">Price</th>
+//                 <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant">Stock</th>
+//                 <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant">Status</th>
+//                 <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant"></th>
+//               </tr>
+//             </thead>
+//             <tbody class="divide-y divide-outline-variant/5">
+
+// <% if (typeof products !== 'undefined' && products.length > 0) { %>
+//   <% products.forEach(function(product, index) { %>
+
+//   <tr class="group hover:bg-surface-container-highest transition-all duration-200">
+
+//     <td class="px-6 py-4 text-sm font-medium text-outline">
+//       <%= (index + 1).toString().padStart(2, '0') %>
+//     </td>
+
+//     <td class="px-6 py-4">
+//       <div class="flex items-center gap-3">
+
+//         <div class="w-10 h-10 rounded-lg bg-white p-1 shadow-sm overflow-hidden flex-shrink-0">
+//           <% if (product.productImages && product.productImages.length > 0) { %>
+//             <img src="/<%= product.productImages[0] %>" class="w-full h-full object-contain"/>
+//           <% } else { %>
+//             <div class="w-full h-full flex items-center justify-center">
+//               <span class="material-symbols-outlined text-sm">image</span>
+//             </div>
+//           <% } %>
+//         </div>
+
+//         <span class="font-semibold whitespace-nowrap">
+//           <%= product.productName %>
+//         </span>
+
+//       </div>
+//     </td>
+
+//     <td class="px-6 py-4 text-sm text-on-surface">
+//       <%= product.productBrand || '-' %>
+//     </td>
+
+//     <td class="px-6 py-4">
+//       <span class="px-3 py-1 bg-secondary-container rounded-full text-[11px] font-bold">
+//         <%= product.productCollection %>
+//       </span>
+//     </td>
+
+//     <td class="px-6 py-4">
+//       <div class="flex flex-col text-xs font-bold">
+//         <% if (product.productCollection === 'TELEPHONE' || product.productCollection === 'MACBOOKS') { %>
+//           <span>RAM: <%= product.productRam || '-' %></span>
+//           <span>Storage: <%= product.productMemory || '-' %></span>
+//         <% } else { %>
+//           <span>-</span>
+//         <% } %>
+//       </div>
+//     </td>
+
+//     <td class="px-6 py-4 font-bold text-primary">
+//       $<%= product.productPrice ? product.productPrice.toLocaleString() : '0' %>
+//     </td>
+
+//     <td class="px-6 py-4">
+//       <%= product.productLeftCount %>
+//     </td>
+
+//     <td class="px-6 py-4">
+//       <select id="<%= product._id %>" onchange="updateProductStatus(this, event)" onclick="event.stopPropagation()"
+//         class="rounded px-2 py-1 text-xs font-bold
+//         <%= product.productStatus === 'ACTIVE' ? 'text-green-600' :
+//             product.productStatus === 'PAUSE' ? 'text-orange-500' :
+//             'text-gray-500' %>">
+
+//         <option value="ACTIVE" <%= product.productStatus === 'ACTIVE' ? 'selected' : '' %>>ACTIVE</option>
+//         <option value="PAUSE" <%= product.productStatus === 'PAUSE' ? 'selected' : '' %>>PAUSE</option>
+//         <option value="PROCESS" <%= product.productStatus === 'PROCESS' ? 'selected' : '' %>>PROCESS</option>
+//         <option value="DELETE" <%= product.productStatus === 'DELETE' ? 'selected' : '' %>>DELETE</option>
+
+//       </select>
+//     </td>
+
+//     <td class="px-6 py-4 text-right">
+//       <span class="material-symbols-outlined">more_vert</span>
+//     </td>
+
+//   </tr>
+
+//   <% }); %>
+
+// <% } else { %>
+
+// <tr>
+//   <td colspan="9" class="px-6 py-12 text-center text-on-surface-variant font-medium">
+//     No products found in the catalog
+//   </td>
+// </tr>
+
+// <% } %>
+
+// </tbody>
+//           </table>
+//         </div>
+//         <div class="p-4 border-t border-outline-variant/10 text-xs text-on-surface-variant flex justify-between items-center bg-white/20">
+//           <span>Showing <%= typeof products !== 'undefined' ? products.length : 0 %> products</span>
+//           <div class="flex gap-2">
+//             <button class="p-1 px-2 rounded hover:bg-surface-container-highest disabled:opacity-50" disabled>Previous</button>
+//             <button class="p-1 px-2 rounded hover:bg-surface-container-highest disabled:opacity-50" disabled>Next</button>
+//           </div>
+//         </div>
+//       </div>
+//     </section>
+
+//     <section class="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-20 hidden" id="product-form-section">
+//       <div class="lg:col-span-2">
+//         <div class="bg-surface-container-low rounded-3xl p-6 md:p-8 shadow-[0_0_32px_0_rgba(19,27,46,0.04)] border border-white">
+//           <div class="flex items-center gap-3 mb-8">
+//             <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+//               <span class="material-symbols-outlined">add_circle</span>
+//             </div>
+//             <div>
+//               <h2 class="text-xl md:text-2xl font-black text-on-surface tracking-tight">Create New Product</h2>
+//               <p class="text-sm text-on-surface-variant">List a new electronic device or accessory in the store.</p>
+//             </div>
+//           </div>
+//           <form action="/admin/product/create" method="POST" enctype="multipart/form-data" class="space-y-6" onsubmit="return validateForm()">
+//             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+//               <div class="space-y-2">
+//                 <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider px-1">Product Name</label>
+//                 <input name="productName" class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:outline-none transition-all" placeholder="e.g. Galaxy S24 Ultra" required type="text"/>
+//               </div>
+//               <div class="space-y-2">
+//   <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider px-1">Brand</label>
+//   <input name="productBrand" class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:outline-none transition-all" placeholder="e.g. Samsung" required type="text"/>
+// </div>
+//               <div class="space-y-2">
+//                 <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider px-1">Category</label>
+//                 <select name="productCollection" id="productCollection" onchange="toggleSpecs()" class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:outline-none cursor-pointer">
+//                   <option value="TELEPHONE">TELEPHONE</option>
+//                   <option value="PC">PC</option>
+//                   <option value="MACBOOKS">MACBOOKS</option>
+//                   <option value="SMARTWATCHES">SMARTWATCHES</option>
+//                   <option value="ACCESSORIES">ACCESSORIES</option>
+//                   <option value="OTHER">OTHER</option>
+//                 </select>
+//               </div>
+//             </div>
+//             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+//               <div class="space-y-2">
+//                 <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider px-1">Price ($)</label>
+//                 <input name="productPrice" class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:outline-none transition-all" placeholder="0.00" required type="number"/>
+//               </div>
+//               <div class="space-y-2">
+//                 <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider px-1">Initial Stock</label>
+//                 <input name="productLeftCount" class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:outline-none transition-all" placeholder="0" required type="number"/>
+//               </div>
+//             </div>
+
+//             <div id="telephone-specs" class="p-4 md:p-6 bg-primary/5 rounded-2xl border border-primary/10 space-y-4">
+//               <div class="flex items-center gap-2 mb-2">
+//                 <span class="material-symbols-outlined text-primary text-sm">settings_input_component</span>
+//                 <h3 class="text-sm font-bold text-primary uppercase tracking-widest">Product Specifications</h3>
+//               </div>
+//               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+//                 <div class="space-y-2">
+//                   <label class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter">RAM (GB)</label>
+//                   <input name="productRam" class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:outline-none transition-all" type="number" placeholder="e.g. 8"/>
+//                 </div>
+//                 <div class="space-y-2">
+//                   <label class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter">Storage (GB)</label>
+//                   <input name="productMemory" class="w-full bg-white border-none rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-primary" type="number" placeholder="e.g. 128"/>
+//                 </div>
+//               </div>
+//             </div>
+
+//             <div class="space-y-2">
+//               <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider px-1">Description</label>
+//               <textarea name="productDesc" class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:outline-none transition-all resize-none" placeholder="Describe the key features and benefits..." rows="4"></textarea>
+//             </div>
+
+//             <div class="space-y-2">
+//               <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider px-1">Product Images</label>
+//               <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+//                 <% for(let i = 1; i <= 5; i++) { %>
+//                 <div class="aspect-square bg-surface-container-highest rounded-xl border-2 border-dashed border-outline-variant flex flex-col items-center justify-center text-outline-variant hover:border-primary hover:text-primary transition-all cursor-pointer relative overflow-hidden">
+//                   <span class="material-symbols-outlined text-3xl">add_a_photo</span>
+//                   <span class="text-[10px] font-bold mt-1">Upload</span>
+//                   <input type="file" name="productImages" class="absolute inset-0 opacity-0 cursor-pointer" onchange="previewFileHandler(this, <%= i %>)"/>
+//                 </div>
+//                 <% } %>
+//               </div>
+//             </div>
+
+//             <div class="flex flex-col sm:flex-row gap-4">
+//               <button class="flex-1 bg-gradient-to-r from-primary to-blue-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/30 hover:shadow-primary/40 active:scale-[0.99] transition-all" type="submit">
+//                 Create Product Entry
+//               </button>
+//               <button class="sm:px-8 py-4 bg-surface-container-high text-on-surface-variant font-bold rounded-xl hover:bg-surface-container-highest transition-all" type="button"
+//                 onclick="hideProductForm()">
+//                 Cancel
+//               </button>
+//             </div>
+//           </form>
+//         </div>
+//       </div>
+
+//       <div class="space-y-8">
+//         <div class="bg-primary rounded-3xl p-6 text-white shadow-xl shadow-primary/20 relative overflow-hidden">
+//           <div class="relative z-10">
+//             <h3 class="text-sm font-bold uppercase tracking-wider opacity-80">Sales Growth</h3>
+//             <div class="text-3xl md:text-4xl font-black mt-2">+12.4%</div>
+//             <p class="text-xs mt-4 opacity-90 leading-relaxed">Our electronics catalog is growing fast — new smartphones, accessories and gadgets added weekly.</p>
+//           </div>
+//           <div class="absolute -right-8 -bottom-8 opacity-10">
+//             <span class="material-symbols-outlined text-[120px]">analytics</span>
+//           </div>
+//         </div>
+//       </div>
+//     </section>
+
+//   </div>
+// </main>
+
+// <script>
+//   function showProductForm() {
+//     var section = document.getElementById('product-form-section');
+//     section.classList.remove('hidden');
+//     document.getElementById('sidebar').classList.add('closed');
+//     document.getElementById('sidebar-overlay').classList.add('hidden');
+    
+//     toggleSpecs();
+    
+//     setTimeout(function() {
+//       section.scrollIntoView({ behavior: 'smooth' });
+//     }, 300);
+//   }
+
+//   function hideProductForm() {
+//     var section = document.getElementById('product-form-section');
+//     section.classList.add('hidden');
+//     window.scrollTo({ top: 0, behavior: 'smooth' });
+//   }
+
+//   function toggleSpecs() {
+//     const category = document.getElementById('productCollection').value;
+//     const specsBlock = document.getElementById('telephone-specs');
+//     const ramInput = document.querySelector('input[name="productRam"]');
+//     const memoryInput = document.querySelector('input[name="productMemory"]');
+
+//     if (category === 'TELEPHONE' || category === 'MACBOOKS' ) {
+//       specsBlock.classList.remove('hidden');
+//       ramInput.disabled = false;
+//       memoryInput.disabled = false;
+//     } else {
+//       specsBlock.classList.add('hidden');
+//       ramInput.value = '';
+//       memoryInput.value = '';
+//       ramInput.disabled = true;
+//       memoryInput.disabled = true;
+//     }
+//   }
+
+// function updateProductStatus(select, event) {
+//   if (event) event.preventDefault();
+
+//   const productId = select.id;
+//   const newStatus = select.value;
+
+//   fetch(`/admin/product/${productId}`, {
+//     method: 'POST',
+//     headers: { 'Content-Type': 'application/json' },
+//     body: JSON.stringify({ productStatus: newStatus })
+//   })
+//   .then(res => {
+//     if (!res.ok) {
+//       alert('Status update failed');
+//     } else {
+//       console.log("updated");
+//     }
+//   })
+//   .catch(err => console.error(err));
+// }
+//   function validateForm() {
+//     var name = document.querySelector('[name="productName"]').value.trim();
+//     var brand = document.querySelector('[name="productBrand"]').value.trim();
+//     var price = document.querySelector('[name="productPrice"]').value;
+//     var stock = document.querySelector('[name="productLeftCount"]').value;
+//     if (!name || !brand || !price || !stock) {
+//       alert('Please fill in all required fields');
+//       return false;
+//     }
+//     return true;
+//   }
+
+//   function searchProducts() {
+//   var search = document.getElementById('searchInput').value.trim();
+//   var category = document.getElementById('categorySelect').value;
+//   var url = '/admin/product/all?';
+//   if (search) url += 'search=' + encodeURIComponent(search) + '&';
+//   if (category) url += 'productCollection=' + encodeURIComponent(category);
+//   window.location.href = url;
+// }
+
+// document.getElementById('searchInput').addEventListener('keydown', function(e) {
+//   if (e.key === 'Enter') searchProducts();
+// });
+
+//   function previewFileHandler(input, num) {
+//     if (input.files && input.files[0]) {
+//       var reader = new FileReader();
+//       reader.onload = function(e) {
+//         var box = input.parentElement;
+//         box.style.backgroundImage = 'url(' + e.target.result + ')';
+//         box.style.backgroundSize = 'cover';
+//         box.style.backgroundPosition = 'center';
+//         var icon = box.querySelector('.material-symbols-outlined');
+//         if (icon) icon.style.display = 'none';
+//         var label = box.querySelector('span.text-\\[10px\\]');
+//         if (label) label.style.display = 'none';
+//       };
+//       reader.readAsDataURL(input.files[0]);
+//     }
+//   }
+
+//   var tableContainer = document.querySelector('.overflow-x-auto');
+//   if (tableContainer) {
+//     tableContainer.addEventListener('scroll', function() {
+//       this.classList.toggle('shadow-inner', this.scrollLeft > 0);
+//     });
+//   }
+// </script>
+
+// </body>
+// </html>
+
+// <%- include('includes/footer') %> -->

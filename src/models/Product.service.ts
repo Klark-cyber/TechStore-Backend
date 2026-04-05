@@ -162,46 +162,42 @@ public async likeProduct(memberId: ObjectId, productId: string): Promise<void> {
 
     /** SSR */
 
-public async getAllProducts(): Promise<Product[]> {
+public async getAllProducts(inquiry?: { search?: string; productCollection?: string }): Promise<any[]> {
+  try {
+    console.log("getAllProducts service");
+    console.log("inquiry:", inquiry);  // ← bu bor
 
-  const result = await this.productModel
-    .aggregate([
-      // 🔥 faqat active productlar
-      {
-        $match: {
-        }
-      },
+    const match: any = {
+      productStatus: { $ne: "DELETE" }
+    };
 
-      // 🔥 TELEPHONE uchun specs yasaymiz
-      {
-        $addFields: {
-          productSpecs: {
-            $cond: [
-              { $eq: ["$productCollection", "TELEPHONE"] },
-              { $concat: [
-            { $toString: "$productRam" },
-            "/",
-            { $toString: "$productMemory" }
-          ] },
-              "-"
-            ]
-          }
-        }
-      },
+    if (inquiry?.search) {
+      match.$or = [
+        { productName: { $regex: inquiry.search, $options: 'i' } },
+        { productBrand: { $regex: inquiry.search, $options: 'i' } }
+      ];
+    }
 
-      // 🔥 eng yangilari tepada
-      {
-        $sort: { createdAt: -1 }
-      }
-    ])
-    .exec();
+    if (inquiry?.productCollection) {
+      match.productCollection = inquiry.productCollection;
+    }
 
-  // ❗ MUHIM: [] ni ham tekshiramiz
-  if (!result || result.length === 0) {
-    throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+    console.log("match:", JSON.stringify(match));  // ← qo'shing
+    
+    const result = await this.productModel
+      .find(match)
+      .sort({ createdAt: -1 })
+      .lean()
+      .exec();
+
+    console.log("result count:", result.length);  // ← qo'shing
+
+    return result as unknown as any[];
+
+  } catch (err) {
+    console.log("Error, getAllProducts service", err);
+    throw new Errors(HttpCode.INTERNAL_SERVER_ERROR, Message.SOMETHING_WENT_WRONG);
   }
-
-  return result;
 }
 
 
