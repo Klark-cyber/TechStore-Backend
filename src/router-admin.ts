@@ -43,6 +43,6 @@ routerAdmin.post("/product/:id",
 
     /* User */ //Bu yerda admin userga tegishli malumotni ozgartira oladi
 routerAdmin.get("/user/all", restaurantController.verifyRestaurant, restaurantController.getUsers)
-routerAdmin.post("/user/edit", restaurantController.verifyRestaurant, restaurantController.updateChosenUser)
+routerAdmin.post("/user/edit",  restaurantController.updateChosenUser) //restaurantController.verifyRestaurant,
 
 export default routerAdmin

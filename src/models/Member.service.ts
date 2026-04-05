@@ -206,26 +206,21 @@ public async addUserPoint(
 
  public async processSignup(input: MemberInput): Promise<Member> {
   try {
-    // 🔥 VALIDATION
     if (!input.memberNick || !input.memberPassword) {
-      throw new Errors(
-        HttpCode.BAD_REQUEST,
-        Message.NICK_PASSWORD_REQUIRED
-      );
+      throw new Errors(HttpCode.BAD_REQUEST, Message.NICK_PASSWORD_REQUIRED);
     }
 
-    // 🔥 PASSWORD HASH
+    // ✅ Duplicate tekshiruv
+    const existing = await this.memberModel.findOne({ memberNick: input.memberNick });
+    if (existing) {
+      throw new Errors(HttpCode.BAD_REQUEST, Message.USED_NICK_PHONE);
+    }
+
     const salt = await bcrypt.genSalt(10);
-    input.memberPassword = await bcrypt.hash(
-      input.memberPassword,
-      salt
-    );
+    input.memberPassword = await bcrypt.hash(input.memberPassword, salt);
 
     const result = await this.memberModel.create(input);
-
     const member = result.toObject();
-
-    // 🔥 PASSWORDNI OLIB TASHLAYMIZ
     delete member.memberPassword;
 
     return member;
@@ -233,13 +228,11 @@ public async addUserPoint(
   } catch (err) {
     console.log("Error, processSignup", err);
 
-    throw new Errors(
-      HttpCode.BAD_REQUEST,
-      Message.USED_NICK_PHONE
-    );
+    if (err instanceof Errors) throw err; // ✅ Errors ni qayta tashla
+    throw new Errors(HttpCode.BAD_REQUEST, Message.USED_NICK_PHONE);
   }
 }
-   public async processLogin(input: LoginInput): Promise<Member> {
+public async processLogin(input: LoginInput): Promise<Member> {
     console.log("Qidirilayotgan nick:", input.memberNick);
     
     const member = await this.memberModel
@@ -277,11 +270,10 @@ console.log(member)
 }
 
 
-   public async getUsers(): Promise<Member[]> {
+  public async getUsers(): Promise<Member[]> {
   const result = await this.memberModel
     .find({
       memberType: MemberType.USER,
-      memberStatus: { $ne: MemberStatus.DELETE },
     })
     // .lean()
     .exec();
