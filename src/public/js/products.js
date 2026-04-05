@@ -1,102 +1,102 @@
-console.log("Products frontend javascript file");
+ function searchProducts() {
+    var search = document.getElementById('searchInput').value.trim();
+    var category = document.getElementById('categorySelect').value;
+    var url = '/admin/product/all?';
+    if (search) url += 'search=' + encodeURIComponent(search) + '&';
+    if (category) url += 'productCollection=' + encodeURIComponent(category);
+    window.location.href = url;
+  }
 
-$(function(){
-    $(".product-collection").on("change", () => {
-        const selectedValue = $(".product-collection").val();
-        if(selectedValue === "DRINK"){
-            $("#product-volume").show(); //product-volumeni korsat
-            $("#product-collection").hide(); //product-collection yashir
-        }else{
-             $("#product-collection").show(); //product-collectionni korsat
-            $("#product-volume").hide(); //product-volumeni yashir            
-        }
-    });
-// New product bosilganda nutton yoqolib product qoshish uchun oynani hosil qilish
-    $("#process-btn").on("click", () => {
-    $(".dish-container").slideToggle(500);
-    $("#process-btn").css("display", "none")
-});
-//Cancelni bosganda New product button paydo bolib productni qoshish oynasi yopilsin
-    $("#cancel-btn").on("click", () => {
-    $(".dish-container").slideToggle(100);
-    $("#process-btn").css("display", "flex")
-});
+  document.getElementById('searchInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') searchProducts();
+  });
 
-$(".new-product-status").on("change", async function (e) {
-    const id = e.target.id;
-    const productStatus = $(`#${id}.new-product-status`).val();
-    console.log("id:", id);
-    console.log("productStatus:", productStatus);
+  function showProductForm() {
+    var section = document.getElementById('product-form-section');
+    section.classList.remove('hidden');
+    document.getElementById('sidebar').classList.add('closed');
+    document.getElementById('sidebar-overlay').classList.add('hidden');
+    toggleSpecs();
+    setTimeout(function() {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }, 300);
+  }
 
-    try {
-        const response = await axios.post(`/admin/product/${id}`, {
-            productStatus: productStatus,
-        });
-        
-        console.log("response:", response);
-        const result = response.data;
-        
-        if (result.data) {
-            console.log("Product updated!");
-            $(".new-product-status").blur();
-        } else {
-            alert("Product update failed!");
-        }
-    } catch (err) {
-        console.log(err);
-        alert("Product update failed!");
+  function hideProductForm() {
+    var section = document.getElementById('product-form-section');
+    section.classList.add('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function toggleSpecs() {
+    const category = document.getElementById('productCollection').value;
+    const specsBlock = document.getElementById('telephone-specs');
+    const ramInput = document.querySelector('input[name="productRam"]');
+    const memoryInput = document.querySelector('input[name="productMemory"]');
+    if (category === 'TELEPHONE' || category === 'MACBOOKS') {
+      specsBlock.classList.remove('hidden');
+      ramInput.disabled = false;
+      memoryInput.disabled = false;
+    } else {
+      specsBlock.classList.add('hidden');
+      ramInput.value = '';
+      memoryInput.value = '';
+      ramInput.disabled = true;
+      memoryInput.disabled = true;
     }
-});
+  }
 
+  function updateProductStatus(select, event) {
+    if (event) event.preventDefault();
+    const productId = select.id;
+    const newStatus = select.value;
+    fetch(`/admin/product/${productId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productStatus: newStatus })
+    })
+    .then(res => {
+      if (!res.ok) {
+        alert('Status update failed');
+      } else {
+        console.log("updated");
+      }
+    })
+    .catch(err => console.error(err));
+  }
 
-});
+  function validateForm() {
+    var name = document.querySelector('[name="productName"]').value.trim();
+    var brand = document.querySelector('[name="productBrand"]').value.trim();
+    var price = document.querySelector('[name="productPrice"]').value;
+    var stock = document.querySelector('[name="productLeftCount"]').value;
+    if (!name || !brand || !price || !stock) {
+      alert('Please fill in all required fields');
+      return false;
+    }
+    return true;
+  }
 
+  function previewFileHandler(input, num) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var box = input.parentElement;
+        box.style.backgroundImage = 'url(' + e.target.result + ')';
+        box.style.backgroundSize = 'cover';
+        box.style.backgroundPosition = 'center';
+        var icon = box.querySelector('.material-symbols-outlined');
+        if (icon) icon.style.display = 'none';
+        var label = box.querySelector('span.text-\\[10px\\]');
+        if (label) label.style.display = 'none';
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
 
-
-function validateForm(){
-    // console.log("Executed")
-    // const memberNick = $(".member-nick").val();
-    // console.log(memberNick)
-
-    const productName = $(".product-name").val();
-    const productPrice = $(".product-price").val();
-    const productLeftCount = $(".product-left-count").val();
-    const productCollection = $(".product-collection").val();
-    const productDesc = $(".product-desc").val();
-    const productStatus = $(".product-status").val();
-
-    if(
-        productName ==="" || 
-        productPrice ===""||
-        productLeftCount ===""||
-        productCollection ===""||
-        productDesc ===""||
-        productStatus ===""
-    ) {
-        alert("Please insert all required details")
-        return false
-        
-    }else return true;    
-}
-
-function previewFileHandler(input, order) {  //order yuklanayotgan rasmga tegishli joyning tartib raqami
-    const imgClassName = input.className;
-    console.log(input)
-    console.log("imgClassName:", imgClassName);
-
-    const file = $(`.${imgClassName}`).get(0).files[0];
-    const fileType = file["type"];
-    const validImageType = ["image/jpg", "image/jpeg", "image/png"]
-
-     if(!validImageType.includes(fileType)){
-                alert("Please insert only jpeg, jpg, png!");
-            }else {
-                if(file) {
-                    const reader = new FileReader();
-                    reader.onload = function(){
-                        $(`#image-section-${order}`).attr("src", reader.result);
-                    };
-                    reader.readAsDataURL(file);
-                }
-            }
-}
+  var tableContainer = document.querySelector('.overflow-x-auto');
+  if (tableContainer) {
+    tableContainer.addEventListener('scroll', function() {
+      this.classList.toggle('shadow-inner', this.scrollLeft > 0);
+    });
+  }

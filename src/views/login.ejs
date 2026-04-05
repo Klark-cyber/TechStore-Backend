@@ -123,10 +123,10 @@
 <div class="absolute inset-0 opacity-20" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCtjS7l8y0CaWA4Iveh-dqrxhf5HUC6a5hsm7oplfWfpiqQqqWxnDlyQSTH4Hll3_4d1iMtJ3SskuoBRieu9U95GcK4qGgmeEcwPIyS-j7rNlBS7UB8DLjeV3d32MjiqNsoASOkoEwiecqGXdw9q8blG3vebDRoKMSWjLTjLezBjinPDVbaoctNhClh4q-UdQpSzthECCTqox3d-iVi9qzRg-qmCjEshXD2ftpW6vVS0AZJp1E2vYNPl05uVKrj1-F2b0D41pDz2o6r');"></div>
 <div class="relative z-10">
 <h2 class="text-white text-4xl font-black tracking-tight leading-tight mb-4">
-                        Precision Engineering <br/> Meets Digital Curation.
+                       Control Every Aspect of Your Tech Store <br/> Manage Products. Track Orders. Grow Sales.
                     </h2>
 <p class="text-blue-100/80 text-lg font-light max-w-xs">
-                        Access your curated technology hub with secure, high-performance authentication.
+                        Log in to monitor inventory, track sales and manage your tech catalog.
                     </p>
 </div>
 <div class="relative z-10 mt-auto">
@@ -144,23 +144,23 @@
 <!-- Right Side: Login Form -->
 <div class="w-full md:w-7/12 p-8 md:p-16 flex flex-col justify-center bg-white/40">
 <div class="mb-10">
-<h1 class="text-3xl font-black text-on-surface tracking-tighter mb-2">Welcome Back</h1>
-<p class="text-on-surface-variant font-medium">Please enter your credentials to proceed.</p>
+<h1 class="text-3xl font-black text-on-surface tracking-tighter mb-2">Welcome Back, Admin</h1>
+<p class="text-on-surface-variant font-medium">Enter your admin credentials to access the dashboard.</p>
 </div>
 <form action="/admin/login" class="space-y-6" method="POST">
 <!-- Restaurant Name / memberNick -->
 <div class="space-y-2">
-<label class="block text-xs uppercase tracking-widest font-bold text-on-surface-variant ml-1" for="memberNick">Restaurant Name</label>
+<label class="block text-xs uppercase tracking-widest font-bold text-on-surface-variant ml-1" for="memberNick">Admin Username</label>
 <div class="relative">
 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline" data-icon="storefront">storefront</span>
-<input class="w-full pl-12 pr-4 py-4 bg-surface-container-highest/50 border-none rounded-lg focus:ring-2 focus:ring-primary focus:bg-white transition-all placeholder:text-outline/60 text-on-surface font-medium" id="memberNick" name="memberNick" placeholder="Enter restaurant name" required="" type="text"/>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-highest/50 border-none rounded-lg focus:ring-2 focus:ring-primary focus:bg-white transition-all placeholder:text-outline/60 text-on-surface font-medium" id="memberNick" name="memberNick" placeholder="Enter Username" required="" type="text"/>
 </div>
 </div>
 <!-- Password / memberPassword -->
 <div class="space-y-2">
 <div class="flex justify-between items-center px-1">
 <label class="block text-xs uppercase tracking-widest font-bold text-on-surface-variant" for="memberPassword">Password</label>
-<a class="text-xs font-bold text-primary hover:text-primary-container transition-colors" href="#">Forgot password?</a>
+
 </div>
 <div class="relative">
 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline" data-icon="lock">lock</span>
@@ -194,43 +194,13 @@
 <footer class="w-full border-t border-slate-800/50 bg-slate-950 px-12 py-8 flex flex-col md:flex-row justify-between items-center gap-4">
 <div class="flex flex-col items-center md:items-start">
 <span class="text-lg font-black text-slate-200">TechStore</span>
-<span class="text-[10px] uppercase tracking-[0.2em] font-semibold text-slate-500 mt-1">Kinetic Precision Engineering.</span>
+
 </div>
-<div class="flex gap-8">
-<a class="text-xs uppercase tracking-widest font-semibold text-slate-500 hover:text-blue-400 underline-offset-4 hover:underline duration-300" href="#">Privacy Policy</a>
-<a class="text-xs uppercase tracking-widest font-semibold text-slate-500 hover:text-blue-400 underline-offset-4 hover:underline duration-300" href="#">Terms of Service</a>
-<a class="text-xs uppercase tracking-widest font-semibold text-slate-500 hover:text-blue-400 underline-offset-4 hover:underline duration-300" href="#">Support</a>
-<a class="text-xs uppercase tracking-widest font-semibold text-slate-500 hover:text-blue-400 underline-offset-4 hover:underline duration-300" href="#">Contact</a>
-</div>
+
 <p class="text-[10px] uppercase tracking-widest font-semibold text-slate-500/60">
             © 2024 TechStore. All Rights Reserved.
         </p>
 </footer>
 <!-- Scripts -->
-<script>
-        // Simple loading state simulation for the button
-        document.querySelector('form').addEventListener('submit', function(e) {
-            const btn = this.querySelector('button[type="submit"]');
-            const originalContent = btn.innerHTML;
-            btn.disabled = true;
-            btn.innerHTML = `
-                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <span>Authenticating...</span>
-            `;
-            // Form continues to submit naturally to /admin/login
-        });
-
-        // Password Visibility Toggle
-        const toggleBtn = document.querySelector('button[type="button"]');
-        const passInput = document.getElementById('memberPassword');
-        toggleBtn.addEventListener('click', () => {
-            const type = passInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passInput.setAttribute('type', type);
-            const icon = toggleBtn.querySelector('span');
-            icon.textContent = type === 'password' ? 'visibility' : 'visibility_off';
-        });
-    </script>
+<script type="text/javascript" src="/js/login.js"></script> 
 </body></html>

@@ -117,7 +117,7 @@ public async getMemberDetail(member: Member): Promise<Member> {
   return result;
 }
 
-    public async updateMember(
+public async updateMember(
   member: Member,
   input: MemberUpdateInput
 ): Promise<Member> {

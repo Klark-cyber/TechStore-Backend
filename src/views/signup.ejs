@@ -3,7 +3,7 @@
 <html lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Join TechStore | Kinetic Precision Engineering</title>
+<title>TechStore</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -110,12 +110,12 @@
 <header class="fixed top-0 w-full z-50 bg-slate-950/80 backdrop-blur-xl shadow-2xl shadow-blue-900/10">
 <nav class="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
 <div class="flex items-center gap-2">
-<img alt="TechStore Logo" class="h-8 w-auto" data-alt="Modern tech logo with geometric shapes and blue accent colors on a transparent background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhtfXniRRqL_UR-gCV4eQd92hZcoPWlQadkP-gmDIUyJ7Krnax0TKqxYdnUn8L0T6u1Q_WyNi2wn2Arn_Iy_uIyG6dzzSeHaFXWFsc9UNWV3HSygnEccw_DBRVnlV9a_L8tgymGkvONCUTwIOPsk1GjTJa7ZeeaSFh5MMKF5tkFfyj09j3ds2cEEHONV_RC9lwm71WW3lMN0_yKmIiQ4v7HHXdRjWrb6xUu-yVuBMO55Ng9ftUNbsUoFr4jYyWel01KZ6PEmZ4i-E4"/>
+<img alt="TechStore Logo" class="h-8 w-auto" data-alt="Modern tech logo with geometric shapes and blue accent colors on a transparent background" src="/img/TechStore.jpeg"/>
 <span class="text-2xl font-bold tracking-tighter text-slate-50 dark:text-white">TechStore</span>
 </div>
 <div class="hidden md:flex items-center gap-8 font-sans text-sm tracking-tight font-medium">
 <a class="text-slate-400 hover:text-slate-100 transition-colors duration-300" href="/admin">Home</a>
-<a class="ext-primary font-bold border-b-2 border-primary" href="/signup">Signup</a>
+<a class="text-primary font-bold border-b-2 border-primary" href="/signup">Signup</a>
 <a class="text-slate-400 hover:text-slate-100 transition-colors duration-300" href="/admin/login">Login</a>
 </div>
 </nav>
@@ -131,9 +131,9 @@
 <div class="relative z-10">
 <div class="mb-10">
 <h1 class="text-display-lg text-4xl md:text-5xl font-extrabold tracking-tighter text-on-surface mb-3">
-                        Join the <span class="text-primary">Ecosystem</span>
+                        Create Your <span class="text-primary">Admin Account</span>
 </h1>
-<p class="text-on-surface-variant text-lg">Create your professional partner account.</p>
+<p class="text-on-surface-variant text-lg">Fill in the details below to create your TechStore admin account.</p>
 </div>
 <form action="/admin/signup" class="space-y-8" enctype="multipart/form-data" id="signupForm" method="POST">
 <!-- Profile Image Upload Section -->
@@ -157,10 +157,10 @@
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 <!-- Restaurant Name -->
 <div class="space-y-2">
-<label class="text-xs uppercase tracking-widest font-semibold text-on-surface-variant px-1" for="memberNick">Restaurant Name</label>
+<label class="text-xs uppercase tracking-widest font-semibold text-on-surface-variant px-1" for="memberNick">Username</label>
 <div class="relative">
 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">storefront</span>
-<input class="w-full pl-12 pr-4 py-4 bg-surface-container-highest rounded-lg border-none focus:ring-0 focus:border-b-2 focus:border-primary transition-all text-on-surface placeholder:text-outline/50" id="memberNick" name="memberNick" placeholder="Kinetic Cuisine" required="" type="text"/>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-highest rounded-lg border-none focus:ring-0 focus:border-b-2 focus:border-primary transition-all text-on-surface placeholder:text-outline/50" id="memberNick" name="memberNick" placeholder="Username" required="" type="text"/>
 </div>
 </div>
 <!-- Phone Number -->
@@ -168,7 +168,7 @@
 <label class="text-xs uppercase tracking-widest font-semibold text-on-surface-variant px-1" for="memberPhone">Phone Number</label>
 <div class="relative">
 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">call</span>
-<input class="w-full pl-12 pr-4 py-4 bg-surface-container-highest rounded-lg border-none focus:ring-0 focus:border-b-2 focus:border-primary transition-all text-on-surface placeholder:text-outline/50" id="memberPhone" name="memberPhone" placeholder="+1 (555) 000-0000" required="" type="tel"/>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-highest rounded-lg border-none focus:ring-0 focus:border-b-2 focus:border-primary transition-all text-on-surface placeholder:text-outline/50" id="memberPhone" name="memberPhone" placeholder="+82 (010) 000-0000" required="" type="tel"/>
 </div>
 </div>
 <!-- Password -->
@@ -191,11 +191,11 @@
 <!-- Submit Action -->
 <div class="pt-6">
 <button class="w-full bg-primary text-on-primary py-5 rounded-lg font-bold text-lg hover:bg-primary-container transition-all duration-300 shadow-xl shadow-primary/20 scale-100 active:scale-95" type="submit">
-                            Establish Partnership
+                            Sign Up
                         </button>
 </div>
 <div class="text-center text-sm text-on-surface-variant">
-                        Already registered? <a class="text-primary font-bold hover:underline underline-offset-4 transition-all" href="/login">Authenticate here</a>
+                        Already registered? <a class="text-primary font-bold hover:underline underline-offset-4 transition-all" href="/login">Go to Login</a>
 </div>
 </form>
 </div>
@@ -205,60 +205,8 @@
 <footer class="w-full border-t border-slate-800/50 bg-slate-950 px-12 py-8 flex flex-col md:flex-row justify-between items-center gap-4">
 <div class="text-lg font-black text-slate-200">TechStore</div>
 <div class="text-xs uppercase tracking-widest font-semibold text-slate-500">
-            © 2024 TechStore. Kinetic Precision Engineering.
+            © 2024 TechStore. 
         </div>
-<div class="flex gap-6 text-xs uppercase tracking-widest font-semibold">
-<a class="text-slate-500 hover:text-slate-300 hover:text-blue-400 underline-offset-4 hover:underline duration-300 opacity-80 hover:opacity-100" href="#">Privacy Policy</a>
-<a class="text-slate-500 hover:text-slate-300 hover:text-blue-400 underline-offset-4 hover:underline duration-300 opacity-80 hover:opacity-100" href="#">Terms of Service</a>
-<a class="text-slate-500 hover:text-slate-300 hover:text-blue-400 underline-offset-4 hover:underline duration-300 opacity-80 hover:opacity-100" href="#">Support</a>
-</div>
 </footer>
-<script>
-        // Image Preview Logic
-        const imageInput = document.getElementById('memberImage');
-        const preview = document.getElementById('profilePreview');
-        const icon = document.getElementById('uploadIcon');
-        const hint = document.getElementById('uploadHint');
-
-        imageInput.addEventListener('change', function() {
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.classList.remove('hidden');
-                    icon.classList.add('hidden');
-                }
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // Validation Logic
-        document.getElementById('signupForm').addEventListener('submit', function(e) {
-            const password = document.getElementById('memberPassword').value;
-            const confirm = document.getElementById('confirmPassword').value;
-            const fileInput = document.getElementById('memberImage');
-
-            let errors = [];
-
-            if (!fileInput.files[0]) {
-                errors.push("Restaurant image is mandatory.");
-                hint.classList.add('text-error', 'font-bold');
-            }
-
-            if (password !== confirm) {
-                errors.push("Passwords do not match.");
-                document.getElementById('confirmPassword').classList.add('border-b-2', 'border-error');
-            }
-
-            if (password.length < 6) {
-                errors.push("Password must be at least 6 characters.");
-            }
-
-            if (errors.length > 0) {
-                e.preventDefault();
-                alert(errors.join("\n"));
-            }
-        });
-    </script>
+<script type="text/javascript" src="/js/signup.js"></script> 
 </body></html>

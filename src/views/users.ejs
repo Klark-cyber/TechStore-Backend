@@ -5,7 +5,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>User Directory | TechStore Admin</title>
+<title>TechStore</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -32,108 +32,204 @@
 <style>
   body { font-family: 'Inter', sans-serif; }
   .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .mesh-bg {
+    background-color: #f0f4ff;
+    background-image:
+      radial-gradient(at 20% 10%, rgba(99,102,241,0.12) 0px, transparent 50%),
+      radial-gradient(at 80% 0%, rgba(59,130,246,0.10) 0px, transparent 50%),
+      radial-gradient(at 0% 80%, rgba(139,92,246,0.08) 0px, transparent 50%),
+      radial-gradient(at 90% 90%, rgba(16,185,129,0.06) 0px, transparent 50%);
+  }
+  .glass-card {
+    background: rgba(255,255,255,0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.9);
+  }
+  .nav-glass {
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .avatar-ring {
+    background: linear-gradient(135deg, #0066FF, #6366f1);
+  }
+  .status-badge-active { background: #dcfce7; color: #16a34a; }
+  .status-badge-block { background: #fee2e2; color: #dc2626; }
+  .status-badge-delete { background: #f1f5f9; color: #64748b; }
 </style>
 </head>
-<body class="bg-white text-on-surface min-h-screen">
+<body class="mesh-bg text-on-surface min-h-screen">
 
 <% if (!member) { %>
 
-<!-- Login kerak -->
-<nav class="bg-white border-b border-outline fixed top-0 w-full z-50 flex justify-between items-center px-8 h-16">
-  <div class="text-xl font-bold text-slate-900 tracking-tight">TechStore Admin</div>
+<nav class="nav-glass border-b border-white/60 fixed top-0 w-full z-50 flex justify-between items-center px-8 h-16 shadow-sm">
+  <div class="flex items-center gap-3">
+    <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-md shadow-blue-200">
+      <span class="material-symbols-outlined text-white text-sm">bolt</span>
+    </div>
+    <div class="text-xl font-bold text-slate-900 tracking-tight">TechStore Admin</div>
+  </div>
   <div class="hidden md:flex items-center gap-8">
     <a class="text-on-surface-variant font-medium hover:text-primary transition-colors" href="/admin/">Home</a>
     <a class="text-on-surface-variant font-medium hover:text-primary transition-colors" href="/admin/signup">SignUp</a>
-    <a class="text-on-surface-variant font-medium hover:text-primary transition-colors" href="/admin/login">Login</a>
+    <a class="bg-primary text-white px-4 py-1.5 rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm" href="/admin/login">Login</a>
   </div>
 </nav>
 <main class="pt-24 pb-12 px-6 flex items-center justify-center min-h-screen">
-  <div class="text-4xl font-bold text-slate-400">Please login first!</div>
+  <div class="glass-card rounded-3xl p-12 text-center shadow-xl max-w-md w-full">
+    <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+      <span class="material-symbols-outlined text-4xl text-primary">lock</span>
+    </div>
+    <div class="text-2xl font-bold text-slate-700 mb-2">Access Restricted</div>
+    <p class="text-on-surface-variant text-sm mb-6">You need to be logged in to view this page.</p>
+    <a href="/admin/login" class="inline-block bg-primary text-white px-8 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200">Go to Login</a>
+  </div>
 </main>
 
 <% } else { %>
 
-<!-- Logged in -->
-<nav class="bg-white border-b border-outline fixed top-0 w-full z-50 flex justify-between items-center px-10 h-16">
-  <div class="text-xl font-bold text-slate-900 tracking-tight">TechStore Admin</div>
-  <div class="hidden md:flex items-center gap-8">
-    <a class="text-on-surface-variant font-medium hover:text-primary transition-colors" href="/admin/">Home</a>
-    <a class="text-on-surface-variant font-medium hover:text-primary transition-colors" href="/admin/product/all">Menu</a>
-    <a class="text-primary font-bold border-b-2 border-primary" href="/admin/user/all">Users</a>
-    <a class="text-on-surface-variant font-medium hover:text-primary transition-colors"
+<nav class="nav-glass border-b border-white/60 fixed top-0 w-full z-50 flex justify-between items-center px-10 h-16 shadow-sm">
+  <div class="flex items-center gap-3">
+    <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-md shadow-blue-200">
+      <span class="material-symbols-outlined text-white text-sm">bolt</span>
+    </div>
+    <div class="text-xl font-bold text-slate-900 tracking-tight">TechStore Admin</div>
+  </div>
+  <div class="hidden md:flex items-center gap-2">
+    <a class="px-4 py-2 text-on-surface-variant font-medium hover:text-primary hover:bg-blue-50 rounded-lg transition-all text-sm" href="/admin/">Home</a>
+    <a class="px-4 py-2 text-on-surface-variant font-medium hover:text-primary hover:bg-blue-50 rounded-lg transition-all text-sm" href="/admin/product/all">Menu</a>
+    <a class="px-4 py-2 bg-primary/10 text-primary font-bold rounded-lg text-sm" href="/admin/user/all">Users</a>
+    <a class="px-4 py-2 text-red-400 font-medium hover:text-red-600 hover:bg-red-50 rounded-lg transition-all text-sm"
       href="/admin/logout"
       onclick="return confirm('Do you really want to logout?')">Logout</a>
   </div>
 </nav>
 
-<main class="pt-24 pb-12 px-6 md:px-12 max-w-7xl mx-auto">
+<main class="pt-24 pb-16 px-6 md:px-12 max-w-7xl mx-auto">
 
   <!-- Header -->
   <div class="mb-10">
-    <h1 class="text-4xl font-extrabold tracking-tight text-on-surface mb-2">Registered Customers</h1>
+    <div class="flex items-center gap-2 mb-3">
+      <div class="w-1 h-6 bg-primary rounded-full"></div>
+      <p class="text-xs font-bold uppercase tracking-widest text-primary">User Management</p>
+    </div>
+    <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 mb-2">Registered Customers</h1>
     <p class="text-on-surface-variant font-medium">Manage and monitor system access for all registered members.</p>
   </div>
 
   <!-- Summary Stats -->
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-    <div class="bg-primary text-white p-6 rounded-xl shadow-md relative overflow-hidden">
+
+    <!-- Total Users -->
+    <div class="relative overflow-hidden rounded-2xl p-6 text-white shadow-xl shadow-blue-300/30"
+      style="background: linear-gradient(135deg, #0066FF 0%, #6366f1 100%);">
+      <div class="absolute -right-6 -top-6 w-28 h-28 bg-white/10 rounded-full"></div>
+      <div class="absolute -right-2 -bottom-8 w-36 h-36 bg-white/5 rounded-full"></div>
+      <div class="absolute top-4 right-4">
+        <span class="text-[10px] font-bold uppercase tracking-widest bg-white/20 px-2 py-0.5 rounded-full">Live</span>
+      </div>
       <div class="relative z-10">
-        <div class="flex justify-between items-start mb-4">
-          <span class="material-symbols-outlined text-3xl">group</span>
-          <span class="text-[10px] font-bold uppercase tracking-widest bg-white/20 px-2 py-0.5 rounded">Live Data</span>
+        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4">
+          <span class="material-symbols-outlined text-2xl">group</span>
         </div>
-        <div class="text-4xl font-black mb-1"><%= users.length %></div>
-        <div class="text-sm font-medium opacity-90">Total Active Registered Members</div>
+        <div class="text-5xl font-black mb-1"><%= users.length %></div>
+        <div class="text-sm font-medium opacity-80">Total Registered Customers</div>
       </div>
     </div>
-    <div class="bg-surface p-6 rounded-xl border border-outline shadow-sm flex flex-col justify-center">
-      <div class="text-on-surface-variant text-xs font-bold mb-2 uppercase tracking-wide">System Health</div>
-      <div class="flex items-center gap-3">
-        <div class="text-2xl font-bold text-on-surface">Optimized</div>
+
+    <!-- Store Status -->
+    <div class="glass-card rounded-2xl p-6 shadow-sm">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
+          <span class="material-symbols-outlined text-emerald-600">check_circle</span>
+        </div>
+        <div class="text-on-surface-variant text-xs font-bold uppercase tracking-wide">Store Status</div>
+      </div>
+      <div class="flex items-center gap-3 mb-2">
+        <div class="text-2xl font-bold text-slate-800">Online</div>
         <div class="relative flex h-3 w-3">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
         </div>
       </div>
+      <p class="text-xs text-on-surface-variant">All systems running smoothly</p>
+      <div class="mt-4 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+        <div class="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full" style="width: 98%"></div>
+      </div>
+      <p class="text-[10px] text-emerald-600 font-semibold mt-1">98% uptime</p>
     </div>
-    <div class="bg-surface p-6 rounded-xl border border-outline shadow-sm flex flex-col justify-center">
-      <div class="text-on-surface-variant text-xs font-bold mb-2 uppercase tracking-wide">Sync Status</div>
-      <div class="text-3xl font-black text-on-surface tabular-nums" id="digital-clock">00:00:00</div>
-      <div class="text-xs font-medium text-on-surface-variant flex items-center gap-1">
-        <span class="w-2 h-2 rounded-full bg-blue-500"></span> Real-time
+
+    <!-- Server Time -->
+    <div class="glass-card rounded-2xl p-6 shadow-sm">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 bg-violet-100 rounded-xl flex items-center justify-center">
+          <span class="material-symbols-outlined text-violet-600">schedule</span>
+        </div>
+        <div class="text-on-surface-variant text-xs font-bold uppercase tracking-wide">Server Time</div>
+      </div>
+      <div class="text-3xl font-black text-slate-800 tabular-nums" id="digital-clock">00:00:00</div>
+      <div class="flex items-center gap-2 mt-3">
+        <div class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
+        <span class="text-xs font-medium text-on-surface-variant">Real-time sync active</span>
       </div>
     </div>
   </div>
 
   <!-- User Table -->
-  <div class="bg-white rounded-xl border border-outline shadow-sm overflow-hidden">
+  <div class="glass-card rounded-2xl shadow-sm overflow-hidden">
+
+    <!-- Table Header -->
+    <div class="px-6 py-5 flex items-center justify-between"
+      style="background: linear-gradient(135deg, #f8faff 0%, #eef2ff 100%); border-bottom: 1px solid #e0e7ff;">
+      <div>
+        <h2 class="text-lg font-bold text-slate-800">Customer Directory</h2>
+        <p class="text-xs text-on-surface-variant mt-0.5">View and manage all customer accounts</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="bg-primary text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md shadow-blue-200">
+          <%= users.length %> customers
+        </span>
+      </div>
+    </div>
+
     <div class="overflow-x-auto">
       <table class="w-full text-left border-collapse">
         <thead>
-          <tr class="bg-slate-50 border-b border-outline">
+          <tr style="background: linear-gradient(135deg, #f8faff, #f1f5ff); border-bottom: 1px solid #e2e8f0;">
             <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant">No</th>
             <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant">Name</th>
             <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant">Phone</th>
             <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant">Status</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-outline">
+        <tbody class="divide-y divide-slate-100">
           <% users.map(function(value, index) { %>
-          <tr class="hover:bg-slate-50 transition-colors">
+          <tr class="hover:bg-blue-50/40 transition-colors group">
             <td class="px-6 py-5">
-              <span class="text-on-surface-variant font-medium"><%= index + 1 %></span>
+              <span class="text-on-surface-variant font-mono text-sm font-medium">
+                <%= (index + 1).toString().padStart(2, '0') %>
+              </span>
             </td>
             <td class="px-6 py-5">
               <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-primary font-bold text-sm">
+                <div class="w-10 h-10 rounded-full avatar-ring flex items-center justify-center text-white font-bold text-sm shadow-md shadow-blue-200 flex-shrink-0">
                   <%= value.memberNick.charAt(0).toUpperCase() %>
                 </div>
-                <span class="font-semibold text-on-surface"><%= value.memberNick %></span>
+                <div>
+                  <span class="font-semibold text-slate-800 block"><%= value.memberNick %></span>
+                  <span class="text-xs text-on-surface-variant">Customer</span>
+                </div>
               </div>
             </td>
-            <td class="px-6 py-5 text-on-surface-variant"><%= value.memberPhone %></td>
             <td class="px-6 py-5">
-              <select class="member-status bg-white border border-outline rounded-lg text-sm font-medium px-3 py-1.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none cursor-pointer transition-all w-32" id="<%= value._id %>">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm text-on-surface-variant">call</span>
+                <span class="text-on-surface-variant text-sm"><%= value.memberPhone %></span>
+              </div>
+            </td>
+            <td class="px-6 py-5">
+              <select class="member-status bg-white border border-outline rounded-lg text-sm font-medium px-3 py-1.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none cursor-pointer transition-all w-32 shadow-sm" id="<%= value._id %>">
                 <option value="ACTIVE" <%= value.memberStatus === "ACTIVE" ? "selected" : "" %>>ACTIVE</option>
                 <option value="BLOCK" <%= value.memberStatus === "BLOCK" ? "selected" : "" %>>BLOCK</option>
                 <option value="DELETE" <%= value.memberStatus === "DELETE" ? "selected" : "" %>>DELETE</option>
@@ -143,6 +239,18 @@
           <% }); %>
         </tbody>
       </table>
+    </div>
+
+    <!-- Table Footer -->
+    <div class="px-6 py-4 flex justify-between items-center"
+      style="background: linear-gradient(135deg, #f8faff, #f1f5ff); border-top: 1px solid #e0e7ff;">
+      <span class="text-xs text-on-surface-variant font-medium">
+        Showing <span class="font-bold text-primary"><%= users.length %></span> customers
+      </span>
+      <div class="flex gap-2">
+        <button class="px-4 py-2 rounded-lg border border-outline bg-white hover:bg-slate-50 disabled:opacity-40 text-xs font-semibold transition-all shadow-sm" disabled>← Previous</button>
+        <button class="px-4 py-2 rounded-lg border border-outline bg-white hover:bg-slate-50 disabled:opacity-40 text-xs font-semibold transition-all shadow-sm" disabled>Next →</button>
+      </div>
     </div>
   </div>
 

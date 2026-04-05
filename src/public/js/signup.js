@@ -1,62 +1,47 @@
-console.log("Signup frontend javascript file");
+ // Image Preview Logic
+        const imageInput = document.getElementById('memberImage');
+        const preview = document.getElementById('profilePreview');
+        const icon = document.getElementById('uploadIcon');
+        const hint = document.getElementById('uploadHint');
 
-$(function() {
-    const fileTarget = $(".file-box .upload-hidden");
-    let filename;
-
-    fileTarget.on("change", function(){ //fileTargetga tegishli biror change hosil bolganda quyidagi f-ya ishga tushadi
-        if(window.FileReader){ //windoow obyectining FileReader State propertysi mavjud bolsa uni uploadfiilega yukladik
-            const uploadFile = $(this)[0].files[0]; // yuklangan fileni qolga kiritdik 
-            console.log("uploadFile:", uploadFile) //yuklangan filening typeni formtini aniqladik
-;           const fileType = uploadFile["type"];
-            const validImageType = ["image/jpg", "image/jpeg", "image/png"] //maqsad: user faqat biz belgilagan formatdagi fileni yuklasin
-            
-            if(!validImageType.includes(fileType)){
-                alert("Please insert only jpeg, jpg, png!");
-            }else {
-                if(uploadFile){ //uploadFileni tekshiramiz
-                    console.log(URL.createObjectURL(uploadFile)); // uploadFileni serverga yubborishdan oldin browser session xotirasiga vaqtincha joylab rasmni korishi test qilishi mumkin boladi
-                    $(".upload-img-frame").attr("src",URL.createObjectURL(uploadFile)).addClass("succes") //defolt imageni ozgartiramiz. jquery yordamida defolt rasm joylashgan classni chaqirib attr yordamida srcni yuqoriga url ichiga joylangan uploadFileni joylab rasmni allmashtirdik. addclass methodi yordamida test uchun succes nomli klass qoshdik
+        imageInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden');
+                    icon.classList.add('hidden');
                 }
-                filename = $(this)[0].files[0].name; //
-                console.log(filename)
+                reader.readAsDataURL(file);
             }
-            $(this).siblings(".upload-name").val(filename);
-        }
-    })
-});
+        });
+
+        // Validation Logic
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            const password = document.getElementById('memberPassword').value;
+            const confirm = document.getElementById('confirmPassword').value;
+            const fileInput = document.getElementById('memberImage');
+
+            let errors = [];
+
+            if (!fileInput.files[0]) {
+                errors.push("Restaurant image is mandatory.");
+                hint.classList.add('text-error', 'font-bold');
+            }
 
 
-//validateSignupFormda user kiritgan malumotlar xto bolsa yoki toliq bolmasa uni serverga yuborishni oldini olish mantiqini yozdik.Fronted Validation
-function validateSignupForm(){
-    // console.log("Executed")
-    // const memberNick = $(".member-nick").val();
-    // console.log(memberNick)
+            if (password !== confirm) {
+                errors.push("Password differs, please check!.");
+                document.getElementById('confirmPassword').classList.add('border-b-2', 'border-error');
+            }
 
-    const memberNick = $(".member-nick").val();
-    const memberPhone = $(".member-phone").val();
-    const memberPassword = $(".member-password").val();
-    const confirmPassword = $(".confirm-password").val();
+            if (password.length < 6) {
+                errors.push("Password must be at least 6 characters.");
+            }
 
-    if(memberNick ==="" || 
-        memberPhone ===""||
-        memberPassword ===""||
-        confirmPassword ===""
-    ){
-        alert("Please insert all required inputs")
-        return false
-    }
-
-    if(memberPassword !== confirmPassword){
-        alert("Password differs, please check!")
-        return false;
-    }
-    
-    const memberImage = $(".member-image").get(0).files[0] ? $(".member-image").get(0).files[0].name : null; // member-image klasidagi rasmnni qaytarsin aks holda null
-    
-    if(!memberImage){
-        alert("Please insert restaurant Image!");
-        return false
-    }
-    console.log("mavjud")
-}
+            if (errors.length > 0) {
+                e.preventDefault();
+                alert(errors.join("\n"));
+            }
+        });

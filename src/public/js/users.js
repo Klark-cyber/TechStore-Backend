@@ -6,6 +6,8 @@ $(function(){
 
     const memberStatus = $(`#${id}.member-status`).val();
     console.log(memberStatus);
+
+    $
     
     //ToDo Axios updateChosenUser
     axios.post("/admin/user/edit", {
@@ -26,3 +28,14 @@ $(function(){
     })
     })
 })
+
+ function updateClock() {
+    var now = new Date();
+    var hours = String(now.getHours()).padStart(2, '0');
+    var minutes = String(now.getMinutes()).padStart(2, '0');
+    var seconds = String(now.getSeconds()).padStart(2, '0');
+    var el = document.getElementById('digital-clock');
+    if (el) el.textContent = hours + ':' + minutes + ':' + seconds;
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
