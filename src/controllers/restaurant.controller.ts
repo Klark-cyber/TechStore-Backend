@@ -126,6 +126,7 @@ restaurantController.logout = (req: AdminRequest, res: Response ) => {
         res.redirect("/admin") //error yuzaga kelsa ham /admin pagega redirect qildi
     }
 };
+
 restaurantController.getUsers = async (req: Request, res: Response ) => {
     try{
         console.log("getUsers"); //Mantiq ishga tushganini yani buyruq ishga tushganini tekshiramiz.natija terminalda paydo boladi

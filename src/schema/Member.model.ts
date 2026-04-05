@@ -24,7 +24,7 @@ const memberSchema = new Schema<Member>(
       maxlength: 30,
       trim: true,
     },
-
+ 
     memberPassword: {
       type: String,
       select: false,

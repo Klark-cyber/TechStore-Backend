@@ -7,6 +7,12 @@
     window.location.href = url;
   }
 
+  document.querySelectorAll('.img-upload').forEach(function(input, i) {
+  input.addEventListener('change', function() {
+    previewFileHandler(this, i + 1);
+  });
+});
+
   document.getElementById('searchInput').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') searchProducts();
   });
