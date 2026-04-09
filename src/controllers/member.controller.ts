@@ -17,14 +17,10 @@ const memberController: T ={};
 memberController.getAdmin = async (req: Request, res: Response) => {
   try {
     console.log("getAdmin");
-
     const result = await memberService.getAdmin();
-
     res.status(HttpCode.OK).json(result);
-
   } catch (err) {
     console.log("Error, getAdmin", err);
-
     if (err instanceof Errors) {
       res.status(err.code).json(err);
     } else {
@@ -38,14 +34,11 @@ memberController.signup = async (req: Request, res: Response) => {
   try {
     console.log("signup");
     console.log("body:", req.body);
-
     const input: MemberInput = req.body;
-
     // 🔥 VALIDATION
     if (!input.memberNick || !input.memberPassword) {
       throw new Errors(HttpCode.BAD_REQUEST, Message.NICK_PASSWORD_REQUIRED);
     }
-
     const result: Member = await memberService.signup(input);
 
     // 🔥 TOKEN
@@ -61,7 +54,6 @@ memberController.signup = async (req: Request, res: Response) => {
     });
 
     res.status(HttpCode.CREATED).json({
-      success: true,
       member: result,
       accessToken: token,
     });
@@ -85,11 +77,6 @@ memberController.login = async (req: Request, res: Response) => {
 
     const input: LoginInput = req.body;
 
-    // 🔥 VALIDATION
-    if (!input.memberNick || !input.memberPassword) {
-      throw new Errors(HttpCode.BAD_REQUEST, Message.USED_NICK_PHONE);
-    }
-
     const result = await memberService.login(input);
 
     // 🔥 TOKEN
@@ -99,14 +86,13 @@ memberController.login = async (req: Request, res: Response) => {
     // 🔥 COOKIE (XAVFSIZ)
     res.cookie("accessToken", token, {
       maxAge: AUTH_TIMER * 3600 * 1000,
-      httpOnly: true,   // ❗ oldin false edi → tuzatildi
+      httpOnly: true,  
       sameSite: "lax",
     });
 
     res.status(HttpCode.OK).json({
-      success: true,
       member: result,
-      // accessToken: token ❗ optional (xavfsizlik uchun olib tashlash mumkin)
+      accessToken: token //❗ optional (xavfsizlik uchun olib tashlash mumkin)
     });
 
   } catch (err) {
@@ -189,14 +175,13 @@ memberController.updateMember = async (
     }
 
     const input: MemberUpdateInput = req.body;
-
+console.log(input)
     // 🔥 IMAGE
     if (req.file) {
       input.memberImage = req.file.path.replace(/\\/g, "/");
     }
 
     const result = await memberService.updateMember(req.member, input);
-
     if (!result) {
       throw new Errors(
         HttpCode.NOT_MODIFIED,
@@ -250,8 +235,9 @@ memberController.verifyAuth = async (
   res: Response,
   next: NextFunction
 ) => {
+  console.log("keldi")
   try {
-    const token = req.cookies?.accessToken;
+    const token = req.cookies["accessToken"];
 
     // 🔥 TOKEN CHECK
     if (!token) {

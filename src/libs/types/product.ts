@@ -50,6 +50,7 @@ export interface ProductInquiry {
   search?: string;
   productRam?: string;       // 🔥 new
   productMemory?: string;    // 🔥 new
+  productBrand?: string;
 }
 
 export interface ProductUpdateInput {

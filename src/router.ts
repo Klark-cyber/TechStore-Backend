@@ -18,6 +18,7 @@ router.post('/member/update',
     memberController.verifyAuth, 
     uploader("members").single('memberImage'), //memberSchema modelda userdan keladigan rasmni memberImage nomi ostida kelishini belgilagandik
     memberController.updateMember);
+
 router.get('/member/top-users', memberController.getTopUsers);
 
 
@@ -27,8 +28,8 @@ router.get('/product/all', productController.getProducts);
 router.get('/product/:id', 
     memberController.retrieveAuth, 
     productController.getProduct);
-router.post(
-    "/product/like",
+router.get(
+    "/product/like/:id",
     memberController.verifyAuth, // user login bo‘lishini tekshiradi
     productController.likeProduct
 );

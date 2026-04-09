@@ -25,6 +25,7 @@ productController.getProducts = async (req: Request, res: Response) => {
       search,
       productRam,
       productMemory,
+      productBrand,
     } = req.query;
 
     const inquiry: ProductInquiry = {
@@ -36,12 +37,13 @@ productController.getProducts = async (req: Request, res: Response) => {
     if (productCollection)
       inquiry.productCollection = productCollection as ProductCollection;
 
-    if (search) inquiry.search = String(search);
-
+    if (search) 
+      inquiry.search = String(search);
+    
     // 🔥 NEW
     if (productRam) inquiry.productRam = String(productRam);
     if (productMemory) inquiry.productMemory = String(productMemory);
-
+    if (productBrand) inquiry.productBrand = String(productBrand);
     const result = await productService.getProducts(inquiry);
 
     res.render("products", { products: result });
@@ -77,12 +79,9 @@ productController.getProduct = async (
       memberId,
       id as string
     );
-
     res.status(HttpCode.OK).json(result);
-
   } catch (err) {
     console.log("Error, getProduct", err);
-
     if (err instanceof Errors) {
       res.status(err.code).json(err);
     } else {
@@ -94,7 +93,12 @@ productController.getProduct = async (
 productController.likeProduct = async (req: ExtendedRequest, res: Response) => {
     try {
         console.log("likeProduct");
+           const { id } = req.params;
 
+    // ❗ id tekshiruv (optional lekin pro-level)
+    if (!id) {
+      throw new Errors(HttpCode.BAD_REQUEST, Message.REQUIRED_PRODUCT_ID);
+    }
         const memberId = req.member?._id;
         if (!memberId) {
             return res.status(HttpCode.UNAUTHORIZED).json({ 
@@ -102,11 +106,9 @@ productController.likeProduct = async (req: ExtendedRequest, res: Response) => {
                 message: "Member not authenticated" 
             });
         }
+        const result = await productService.likeProduct(memberId, id as string);
 
-        const { id } = req.body;
-        await productService.likeProduct(memberId, id);
-
-        res.status(HttpCode.OK).json({ success: true });
+        res.status(HttpCode.OK).json(result);
 
     } catch (err) {
         console.log("Error, likeProduct", err);
@@ -193,8 +195,6 @@ productController.getAllProducts= async (req: Request, res: Response) => {
       else res.status(500).json({ message: "Something went wrong" });
     }
   }
-
-
 
 productController.createNewProduct = async (
   req: AdminRequest,
@@ -283,6 +283,7 @@ productController.createNewProduct = async (
     `);
   }
 };
+
 productController.updateChosenProduct = async (
   req: Request,
   res: Response

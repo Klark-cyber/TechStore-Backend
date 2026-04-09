@@ -28,27 +28,12 @@ class MemberService { //MemberService module ichida Member Schema modelni ishlat
 
 
 public async signup(input: MemberInput): Promise<Member> {
-  try {
-    // 🔥 DUPLICATE CHECK (faqat nick)
-    const exist = await this.memberModel.findOne({
-      memberNick: input.memberNick
-    }).exec();
-
-    if (exist) {
-      throw new Errors(HttpCode.BAD_REQUEST, Message.USED_NICK_PHONE);
-    }
-
-    // 🔥 PASSWORD HASH
-    const salt = await bcrypt.genSalt(10);
+  const salt = await bcrypt.genSalt(10);
     input.memberPassword = await bcrypt.hash(input.memberPassword, salt);
-
+  try {
     const result = await this.memberModel.create(input);
-
-    // 🔥 PASSWORDNI RESPONSE DAN OLIB TASHLAYMIZ
-    const member = result.toObject();
-    delete member.memberPassword;
-
-    return member;
+    result.memberPassword = '';
+    return result.toJSON() as Member;
 
   } catch (err) {
     console.error("Error, service:signup", err);
@@ -65,9 +50,8 @@ public async login(input: LoginInput): Promise<Member> {
     .findOne({
       memberNick: input.memberNick,
       memberStatus: { $ne: MemberStatus.DELETE }
-    })
-    .select("+memberPassword memberStatus memberNick")
-    .lean()
+    },
+  {memberNick: 1, memberPassword: 1, memberStatus:1 })
     .exec();
 
   if (!member) {
@@ -91,7 +75,7 @@ public async login(input: LoginInput): Promise<Member> {
   // 🔥 PASSWORDNI OLIB TASHLAYMIZ
   delete member.memberPassword;
 
-  return member;
+  return await this.memberModel.findById(member._id).lean().exec() as Member;
 }
 
 
@@ -122,7 +106,7 @@ public async updateMember(
   input: MemberUpdateInput
 ): Promise<Member> {
   const memberId = shapeIntoMongooseObjectId(member._id);
-
+console.log(member)
   // 🔥 PASSWORD HASH (faqat bo‘lsa)
   if (input.memberPassword) {
     const salt = await bcrypt.genSalt(10);

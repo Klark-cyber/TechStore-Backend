@@ -24,28 +24,34 @@ class ProductService{
     /** SPA */
 
 public async getProducts(inquiry: ProductInquiry): Promise<Product[]> {
-  console.log("inquiry:", inquiry);
-
-  const match: T = { productStatus: ProductStatus.PROCESS };
+  // 1. Statusni tekshiring. Agar PAUSE mahsulotlar ham kerak bo'lsa, statusni dinamik qiling
+  const match: any = { 
+    productStatus: inquiry.productCollection ? ProductStatus.PROCESS : ProductStatus.PROCESS 
+  };
+  
+  // Agarda sizga PAUSEdagilar ham kerak bo'lsa, matchni shunchaki bo'sh qoldiring yoki:
+  // const match: any = {}; 
 
   if (inquiry.productCollection) {
     match.productCollection = inquiry.productCollection;
   }
 
+  // 2. RAM va MEMORY ni Numberga o'girish (JUDA MUHIM)
+  if (inquiry.productRam) {
+    match.productRam = Number(inquiry.productRam);
+  }
+
+  if (inquiry.productMemory) {
+    match.productMemory = Number(inquiry.productMemory);
+  }
+
+  if (inquiry.productBrand && inquiry.productBrand.trim() !== "") {
+    match.productBrand = { $regex: new RegExp(inquiry.productBrand.trim(), "i") };
+}
+
   if (inquiry.search) {
     match.productName = { $regex: new RegExp(inquiry.search, "i") };
-  }
-
-  // 🔥 RAM filter
-  if (inquiry.productRam) {
-    match.productRam = inquiry.productRam;
-  }
-
-  // 🔥 MEMORY filter
-  if (inquiry.productMemory) {
-    match.productMemory = inquiry.productMemory;
-  }
-
+}
   const sort: T =
     inquiry.order === "productPrice"
       ? { [inquiry.order]: 1 }
@@ -61,7 +67,13 @@ public async getProducts(inquiry: ProductInquiry): Promise<Product[]> {
           productSpecs: {
             $cond: [
               { $eq: ["$productCollection", "TELEPHONE"] },
-              { $concat: ["$productRam", "/", "$productMemory"] },
+              {
+                $concat: [
+                  { $toString: { $ifNull: ["$productRam", "0"] } }, // Raqamni stringga o'girdik
+                  "/",
+                  { $toString: { $ifNull: ["$productMemory", "0"] } } // Raqamni stringga o'girdik
+                ]
+              },
               "-"
             ]
           }
@@ -80,40 +92,28 @@ public async getProducts(inquiry: ProductInquiry): Promise<Product[]> {
   return result;
 }
 
-public async getProduct(
-  memberId: ObjectId | null,
-  id: string
-): Promise<Product> {
-
+public async getProduct( memberId: ObjectId | null, id: string): Promise<Product> {
   const productId = shapeIntoMongooseObjectId(id);
-
   let result = await this.productModel
     .findOne({
       _id: productId,
       productStatus: ProductStatus.PROCESS
     })
     .exec();
-
   if (!result) {
     throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
   }
-
-  // 🔥 AGAR USER LOGIN BO‘LGAN BO‘LSA
-  if (memberId) {
-
+ if (memberId) {
     const input: ViewInput = {
       memberId: memberId,
       viewRefId: productId,
       viewGroup: ViewGroup.PRODUCT
     };
-
     // 🔍 VIEW BOR-YO‘QLIGINI TEKSHIRAMIZ
     const existView = await this.viewService.checkViewExistence(input);
-
     // 🆕 AGAR YO‘Q BO‘LSA → YARATAMIZ
     if (!existView) {
       await this.viewService.insertMemberView(input);
-
       // 📈 VIEW COUNT OSHIRAMIZ
       result = await this.productModel
         .findByIdAndUpdate(
@@ -124,7 +124,6 @@ public async getProduct(
         .exec();
     }
   }
-
   return result;
 }
 
@@ -133,16 +132,16 @@ public async likeProduct(memberId: ObjectId, productId: string): Promise<void> {
     const likeRefId = shapeIntoMongooseObjectId(productId);
 
     const input: LikeInput = {
-        memberId: memberId,
+        memberId: shapeIntoMongooseObjectId(memberId),
         likeRefId: likeRefId,
         likeGroup: LikeGroup.PRODUCT
     };
-
+console.log(memberId, productId)
     const existLike = await this.likeService.checkLikeExistence(input);
 
-    // 🔴 AGAR LIKE BOR BO‘LSA → O‘CHIRAMIZ
+ 
     if (existLike) {
-        await this.likeService["likeModel"].findByIdAndDelete(existLike._id);
+      const result =  await this.likeService["likeModel"].findByIdAndDelete(existLike._id);
 
         await this.productModel.findByIdAndUpdate(
             likeRefId,
