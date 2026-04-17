@@ -11,11 +11,13 @@ import { ViewGroup } from "../libs/enums/view.enum";
 import LikeService from "./Like.service";
 import { LikeInput } from "../libs/types/like";
 import { LikeGroup } from "../libs/enums/Like.enum";
+import { Member } from "../libs/types/member";
 
 class ProductService{
     private readonly productModel;
     public viewService;
     public likeService;
+  reviewModel: any;
  constructor(){
         this.productModel = ProductModel;
         this.viewService = new ViewService()
@@ -79,7 +81,6 @@ public async getProducts(inquiry: ProductInquiry): Promise<Product[]> {
           }
         }
       },
-
       { $sort: sort },
       { $skip: (inquiry.page * 1 - 1) * inquiry.limit },
       { $limit: inquiry.limit * 1 }
@@ -88,8 +89,49 @@ public async getProducts(inquiry: ProductInquiry): Promise<Product[]> {
 
   if (!result || result.length === 0)
     throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
-
+console.log(result)
   return result;
+}
+
+public async rateProduct(member: Member, input: any): Promise<void> {
+  const { productId, rating } = input;
+
+  const prodId = shapeIntoMongooseObjectId(productId);
+
+  // ❗ oldin baho berganmi?
+  const exist = await this.reviewModel.findOne({
+    productId: prodId,
+    memberId: member._id,
+  });
+
+  if (exist) {
+    throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);
+  }
+
+  // ✅ yangi rating
+  await this.reviewModel.create({
+    productId: prodId,
+    memberId: member._id,
+    rating,
+  });
+
+  // 🔥 average hisoblash
+  const stats = await this.reviewModel.aggregate([
+    { $match: { productId: prodId } },
+    {
+      $group: {
+        _id: "$productId",
+        avg: { $avg: "$rating" },
+        count: { $sum: 1 },
+      },
+    },
+  ]);
+
+  // ✅ product update
+  await this.productModel.findByIdAndUpdate(prodId, {
+    productRating: stats[0]?.avg || 0,
+    productReviewCount: stats[0]?.count || 0,
+  });
 }
 
 public async getProduct( memberId: ObjectId | null, id: string): Promise<Product> {
@@ -271,11 +313,6 @@ public async createNewProduct(input: ProductInput): Promise<Product> {
         input.productRam = undefined;
         input.productMemory = undefined;
         break;
-    }
-
-    // 🔥 ATTRIBUTES DEFAULT
-    if (!input.attributes) {
-      input.attributes = {};
     }
 
     // 🔥 CREATE

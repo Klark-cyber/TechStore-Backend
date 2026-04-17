@@ -74,12 +74,10 @@ const productSchema = new Schema(
       max: 5,
     },
 
- //qoshimcha
-    attributes: {
-      type: Map,
-      of: String,
-      default: {},
-    },
+    productReviewCount: {
+      type: Number, 
+      default: 0 },
+
   },
   { timestamps: true }
 );

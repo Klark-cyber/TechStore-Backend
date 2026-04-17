@@ -46,7 +46,7 @@ productController.getProducts = async (req: Request, res: Response) => {
     if (productBrand) inquiry.productBrand = String(productBrand);
     const result = await productService.getProducts(inquiry);
 
-    res.render("products", { products: result });
+    res.status(HttpCode.OK).json(result)
 
   } catch (err) {
     console.log("Error, getProducts", err);
@@ -87,6 +87,26 @@ productController.getProduct = async (
     } else {
       res.status(Errors.standard.code).json(Errors.standard);
     }
+  }
+};
+
+productController.rateProduct = async (
+  req: ExtendedRequest,
+  res: Response
+) => {
+  try {
+    console.log("rateProduct");
+
+    if (!req.member)
+      throw new Errors(HttpCode.UNAUTHORIZED, Message.NOT_AUTHENTIFICATED);
+
+    await productService.rateProduct(req.member, req.body);
+
+    res.status(HttpCode.OK).json({ success: true });
+  } catch (err) {
+    console.log("Error, rateProduct", err);
+    if (err instanceof Errors) res.status(err.code).json(err);
+    else res.status(Errors.standard.code).json(Errors.standard);
   }
 };
 

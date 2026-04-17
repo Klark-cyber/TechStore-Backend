@@ -302,3 +302,4 @@ public async updateChosenUser(
 }
 
 export default MemberService
+

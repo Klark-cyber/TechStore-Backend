@@ -14,9 +14,9 @@ export interface Product{
     productRam: number;
     productLikes: number,
     productRating: number,
+    productReviewCount:number,
     productDesc?: string;
     productImages: string[];
-    attributes: ProductAttributes,
     productViews: number;
     createdAt: Date;
     updatedAt: Date;
@@ -39,7 +39,6 @@ export interface ProductInput{
     productDesc?: string;
     productImages: string[];
     productViews?: number;
-    attributes?: Record<string, string>;
 }
 
 export interface ProductInquiry {
