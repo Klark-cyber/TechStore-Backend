@@ -42,7 +42,7 @@ export interface MemberUpdateInput {
     memberNick?: string;
     memberPhone?: string;
     memberPassword?: string;
-    memberAddres?: string;
+    memberAddress?: string;
     memberDesc?: string;
     memberImage?: string;
 }

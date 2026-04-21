@@ -166,7 +166,6 @@ public async addUserPoint(
     .findOneAndUpdate(
       {
         _id: memberId,
-        memberType: MemberType.USER,
         memberStatus: MemberStatus.ACTIVE,
       },
       { $inc: { memberPoints: point } },

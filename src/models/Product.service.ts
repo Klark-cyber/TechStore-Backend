@@ -124,11 +124,17 @@ return result;
 }
 
 public async rateProduct(member: Member, input: any): Promise<void> {
-  const { productId, rating } = input;
+  const { productId } = input;
+  const rating = Number(input.rating); // string → number
+
+  // rating 1-5 oralig'ida bo'lishi kerak
+  if (!rating || rating < 1 || rating > 5) {
+    throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);
+  }
 
   const prodId = shapeIntoMongooseObjectId(productId);
 
-  // ❗ oldin baho berganmi?
+  // Oldin baho berganmi?
   const exist = await this.reviewModel.findOne({
     productId: prodId,
     memberId: member._id,
@@ -138,14 +144,14 @@ public async rateProduct(member: Member, input: any): Promise<void> {
     throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);
   }
 
-  // ✅ yangi rating
+  // Yangi review yaratish
   await this.reviewModel.create({
     productId: prodId,
     memberId: member._id,
     rating,
   });
 
-  // 🔥 average hisoblash
+  // Barcha reviewlar bo'yicha average hisoblash
   const stats = await this.reviewModel.aggregate([
     { $match: { productId: prodId } },
     {
@@ -157,10 +163,10 @@ public async rateProduct(member: Member, input: any): Promise<void> {
     },
   ]);
 
-  // ✅ product update
+  // Product ni yangilash
   await this.productModel.findByIdAndUpdate(prodId, {
-    productRating: stats[0]?.avg || 0,
-    productReviewCount: stats[0]?.count || 0,
+    productRating: stats[0]?.avg ?? 0,
+    productReviewCount: stats[0]?.count ?? 0,
   });
 }
 

@@ -91,18 +91,19 @@ productController.getProduct = async (
   }
 };
 
-productController.rateProduct = async (
-  req: ExtendedRequest,
-  res: Response
-) => {
+productController.rateProduct = async (req: ExtendedRequest, res: Response) => {
   try {
     console.log("rateProduct");
-
     if (!req.member)
       throw new Errors(HttpCode.UNAUTHORIZED, Message.NOT_AUTHENTIFICATED);
 
-    await productService.rateProduct(req.member, req.body);
+    // ✅ rating ni numberga o'girish
+    const input = {
+      productId: req.body.productId,
+      rating: Number(req.body.rating),  // ← shu qator
+    };
 
+    await productService.rateProduct(req.member, input);
     res.status(HttpCode.OK).json({ success: true });
   } catch (err) {
     console.log("Error, rateProduct", err);
