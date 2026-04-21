@@ -48,11 +48,9 @@
     </div>
   </aside>
 
-  <!-- Sidebar overlay (mobile) -->
-  <div id="sidebar-overlay" class="sidebar-overlay hidden"
-    onclick="closeSidebar()"></div>
+  <div id="sidebar-overlay" class="sidebar-overlay hidden" onclick="closeSidebar()"></div>
 
-  <!-- ── NAVBAR ── -->
+  <!-- ── TOPBAR ── -->
   <header class="topbar">
     <button class="menu-btn" onclick="toggleSidebar()">
       <span class="material-symbols-outlined">menu</span>
@@ -77,7 +75,12 @@
       <div class="catalog-header">
         <div>
           <h1 class="catalog-title">Electronics Catalog</h1>
-          <p class="catalog-sub">Manage your full electronics catalog and stock in one place.</p>
+          <p class="catalog-sub">
+            Manage your full electronics catalog and stock in one place.
+            <% if (typeof products !== 'undefined') { %>
+              — <strong><%= products.length %></strong> products
+            <% } %>
+          </p>
         </div>
         <div class="filter-bar">
           <div class="search-wrap">
@@ -92,13 +95,13 @@
           </div>
           <select id="categorySelect" class="category-select">
             <option value="">All Categories</option>
-            <option value="TELEPHONE"  <%= typeof productCollection !== 'undefined' && productCollection === 'TELEPHONE'   ? 'selected' : '' %>>TELEPHONE</option>
-            <option value="PC"         <%= typeof productCollection !== 'undefined' && productCollection === 'PC'          ? 'selected' : '' %>>PC</option>
-            <option value="LAPTOPS"    <%= typeof productCollection !== 'undefined' && productCollection === 'LAPTOPS'     ? 'selected' : '' %>>LAPTOPS</option>
-            <option value="MACBOOKS"   <%= typeof productCollection !== 'undefined' && productCollection === 'MACBOOKS'    ? 'selected' : '' %>>MACBOOKS</option>
+            <option value="TELEPHONE"    <%= typeof productCollection !== 'undefined' && productCollection === 'TELEPHONE'    ? 'selected' : '' %>>TELEPHONE</option>
+            <option value="PC"           <%= typeof productCollection !== 'undefined' && productCollection === 'PC'           ? 'selected' : '' %>>PC</option>
+            <option value="LAPTOPS"      <%= typeof productCollection !== 'undefined' && productCollection === 'LAPTOPS'      ? 'selected' : '' %>>LAPTOPS</option>
+            <option value="MACBOOKS"     <%= typeof productCollection !== 'undefined' && productCollection === 'MACBOOKS'     ? 'selected' : '' %>>MACBOOKS</option>
             <option value="SMARTWATCHES" <%= typeof productCollection !== 'undefined' && productCollection === 'SMARTWATCHES' ? 'selected' : '' %>>SMARTWATCHES</option>
-            <option value="ACCESSORIES" <%= typeof productCollection !== 'undefined' && productCollection === 'ACCESSORIES' ? 'selected' : '' %>>ACCESSORIES</option>
-            <option value="OTHERS"     <%= typeof productCollection !== 'undefined' && productCollection === 'OTHERS'      ? 'selected' : '' %>>OTHERS</option>
+            <option value="ACCESSORIES"  <%= typeof productCollection !== 'undefined' && productCollection === 'ACCESSORIES'  ? 'selected' : '' %>>ACCESSORIES</option>
+            <option value="OTHERS"       <%= typeof productCollection !== 'undefined' && productCollection === 'OTHERS'       ? 'selected' : '' %>>OTHERS</option>
           </select>
           <button onclick="searchProducts()" class="filter-btn">
             <span class="material-symbols-outlined">tune</span>
@@ -148,13 +151,17 @@
                     <% } else { %>—<% } %>
                   </td>
                   <td class="td-price">$<%= product.productPrice ? product.productPrice.toLocaleString() : '0' %></td>
-                  <td><%= product.productLeftCount %></td>
+                  <td class="td-stock">
+                    <span class="stock-badge <%= product.productLeftCount > 10 ? 'in-stock' : product.productLeftCount > 0 ? 'low-stock' : 'out-stock' %>">
+                      <%= product.productLeftCount %>
+                    </span>
+                  </td>
                   <td>
                     <select
                       id="<%= product._id %>"
                       onchange="updateProductStatus(this, event)"
                       onclick="event.stopPropagation()"
-                      class="status-select status-<%= product.productStatus ? product.productStatus.toLowerCase() : 'active' %>"
+                      class="status-select status-<%= product.productStatus ? product.productStatus.toLowerCase() : 'process' %>"
                     >
                       <option value="ACTIVE"  <%= product.productStatus === 'ACTIVE'  ? 'selected' : '' %>>ACTIVE</option>
                       <option value="PAUSE"   <%= product.productStatus === 'PAUSE'   ? 'selected' : '' %>>PAUSE</option>
@@ -169,17 +176,25 @@
                 <% }); %>
               <% } else { %>
               <tr>
-                <td colspan="9" class="td-empty">No products found in the catalog</td>
+                <td colspan="9" class="td-empty">
+                  <span class="material-symbols-outlined" style="font-size:36px;opacity:0.3;display:block;margin-bottom:8px">inventory_2</span>
+                  No products found in the catalog
+                </td>
               </tr>
               <% } %>
             </tbody>
           </table>
         </div>
         <div class="table-footer">
-          Showing <%= typeof products !== 'undefined' ? products.length : 0 %> products
+          <% if (typeof products !== 'undefined') { %>
+            Showing <strong><%= products.length %></strong> products
+          <% } %>
         </div>
       </div>
     </section>
+
+    <!-- ── GAP ── -->
+    <div style="height: 48px;"></div>
 
     <!-- ── CREATE PRODUCT FORM ── -->
     <section class="form-section hidden" id="product-form-section">
@@ -192,11 +207,13 @@
             <h2 class="form-title">Create New Product</h2>
             <p class="form-sub">List a new electronic device or accessory in the store.</p>
           </div>
+          <button type="button" class="form-close-btn" onclick="hideProductForm()">
+            <span class="material-symbols-outlined">close</span>
+          </button>
         </div>
 
         <form action="/admin/product/create" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
 
-          <!-- Row 1 -->
           <div class="form-grid">
             <div class="form-group">
               <label>Product Name</label>
@@ -220,7 +237,6 @@
             </div>
           </div>
 
-          <!-- Row 2 -->
           <div class="form-grid form-grid-2">
             <div class="form-group">
               <label>Price ($)</label>
@@ -232,7 +248,6 @@
             </div>
           </div>
 
-          <!-- Specs -->
           <div id="telephone-specs" class="specs-block hidden">
             <div class="specs-header">
               <span class="material-symbols-outlined">settings_input_component</span>
@@ -250,13 +265,11 @@
             </div>
           </div>
 
-          <!-- Description -->
           <div class="form-group">
             <label>Description</label>
             <textarea name="productDesc" rows="4" placeholder="Describe the key features and benefits..."></textarea>
           </div>
 
-          <!-- Images -->
           <div class="form-group">
             <label>Product Images <span class="label-hint">(at least 1 required)</span></label>
             <div class="img-grid">
@@ -270,7 +283,6 @@
             </div>
           </div>
 
-          <!-- Buttons -->
           <div class="form-actions">
             <button type="submit" class="btn-submit">Create Product Entry</button>
             <button type="button" class="btn-cancel" onclick="hideProductForm()">Cancel</button>
@@ -278,7 +290,6 @@
         </form>
       </div>
 
-      <!-- Side card -->
       <div class="form-side">
         <div class="side-card">
           <div class="side-card-label">Sales Growth</div>

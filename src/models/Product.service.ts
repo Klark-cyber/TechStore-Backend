@@ -12,6 +12,7 @@ import LikeService from "./Like.service";
 import { LikeInput } from "../libs/types/like";
 import { LikeGroup } from "../libs/enums/Like.enum";
 import { Member } from "../libs/types/member";
+import ReviewModel from "../schema/Review.model";
 
 class ProductService{
     private readonly productModel;
@@ -22,23 +23,19 @@ class ProductService{
         this.productModel = ProductModel;
         this.viewService = new ViewService()
         this.likeService = new LikeService();
+        this.reviewModel = ReviewModel;
     }
     /** SPA */
 
-public async getProducts(inquiry: ProductInquiry): Promise<Product[]> {
-  // 1. Statusni tekshiring. Agar PAUSE mahsulotlar ham kerak bo'lsa, statusni dinamik qiling
-  const match: any = { 
-    productStatus: inquiry.productCollection ? ProductStatus.PROCESS : ProductStatus.PROCESS 
+public async getProducts(inquiry: ProductInquiry, memberId?: ObjectId | null): Promise<Product[]> {
+  const match: any = {
+    productStatus: ProductStatus.PROCESS,
   };
-  
-  // Agarda sizga PAUSEdagilar ham kerak bo'lsa, matchni shunchaki bo'sh qoldiring yoki:
-  // const match: any = {}; 
 
   if (inquiry.productCollection) {
     match.productCollection = inquiry.productCollection;
   }
 
-  // 2. RAM va MEMORY ni Numberga o'girish (JUDA MUHIM)
   if (inquiry.productRam) {
     match.productRam = Number(inquiry.productRam);
   }
@@ -49,21 +46,27 @@ public async getProducts(inquiry: ProductInquiry): Promise<Product[]> {
 
   if (inquiry.productBrand && inquiry.productBrand.trim() !== "") {
     match.productBrand = { $regex: new RegExp(inquiry.productBrand.trim(), "i") };
-}
+  }
 
   if (inquiry.search) {
     match.productName = { $regex: new RegExp(inquiry.search, "i") };
-}
+  }
+
   const sort: T =
     inquiry.order === "productPrice"
       ? { [inquiry.order]: 1 }
       : { [inquiry.order]: -1 };
 
+  // string → ObjectId (meLiked lookup uchun muhim)
+  const memberObjectId = memberId
+    ? shapeIntoMongooseObjectId(memberId)
+    : null;
+
   const result = await this.productModel
     .aggregate([
       { $match: match },
 
-      // 🔥 4GB/64GB format
+      // productSpecs: "16/128" format (TELEPHONE uchun)
       {
         $addFields: {
           productSpecs: {
@@ -71,9 +74,9 @@ public async getProducts(inquiry: ProductInquiry): Promise<Product[]> {
               { $eq: ["$productCollection", "TELEPHONE"] },
               {
                 $concat: [
-                  { $toString: { $ifNull: ["$productRam", "0"] } }, // Raqamni stringga o'girdik
+                  { $toString: { $ifNull: ["$productRam", "0"] } },
                   "/",
-                  { $toString: { $ifNull: ["$productMemory", "0"] } } // Raqamni stringga o'girdik
+                  { $toString: { $ifNull: ["$productMemory", "0"] } },
                 ]
               },
               "-"
@@ -81,16 +84,43 @@ public async getProducts(inquiry: ProductInquiry): Promise<Product[]> {
           }
         }
       },
+
       { $sort: sort },
       { $skip: (inquiry.page * 1 - 1) * inquiry.limit },
-      { $limit: inquiry.limit * 1 }
+      { $limit: inquiry.limit * 1 },
+
+      // meLiked — login user bu productni liked qilganmi
+      ...(memberObjectId
+        ? [
+            {
+              $lookup: {
+                from: "likes",
+                let: { productId: "$_id" },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: {
+                        $and: [
+                          { $eq: ["$likeRefId", "$$productId"] },
+                          { $eq: ["$memberId", memberObjectId] },
+                          { $eq: ["$likeGroup", "PRODUCT"] },
+                        ],
+                      },
+                    },
+                  },
+                ],
+                as: "meLiked",
+              },
+            },
+          ]
+        : [
+            { $addFields: { meLiked: [] } },
+          ]),
     ])
     .exec();
 
-  if (!result || result.length === 0)
-    throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
-console.log(result)
-  return result;
+  if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+return result;
 }
 
 public async rateProduct(member: Member, input: any): Promise<void> {
@@ -134,39 +164,57 @@ public async rateProduct(member: Member, input: any): Promise<void> {
   });
 }
 
-public async getProduct( memberId: ObjectId | null, id: string): Promise<Product> {
+public async getProduct(memberId: ObjectId | null, id: string): Promise<Product> {
   const productId = shapeIntoMongooseObjectId(id);
+
+  // View logic — o'zgarishsiz
   let result = await this.productModel
-    .findOne({
-      _id: productId,
-      productStatus: ProductStatus.PROCESS
-    })
+    .findOne({ _id: productId, productStatus: ProductStatus.PROCESS })
     .exec();
-  if (!result) {
-    throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
-  }
- if (memberId) {
+
+  if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+
+  if (memberId) {
     const input: ViewInput = {
       memberId: memberId,
       viewRefId: productId,
       viewGroup: ViewGroup.PRODUCT
     };
-    // 🔍 VIEW BOR-YO‘QLIGINI TEKSHIRAMIZ
     const existView = await this.viewService.checkViewExistence(input);
-    // 🆕 AGAR YO‘Q BO‘LSA → YARATAMIZ
     if (!existView) {
       await this.viewService.insertMemberView(input);
-      // 📈 VIEW COUNT OSHIRAMIZ
       result = await this.productModel
-        .findByIdAndUpdate(
-          productId,
-          { $inc: { productViews: 1 } },
-          { new: true }
-        )
+        .findByIdAndUpdate(productId, { $inc: { productViews: 1 } }, { new: true })
         .exec();
     }
   }
-  return result;
+
+  // ✅ meLiked — aggregate orqali
+  const memberObjectId = memberId ? shapeIntoMongooseObjectId(memberId) : null;
+
+  const withLike = await this.productModel.aggregate([
+    { $match: { _id: productId } },
+    ...(memberObjectId ? [{
+      $lookup: {
+        from: "likes",
+        let: { productId: "$_id" },
+        pipeline: [{
+          $match: {
+            $expr: {
+              $and: [
+                { $eq: ["$likeRefId", "$$productId"] },
+                { $eq: ["$memberId", memberObjectId] },
+                { $eq: ["$likeGroup", "PRODUCT"] },
+              ]
+            }
+          }
+        }],
+        as: "meLiked",
+      }
+    }] : [{ $addFields: { meLiked: [] } }]),
+  ]).exec();
+
+  return withLike[0] ?? result;
 }
 
 public async likeProduct(memberId: ObjectId, productId: string): Promise<void> {

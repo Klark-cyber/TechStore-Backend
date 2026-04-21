@@ -142,7 +142,7 @@ console.log(member)
       memberPoints: { $gte: 1 },
     })
     .sort({ memberPoints: -1 })
-    .limit(4)
+    .limit(5)
     .lean()
     .exec();
 

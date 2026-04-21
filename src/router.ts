@@ -24,7 +24,7 @@ router.get('/member/top-users', memberController.getTopUsers);
 
 
 // Prduct
-router.get('/product/all', productController.getProducts);
+router.get('/product/all',memberController.retrieveAuth,productController.getProducts);
 router.get('/product/:id', 
     memberController.retrieveAuth, 
     productController.getProduct);
@@ -32,6 +32,12 @@ router.get(
     "/product/like/:id",
     memberController.verifyAuth, // user login bo‘lishini tekshiradi
     productController.likeProduct
+);
+
+router.post(
+  "/product/rate",
+  memberController.verifyAuth,  // login bo'lishi shart
+  productController.rateProduct
 );
 
 

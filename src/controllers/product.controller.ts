@@ -12,11 +12,10 @@ const productController: T ={}; //productController nomli yangi object yaratdik 
 
 /** SPA */
 
-productController.getProducts = async (req: Request, res: Response) => {
+productController.getProducts = async (req: ExtendedRequest, res: Response) => {
   try {
     console.log("getProducts");
     console.log(req.query);
-
     const {
       page = 1,
       limit = 10,
@@ -36,21 +35,23 @@ productController.getProducts = async (req: Request, res: Response) => {
 
     if (productCollection)
       inquiry.productCollection = productCollection as ProductCollection;
-
     if (search) 
       inquiry.search = String(search);
-    
-    // 🔥 NEW
     if (productRam) inquiry.productRam = String(productRam);
     if (productMemory) inquiry.productMemory = String(productMemory);
     if (productBrand) inquiry.productBrand = String(productBrand);
-    const result = await productService.getProducts(inquiry);
 
-    res.status(HttpCode.OK).json(result)
+    
+  
+    const memberId = req.member?._id ?? null;
+ console.log("memberId:", memberId);           // bor yo'qligini
+    console.log("memberId type:", typeof memberId);
+    const result = await productService.getProducts(inquiry, memberId);
+
+    res.status(HttpCode.OK).json(result);
 
   } catch (err) {
     console.log("Error, getProducts", err);
-
     if (err instanceof Errors) res.status(err.code).json(err);
     else res.status(Errors.standard.code).json(Errors.standard);
   }

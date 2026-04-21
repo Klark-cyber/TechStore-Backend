@@ -62,7 +62,10 @@ restaurantController.processSignup = async (req: AdminRequest, res: Response ) =
 
         const result = await memberService.processSignup(newMember);
         //TODO: TOKENS AUTHENTIFICATION
-        
+         // ✅ Log qo'shing:
+    console.log("result.memberType:", result.memberType);
+    console.log("MemberType.ADMIN:", MemberType.ADMIN);
+    console.log("teng?", result.memberType === MemberType.ADMIN);
         req.session.member = result; //req-request session midleware qismida hosil bolgan va har bir requestga avtomatik qoshiladigan object.member ozimiz yaratgan object nomi. session collection ichiga resultni borib joyladik.Shuningdek browser cookie ga SessionId ni yubordik.Agar bu qator bolmasa collectionga faqat session saqlanadi result saqlanmaydi.Natijada keyinchalik shu browserdan keladigan req uchun ayni shu browserga tegishli malumotni res.send qila olmaymiz
         req.session.save(function(){ 
             res.redirect("/admin/product/all"); //save muvafaqqiyatli amalga oshsa browserni product/all pagega redirect qildik

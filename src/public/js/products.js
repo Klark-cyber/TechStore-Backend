@@ -27,6 +27,8 @@ function showProductForm() {
 function hideProductForm() {
   var section = document.getElementById('product-form-section');
   section.classList.add('hidden');
+  // Sidebar ni qaytaramiz
+  document.getElementById('sidebar').classList.remove('closed');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 

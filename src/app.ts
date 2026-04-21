@@ -34,15 +34,16 @@ app.use(morgan(MORGAN_FORMAT))
 
 /** 2-SESSIONS */ //middleware sessionlarni integrate qilib olamiz
 //1-req.session yaratiladi. 2-req.session.member mavjud boldi
-app.use(
-session({
-  secret: String(process.env.SESSION_SECRET), //sidni shifrlash uchun ishlatiladigan mahfiy kalit
+app.use(session({
+  secret: String(process.env.SESSION_SECRET),
   cookie: {
-    maxAge: 1000 * 3600 * 6 // 6 hours bu sessionning aktivlik vaqti
+    maxAge: 1000 * 3600 * 6,
+    sameSite: 'lax',  // ← 'none' emas, 'lax' — localhost HTTP uchun
+    secure: false,    // ← false qolsin
   },
-  store: store, //sessionning Mongodb da saqlanadigan collection manzili
-  resave: true, //true songi login qilingan vaqtdan boshlab emas dastlabki login bolgan vaqtdan boshlab 3 soat davomidagi session aktivligi.Agar false bolsa songi request timedan song 3 soat davomida aktivlik davom etadi
-  saveUninitialized: true //requ
+  store: store,
+  resave: true,
+  saveUninitialized: true,
 }));
 
 app.use(function(req, res, next){ //app.use global midleware yani kirib kelayotgan barcha requestlar shu midlwaredan otadi

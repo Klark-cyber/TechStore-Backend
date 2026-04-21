@@ -4,16 +4,14 @@ const reviewSchema = new Schema(
   {
     productId: {
       type: Schema.Types.ObjectId,
-      ref: "Product",
       required: true,
+      ref: "Product",
     },
-
     memberId: {
       type: Schema.Types.ObjectId,
-      ref: "Member",
       required: true,
+      ref: "Member",
     },
-
     rating: {
       type: Number,
       required: true,
@@ -23,5 +21,8 @@ const reviewSchema = new Schema(
   },
   { timestamps: true }
 );
+
+// Bir user bir productga faqat bir marta rate bera olsin
+reviewSchema.index({ productId: 1, memberId: 1 }, { unique: true });
 
 export default mongoose.model("Review", reviewSchema);
