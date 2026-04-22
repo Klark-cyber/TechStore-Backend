@@ -48,8 +48,8 @@ memberController.signup = async (req: Request, res: Response) => {
 
     // 🔥 COOKIE (XAVFSIZ VARIANT)
     res.cookie("accessToken", token, {
-      maxAge: AUTH_TIMER * 3600 * 1000,
-      httpOnly: true, // ❗ MUHIM (oldin false edi)
+      maxAge: AUTH_TIMER * 3600 * 1000 * 6,
+      httpOnly: true, 
       sameSite: "lax",
     });
 

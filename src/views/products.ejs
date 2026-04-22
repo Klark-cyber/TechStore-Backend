@@ -163,7 +163,7 @@
                       onclick="event.stopPropagation()"
                       class="status-select status-<%= product.productStatus ? product.productStatus.toLowerCase() : 'process' %>"
                     >
-                      <option value="ACTIVE"  <%= product.productStatus === 'ACTIVE'  ? 'selected' : '' %>>ACTIVE</option>
+  
                       <option value="PAUSE"   <%= product.productStatus === 'PAUSE'   ? 'selected' : '' %>>PAUSE</option>
                       <option value="PROCESS" <%= product.productStatus === 'PROCESS' ? 'selected' : '' %>>PROCESS</option>
                       <option value="DELETE"  <%= product.productStatus === 'DELETE'  ? 'selected' : '' %>>DELETE</option>
