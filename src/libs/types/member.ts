@@ -1,5 +1,5 @@
 import { MemberStatus, MemberType } from "../enums/member.enum";
-import {ObjectId} from "mongoose";
+import { ObjectId } from "mongoose";
 import { Request } from "express";
 import { Session } from "express-session";
 
@@ -16,7 +16,7 @@ export interface MemberInput { //Bu type newMember uchun yani har bir yangi memb
 }
 
 export interface Member { //Bu type MongoDb member collectionga borib yozilib memberModelga qaytarilgan return resultning Promise<Member> returned type hisoblanadi 
-    _id: ObjectId; 
+    _id: ObjectId;
     memberType: MemberType;//MemberType va MemberStatus enum bolgani sababli uni member.enumdan import
     memberStatus: MemberStatus;
     memberNick: string;
@@ -48,15 +48,15 @@ export interface MemberUpdateInput {
 }
 
 export interface ExtendedRequest extends Request {
-  member?: Member; // 🔥 optional
-  file?: Express.Multer.File;
-  files?: Express.Multer.File[];
+    member?: Member; // 🔥 optional
+    file?: Express.Multer.File;
+    files?: Express.Multer.File[];
 }
 
 export interface AdminRequest extends Request {
-  member: Member; // 🔥 majburiy
-  session: Session & { member: Member };
-  file?: Express.Multer.File;
-  files?: Express.Multer.File[];
+    member: Member; // 🔥 majburiy
+    session: Session & { member: Member };
+    file?: Express.Multer.File;
+    files?: Express.Multer.File[];
 }
 

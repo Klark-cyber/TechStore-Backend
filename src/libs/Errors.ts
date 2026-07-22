@@ -17,10 +17,10 @@ export enum Message { //error hosil bolganda yuboriladigan xabarlar
     NO_DATA_FOUND = "No data is found!",
     CREATE_FAILED = "Create is failed!",
     UPDATE_FAILED = "Update is failed!",
-   
+
     USED_NICK_PHONE = "You are inserting already used nick or phone number!",
     NICK_PASSWORD_REQUIRED = "Nick and password required",
-    BLOCKED_USER = "You have been blocked!, contact restaurant",
+    BLOCKED_USER = "You have been blocked! Please contact support",
     NO_MEMBER_NICK = "No member with that member nick!",
     WRONG_PASSWORD = "Wrong password, please try again!",
     NOT_AUTHENTIFICATED = "You are not authentificated, Please login first",
@@ -36,15 +36,15 @@ class Errors extends Error {
     public message: Message;
 
 
-    static standard ={
+    static standard = {
         code: HttpCode.INTERNAL_SERVER_ERROR,
         message: Message.SOMETHING_WENT_WRONG,
     };
 
-constructor(statusCode: HttpCode, statusMessage: Message) { 
-    super();
-    this.code = statusCode; 
-    this.message = statusMessage;
+    constructor(statusCode: HttpCode, statusMessage: Message) {
+        super();
+        this.code = statusCode;
+        this.message = statusMessage;
     }
 }
 export default Errors; // errorrs klasini file ichida default holda export qildik ammo bu klassdan boshqa yuqorida httpcode hamda message enumlarini shunchaki export qildik

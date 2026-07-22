@@ -7,28 +7,49 @@ import morgan from "morgan" // morganni ishlatish uchun @types/morgan ham instal
 import cookieParser from 'cookie-parser'
 import { MORGAN_FORMAT } from './libs/config'
 import { T } from './libs/types/common'
-import uuid from "uuid"
 
 
 import session from 'express-session' //bu paket sessionni hosil qilish uchun kerak
 import ConnectMongoDB from "connect-mongodb-session" //bu paket sessionni hosil qilish uchun kerak
 
 
-const MongoDBStore = ConnectMongoDB(session) 
+const MongoDBStore = ConnectMongoDB(session)
 const store = new MongoDBStore({ //session borib saqlanaadigan collection manzili
-    uri: String(process.env.MONGO_URL),  //Burak uchun ochigan MongoDB manzilini kiritamiz
-    collection: "sessions"               //session saqlanishi kerak bolgan qaysi nom orqali ochilgan collection nomini kiritamiz
+  uri: String(process.env.MONGO_URL),  //Burak uchun ochigan MongoDB manzilini kiritamiz
+  collection: "sessions"               //session saqlanishi kerak bolgan qaysi nom orqali ochilgan collection nomini kiritamiz
 })
 
- 
+
 /** 1-ENTRANCE */
 const app = expreess();
 //console.log(__dirname); //__dirname bu dirname yozilgan filening manzili
-app.use(expreess.static(path.join(__dirname, 'public'))) 
+app.use(expreess.static(path.join(__dirname, 'public')))
 app.use('/uploads', expreess.static("./uploads")) //uploads fodlderni ham public qilib qoydik.Agar req /uploads ga kelsa server uploades folderni static qiladi
-app.use(expreess.urlencoded({extended: true})); //traditional Api uchun xizmat qilib form tegidan kelayotgan malumotlarni qabul qilishga ruxsat beradi
+app.use(expreess.urlencoded({ extended: true })); //traditional Api uchun xizmat qilib form tegidan kelayotgan malumotlarni qabul qilishga ruxsat beradi
 app.use(expreess.json()); //RestAPI sifatida request bolayotgan datalarni bodysida kelayotgan json datani otqazishga ruxsat beryapmiz.
-app.use(cors({credentials: true, origin: true})) //cors ixtiyoriy domendan kelayotgan requestlarni serverga kirishiga ruxsat beradi
+// ⚠️ TUZATILDI: avval `origin: true` — bu ISTALGAN veb-saytdan kelgan
+// so'rovni, `credentials: true` bilan birga, qabul qilardi. Bu, boshqa
+// birov o'z sahifasini ochib, tashrif buyuruvchining brauzeridagi session
+// cookie'sidan foydalanib, ushbu API'ga uning nomidan so'rov yubora
+// olishi mumkinligini anglatardi (CSRF-ga o'xshash xavf). Endi faqat
+// haqiqiy frontend domenimiz va lokal rivojlantirish manzillariga
+// ruxsat beriladi.
+const allowedOrigins = [
+  'https://featuretechstore.com',
+  'https://www.featuretechstore.com',
+  'http://localhost:3000',
+  'http://localhost:3009',
+];
+app.use(cors({
+  credentials: true,
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+}))
 app.use(cookieParser()) //kirib kelgan req tarkibida cookielarni korishimiz va res orqali browser cookielarini ozgartirishimiz mumkin boladi
 app.use(morgan(MORGAN_FORMAT))
 
@@ -38,15 +59,22 @@ app.use(session({
   secret: String(process.env.SESSION_SECRET),
   cookie: {
     maxAge: 1000 * 3600 * 6,
-    sameSite: 'lax',  // ← 'none' emas, 'lax' — localhost HTTP uchun
-    secure: false,    // ← false qolsin
+    sameSite: 'lax',
+    // ⚠️ TUZATILDI: avval har doim `false` edi — bu session cookie
+    // hatto oddiy (SSL'siz) HTTP orqali ham yuborilishi mumkinligini
+    // anglatardi. Endi production'da (NODE_ENV=production o'rnatilgach)
+    // avtomatik `true` bo'ladi — bu serverga SSL (https) o'rnatilgandan
+    // keyin cookie faqat xavfsiz ulanish orqali yuborilishini ta'minlaydi.
+    // Lokal rivojlantirishda (http://localhost) hali ham `false`
+    // qoladi, aks holda cookie umuman ishlamay qolardi.
+    secure: process.env.NODE_ENV === 'production',
   },
   store: store,
   resave: true,
   saveUninitialized: true,
 }));
 
-app.use(function(req, res, next){ //app.use global midleware yani kirib kelayotgan barcha requestlar shu midlwaredan otadi
+app.use(function (req, res, next) { //app.use global midleware yani kirib kelayotgan barcha requestlar shu midlwaredan otadi
   const sessionInstance = req.session as T; //session yuqoridagi session midleware sababli paydo bolgan.Agar user login bolgan bolsa req tarkibida member mavjud boladi
   res.locals.member = sessionInstance.member; //Bu qator sessiondagi userni barcha sahifalar va filellar ishlatishi mumkin bolgan holatga keltiradi.res.locals browser veriable hisoblanadi
   next();
