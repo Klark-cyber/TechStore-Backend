@@ -1,5 +1,5 @@
-import {NextFunction, Request, Response} from "express"; //{ req va res} qavs ichidaligiga sabab u export bolgan fileda req va res dan boshqa export bolgan malumotlar ham bor
-import {T} from "../libs/types/common"; //T interfaceni import qildik
+import { NextFunction, Request, Response } from "express"; //{ req va res} qavs ichidaligiga sabab u export bolgan fileda req va res dan boshqa export bolgan malumotlar ham bor
+import { T } from "../libs/types/common"; //T interfaceni import qildik
 import MemberService from "../models/Member.service";
 import { ExtendedRequest, LoginInput, Member, MemberInput, MemberUpdateInput } from "../libs/types/member";
 import Errors, { HttpCode, Message } from "../libs/Errors";
@@ -7,11 +7,11 @@ import AuthService from "../models/Auth.service";
 import { AUTH_TIMER } from "../libs/config";
 import productController from "./product.controller";
 
-const memberService = new MemberService(); 
+const memberService = new MemberService();
 const authService = new AuthService(); //Yangi Authservice service modelidan instance oldik
 
-const memberController: T ={};
- 
+const memberController: T = {};
+
 //REACT loyihamiz uchun
 
 memberController.getAdmin = async (req: Request, res: Response) => {
@@ -47,10 +47,18 @@ memberController.signup = async (req: Request, res: Response) => {
     console.log("token =>", token);
 
     // 🔥 COOKIE (XAVFSIZ VARIANT)
+    // ⚠️ TUZATILDI: avval `path` ko'rsatilmagan edi — standart holatda
+    // cookie faqat so'rov yuborilgan yo'lning "papkasi" (`/member/signup`
+    // uchun — `/member`) bilan cheklanadi. Bu shuni anglatardiki, cookie
+    // `/order/create` kabi boshqa yo'llarga UMUMAN yuborilmasdi — aynan
+    // shu sababli "login qilganman" deb hisoblansa-da, checkout paytida
+    // "not authenticated" xatosi chiqardi. `path: '/'` endi cookie'ni
+    // BUTUN saytga amal qiladigan qilib qo'yadi.
     res.cookie("accessToken", token, {
-      maxAge: AUTH_TIMER * 3600 * 1000 * 6,
-      httpOnly: true, 
+      maxAge: AUTH_TIMER * 3600 * 1000,
+      httpOnly: true,
       sameSite: "lax",
+      path: "/",
     });
 
     res.status(HttpCode.CREATED).json({
@@ -84,10 +92,13 @@ memberController.login = async (req: Request, res: Response) => {
     console.log("token is:", token);
 
     // 🔥 COOKIE (XAVFSIZ)
+    // ⚠️ TUZATILDI: xuddi shu path muammosi — endi butun saytga amal
+    // qiladi.
     res.cookie("accessToken", token, {
       maxAge: AUTH_TIMER * 3600 * 1000,
-      httpOnly: true,  
+      httpOnly: true,
       sameSite: "lax",
+      path: "/",
     });
 
     res.status(HttpCode.OK).json({
@@ -111,9 +122,13 @@ memberController.logout = (req: ExtendedRequest, res: Response) => {
     console.log("logout");
 
     // 🔥 COOKIE NI TO‘LIQ O‘CHIRISH
+    // ⚠️ TUZATILDI: `path` cookie o'rnatilgandagi bilan BIR XIL bo'lishi
+    // SHART — aks holda brauzer buni "boshqa cookie" deb hisoblab,
+    // haqiqiy cookie'ni o'chirmay qoldirardi.
     res.clearCookie("accessToken", {
       httpOnly: true,
       sameSite: "lax",
+      path: "/",
     });
 
     res.status(HttpCode.OK).json({
@@ -175,7 +190,7 @@ memberController.updateMember = async (
     }
 
     const input: MemberUpdateInput = req.body;
-console.log(input)
+    console.log(input)
     // 🔥 IMAGE
     if (req.file) {
       input.memberImage = req.file.path.replace(/\\/g, "/");
@@ -271,7 +286,7 @@ memberController.verifyAuth = async (
   }
 };
 
-  memberController.retrieveAuth = async (
+memberController.retrieveAuth = async (
   req: ExtendedRequest,
   res: Response,
   next: NextFunction

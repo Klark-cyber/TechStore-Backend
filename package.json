@@ -1,12 +1,12 @@
 {
-  "name": "burak",
+  "name": "techstore",
   "version": "1.0.0",
-  "description": "This is Burac project backend",
+  "description": "This is TechStore project backend",
   "main": "src/server.ts",
   "scripts": {
     "start": "ts-node src/server.ts",
     "start:dev": "nodemon --exec ts-node src/server.ts",
-    "build": "tsc",
+    "build": "tsc && cp -r src/views/. dist/views/",
     "train": "nodemon --exec ts-node src/train.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

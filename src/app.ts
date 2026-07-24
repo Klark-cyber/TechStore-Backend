@@ -19,6 +19,16 @@ const store = new MongoDBStore({ //session borib saqlanaadigan collection manzil
   collection: "sessions"               //session saqlanishi kerak bolgan qaysi nom orqali ochilgan collection nomini kiritamiz
 })
 
+// ⚠️ YANGI — avval bu yerda hech qanday xato tekshiruvi yo'q edi.
+// Agar session'lar saqlanadigan MongoDB ulanishida muammo bo'lsa
+// (masalan .env'da MONGO_URL noto'g'ri, yoki vaqtincha ulanish
+// uzilishi), bu jimgina, hech qanday xabarsiz muvaffaqiyatsiz
+// bo'lardi — va foydalanuvchi "login qilganman" deb hisoblasa-da,
+// sessiyasi haqiqatda saqlanmagan/topilmagan bo'lardi.
+store.on('error', (err) => {
+  console.error('❌ Session store xatosi (MongoDB):', err);
+});
+
 
 /** 1-ENTRANCE */
 const app = expreess();
@@ -43,7 +53,13 @@ const allowedOrigins = [
 app.use(cors({
   credentials: true,
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    // ⚠️ YANGI: Vercel'ning avtomatik (*.vercel.app) domenlariga ham
+    // ruxsat beramiz — chunki loyiha ko'pincha custom domendan oldin,
+    // yoki u bilan bir qatorda, Vercel'ning o'zi bergan standart
+    // manzili orqali ham sinab ko'riladi. Bu ro'yxatda bo'lmasa, CORS
+    // butun so'rovni butunlay rad etardi (faqat cookie emas).
+    const isVercelPreview = origin && /\.vercel\.app$/.test(origin);
+    if (!origin || allowedOrigins.includes(origin) || isVercelPreview) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
@@ -59,14 +75,22 @@ app.use(session({
   secret: String(process.env.SESSION_SECRET),
   cookie: {
     maxAge: 1000 * 3600 * 6,
-    sameSite: 'lax',
-    // ⚠️ TUZATILDI: avval har doim `false` edi — bu session cookie
-    // hatto oddiy (SSL'siz) HTTP orqali ham yuborilishi mumkinligini
-    // anglatardi. Endi production'da (NODE_ENV=production o'rnatilgach)
-    // avtomatik `true` bo'ladi — bu serverga SSL (https) o'rnatilgandan
-    // keyin cookie faqat xavfsiz ulanish orqali yuborilishini ta'minlaydi.
-    // Lokal rivojlantirishda (http://localhost) hali ham `false`
-    // qoladi, aks holda cookie umuman ishlamay qolardi.
+    // ⚠️ TUZATILDI: avval 'lax' edi — bu cookie faqat "bir xil sayt"
+    // so'rovlarida yuborilardi. Lekin frontend Vercel'ning standart
+    // domeni (masalan *.vercel.app) orqali ham ochilishi mumkin — bu
+    // backend domenimizdan (api.featuretechstore.com) BUTUNLAY BOSHQA
+    // sayt hisoblanadi, shuning uchun brauzer cookie'ni jimgina
+    // yubormay qo'yardi. Natijada frontend "men login qilganman"
+    // deb hisoblasa-da (eski, saqlanib qolgan holat), backend
+    // so'rovda hech qanday cookie ko'rmasdi va "not authenticated"
+    // xatosini qaytarardi.
+    // MUHIM: sameSite:'none' HAR DOIM secure:true bilan birga
+    // bo'lishi SHART (brauzer talabi) — aks holda cookie butunlay
+    // rad etiladi. Shuning uchun ikkalasi ham bir xil shartga
+    // (NODE_ENV) bog'langan: production'da 'none'+true (Vercel kabi
+    // boshqa domendan ham ishlaydi), lokalda 'lax'+false (oddiy
+    // http://localhost uchun).
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     secure: process.env.NODE_ENV === 'production',
   },
   store: store,
